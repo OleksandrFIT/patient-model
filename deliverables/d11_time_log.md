@@ -1,9 +1,31 @@
 # D11 — Time log
 
-> The clock time is the candidate's own record, to the nearest five minutes. The breakdown is
-> split by the categories the work actually fell into rather than by deliverable, so each row
-> can be checked against the git history for that stretch. The rows sum to the total, and
-> `scripts_audit_figures.py` fails if they ever stop summing to it.
+> The clock time is the candidate's own record, to the nearest five minutes. The first table
+> uses the categories the assignment asks for; the breakdown below splits the same 5:30 by the
+> categories the work actually fell into, so each row can be checked against the git history
+> for that stretch. Both tables sum to the total, and `scripts_audit_figures.py` fails if they
+> ever stop summing to it.
+
+| Activity | Time Spent |
+|---|---|
+| Reading assignment | 0:10 |
+| Planning | 0:30 |
+| AI prompting | 0:15 |
+| Model design | 1:05 |
+| Implementation | 2:20 |
+| Workflow analysis | 0:05 |
+| Final documentation | 0:15 |
+| Review | 0:50 |
+| **Total** | **5:30** |
+
+One note on *AI prompting*, because the number is small and the reason matters. The whole
+build was produced through an assistant, so prompting is not a separable activity — it is
+distributed across design, implementation and review, and the prompt log in D10 records it
+there. The fifteen minutes above are the prompt engineering that was its own task: moving the
+model's prompt from record ids to indices, withholding a conflict's figures from it, and
+passing flags to it as structure rather than prose.
+
+## The same 5:30, by what the work actually was
 
 | Activity | Time spent |
 |---|---|
@@ -18,7 +40,8 @@
 | Implementation, Phase 3 — the thin five | 0:05 |
 | Implementation, Phase 4 — AI layer schema | 0:10 |
 | Implementation, Phase 5 — consent gate, projection, guardrails, adapter, D8 end to end | 0:35 |
-| Deliverable documents (D2, D3, D8, D9, D10, D11, README) | 0:20 |
+| D8 workflow analysis — current state, pain points, future state, what is out of scope | 0:05 |
+| Deliverable documents (D2, D3, D9, D10, D11, README) | 0:15 |
 | Optional build — three conflicting sources reconciled into canonical, with conflict report and review queue | 0:30 |
 | Wiring a real local model (ollama, `qwen2.5:7b`) and auditing what the stub had been claiming | 0:15 |
 | The 25-dimension audit, rebuilt as a repeatable gate after the first pass proved circular | 0:10 |
@@ -67,11 +90,11 @@ the six security topics, the three reliability topics, and running D8 against a 
 model rather than specifying the workflow on paper. None of those three was in the
 recommendation, and together they account for fifty-five minutes.
 
-What paid for them is visible in the row breakdown. Phases 2 and 3 took fifteen minutes
-between them, against thirty-five for Phase 1, because Phase 1 settled the patterns the later
-phases only applied — the same split the defect log shows, with three defects in Phase 1 and
-none in the two that followed. Design that is argued before code is written is not time taken
-away from implementation.
+What paid for them is visible in the breakdown. Phases 2 and 3 took fifteen minutes between
+them, against thirty-five for Phase 1, because Phase 1 settled the patterns the later phases
+only applied — the same split the defect log shows, with three defects in Phase 1 and none in
+the two that followed. Design that is argued before code is written is not time taken away
+from implementation.
 
 Two cuts were taken rather than letting the scope grow without limit, both pre-authorised by
 the design document because both degrade honestly: the `EntityKind` registry (§8.4) and
@@ -84,9 +107,9 @@ validation enum that works from one that is merely declared. It also produced
 invariants both held on real data — and four defects of its own, including a conflict model
 that could not represent the central case the build exists to show.
 
-The last seven rows, an hour and five minutes between them, are all review and correction
-after the build was nominally finished — and they produced defects 17 to 23, every one of the
-last seven in the log, plus the stale figures in these two documents. In that hour a reviewer's
-reading found a fabricated citation that no test could see, a prompt handing the model numbers
-it was forbidden to use, a trend advertising another analyte's blocking flag, and a test that
-had quietly stopped being able to fail. It is the cheapest hour here.
+The last seven rows of the breakdown, an hour and five minutes between them, are all review
+and correction after the build was nominally finished — and they produced defects 17 to 23,
+every one of the last seven in the log, plus the stale figures in these two documents. In that
+hour a reviewer's reading found a fabricated citation that no test could see, a prompt handing
+the model numbers it was forbidden to use, a trend advertising another analyte's blocking
+flag, and a test that had quietly stopped being able to fail. It is the cheapest hour here.

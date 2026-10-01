@@ -43,6 +43,38 @@ def lines_in(*globs: str) -> int:
     )
 
 
+ACTIVITY_ROW = re.compile(r"^\| (?!\*\*Total)(?!Activity)(?!---)(?:.+?) \| (\d+):(\d\d) \|$")
+ACTIVITY_TOTAL = re.compile(r"^\| \*\*Total\*\* \| \*\*(\d+):(\d\d)\*\* \|$")
+
+
+def hhmm(minutes: int) -> str:
+    return f"{minutes // 60}:{minutes % 60:02d}"
+
+
+def activity_tables(text: str) -> tuple[list[tuple[list[int], int]], int]:
+    """Each activity table in D11, as its row minutes and the total it states.
+
+    D11 gives the same total twice, under two breakdowns of the same work, and the first
+    version of this check summed every row in the section against the first total — reporting
+    30 rows summing to 11:00 against a stated 5:30, which was the check double counting rather
+    than the document disagreeing with itself. A table therefore closes at its own `Total` row
+    and is compared only against that. Rows left over after the last total are returned so a
+    table that lost its total is a problem rather than a silence.
+    """
+    tables: list[tuple[list[int], int]] = []
+    rows: list[int] = []
+    for line in text.splitlines():
+        row = ACTIVITY_ROW.match(line)
+        if row:
+            rows.append(int(row.group(1)) * 60 + int(row.group(2)))
+            continue
+        total = ACTIVITY_TOTAL.match(line)
+        if total:
+            tables.append((rows, int(total.group(1)) * 60 + int(total.group(2))))
+            rows = []
+    return tables, len(rows)
+
+
 def collected_tests(target: str) -> int:
     out = subprocess.run(
         [".venv/bin/pytest", target, "-q", "--collect-only"],
@@ -136,21 +168,32 @@ def main() -> int:
         )
 
     # D11's activity rows must account for the total it states. The same shape as the
-    # instrument table above: a document whose own figures have to add up.
+    # instrument table above: a document whose own figures have to add up. Each table is
+    # checked against its own total, and the totals against each other — the two breakdowns
+    # are the same 5:30 twice, so they have to agree as well as add up.
     breakdown = D11.read_text().split("## What the repository can attest to")[0]
-    rows = re.findall(r"^\| (?!\*\*Total)(?!Activity)(?!---)(.+?) \| (\d+):(\d\d) \|$", breakdown, re.MULTILINE)
-    stated = re.search(r"^\| \*\*Total\*\* \| \*\*(\d+):(\d\d)\*\* \|$", breakdown, re.MULTILINE)
-    if not rows or stated is None:
+    tables, orphans = activity_tables(breakdown)
+    if not tables:
         problems.append("d11_time_log.md: could not read the activity breakdown or its total")
-    else:
-        counted = sum(int(h) * 60 + int(m) for _, h, m in rows)
-        claimed = int(stated.group(1)) * 60 + int(stated.group(2))
+    if orphans:
+        problems.append(
+            f"d11_time_log.md: {orphans} activity row(s) after the last total — "
+            "a table lost its Total row"
+        )
+    for n, (rows, claimed) in enumerate(tables, start=1):
+        counted = sum(rows)
         if counted != claimed:
             problems.append(
-                f"d11_time_log.md: {len(rows)} activity rows sum to "
-                f"{counted // 60}:{counted % 60:02d}, the total states "
-                f"{claimed // 60}:{claimed % 60:02d}"
+                f"d11_time_log.md: breakdown {n}'s {len(rows)} activity rows sum to "
+                f"{hhmm(counted)}, its total states {hhmm(claimed)}"
             )
+    stated_totals = {claimed for _, claimed in tables}
+    if len(stated_totals) > 1:
+        problems.append(
+            "d11_time_log.md: the breakdowns state different totals — "
+            + ", ".join(hhmm(t) for t in sorted(stated_totals))
+            + " — and each is presented as the same work"
+        )
 
     # The claim this gate was built after. Kept as a named check rather than left to the
     # figures above, because it was prose and no number would have caught it.
