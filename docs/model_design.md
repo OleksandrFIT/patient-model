@@ -136,7 +136,7 @@ Task.
 |---|---|---|---|
 | `Patient` | Canonical | `identifiers[]`, `names[]`, `contacts[]`, `addresses[]`, `preferences`, care-team memberships | Identifiers are a list — §6.12. Contacts embedded: read with the patient 100% of the time, never queried alone |
 | `Provider` | Canonical | `name`, `identifiers[]` | Referenced as prescriber, note author, lab orderer. A free-text name produces spelling drift and makes "all meds from Dr X" unanswerable |
-| `Consent` | PatientScoped | `scope`, validity window | An enforcement point, not documentation — §6.11 |
+| `Consent` | PatientScoped | `scope`, validity window, `revoked_at`, `revoked_by` | An enforcement point, not documentation — §6.11. Enforced as a capability — §10.3 |
 | `Coverage` | PatientScoped | payer, member id, effective dates | Thin. Concierge practices commonly bill labs and procedures through insurance even when membership is self-pay |
 | `Encounter` | PatientScoped | type, period, participants | Grouping anchor for the pre-visit brief |
 | `Condition` | Clinical | `code: CodeableConcept`, `clinical_status`, `verification_status`, onset, abatement | Merges history and current diagnoses — §6.4 |
@@ -468,10 +468,14 @@ A separate entity rather than a field on `Patient`.
 `scope: treatment | ai_processing | data_sharing | research | family_access`
 plus a validity window.
 
-It is the gate for the entire AI layer: an agent asks "is there active
-`ai_processing` consent for this patient" before doing anything. Embedded,
-revocation bumps the `Patient` version, and "whose AI-processing consent expires
-this month" becomes unanswerable.
+It is the gate for the entire AI layer. How that gate is *enforced*, rather than
+merely intended, is §10.3. Embedded on `Patient`, revocation would bump the patient
+version, and "whose AI-processing consent expires this month" becomes unanswerable.
+
+Revocation is distinct from expiry, and distinct again from `record_status =
+superseded`, which means replaced by a newer version. A patient who withdrew
+consent and a consent that simply lapsed must be told apart in the audit trail, so
+`Consent` carries `revoked_at` and `revoked_by`.
 
 ### 6.12 `Patient.identifiers` is a list, not `mrn: str`
 
@@ -559,6 +563,11 @@ does not carry provenance the way this model needs, and its
 - **A canonical carrier for `patient_submitted`** — §10.1 wraps four narrative
   fields, and patient-authored free text such as `Goal.description` is not among
   them.
+- **General access control.** §10.3 gates the AI read path only. Staff access,
+  role permissions and break-glass are Phase 1 boundaries, resting on
+  authentication and the audit trail of §6.3.
+- **Revocation arriving mid-inference** — §10.3. Bounded by `valid_until` and a
+  re-check at artifact construction, not guaranteed.
 - **Unit conversion inside trends** — §9.4. Mismatched units are excluded with a
   visible reason rather than converted.
 - **FHIR as a wire format** — §6.18.
@@ -944,6 +953,83 @@ prompt is no longer reproducible rather than quietly reproducing a different one
 grounds that a pending state belongs to the AI layer; until now the document gave
 it nowhere to live, and `review` is that place. §6.3's `trace_id` gets its
 counterpart.
+
+### 10.3 The consent gate is a capability, not a convention
+
+§6.11 says three times over that `Consent` is the gate for the AI layer. Saying it
+is not enforcing it, and §9.4 already set the standard: a rule that lives in a
+sentence survives until the first refactor.
+
+**Why `consent_ref` (§10.2) does not close this.** A required `consent_ref`
+guarantees that an artifact *names* a consent, and nothing further — not that the
+consent was active, that its scope was right, or that it belonged to this patient.
+And it fires too late: an agent that read forty records and then failed the check
+has already assembled PHI into a prompt. The leak has happened. Validating at
+artifact construction catches the consequence, not the event.
+
+So the gate stands **before the read**, in the one place where canonical data
+becomes model context: the projection layer of §6.3.
+
+```
+AIReadScope:              # produced only by the consent check
+    patient_id:  ULID
+    consent_id:  ULID
+    scope:       Literal["ai_processing"]
+    valid_until: datetime
+    trace_id:    ULID
+```
+
+Every projection function takes an `AIReadScope`, not a `patient_id`, and no
+overload taking a bare `patient_id` exists. "Read a patient's data for a model
+without checking consent" is then **unexpressible**: the function cannot be called
+without the token, and the token cannot be made except through the check. This is
+stronger than §9.4 — there a required field stopped a flag being dropped on the way
+out; here the gate stands at the entrance.
+
+`authorize_ai_read(patient_id, now) -> AIReadScope` **raises rather than returning
+`None`.** `None` invites `if scope:` and the one caller who omits it; an exception
+makes refusal the default path. Fail-closed, the same discipline as treating
+`TextOrigin.unknown` as external (§10.1).
+
+`AIReadScope` is **not persisted** — not an entity, not a value object, nothing in
+§3's taxonomy. It is a runtime capability. Storing it would make it forgeable and
+replayable, which is the opposite of its purpose.
+
+**`consent_ref` is derived, not supplied.** The adapter copies it from the
+`AIReadScope` it was handed, so it cannot be set independently of the check. The
+same principle as `execution` in §10.2.
+
+**`trace_id` rides on the token.** §6.3 priced threading `trace_id` through the
+read paths as a separate cost. Carried on `AIReadScope` it is threaded by the
+parameter being added anyway, and the two costs collapse into one.
+
+**This gate does not degrade.** Every other item in §11 step 4 fails honestly when
+time runs short: `fields_read` stays `None`, which is a legal value meaning "the
+whole record", and ids keep their prefixes without the registry. **An unimplemented
+consent gate is not a `None`. It is an open door.** It cannot be dropped the way
+the others can.
+
+That is not a deferral risk, and the reason is worth stating: before step 4 there is
+no projection layer, so there is no AI read path to guard. The door and its lock are
+installed in the same step.
+
+**This is a gate for the AI path only.** A physician reading a chart needs
+`treatment` consent, under different rules including break-glass access in an
+emergency. **This model does not build general access control** and does not pretend
+to: clinical access rests on authentication and on the audit trail of §6.3. That is
+a deliberate Phase 1 boundary, not an omission.
+
+**Revocation during a generation.** `valid_until` bounds the window, and the adapter
+re-checks before constructing the artifact, which catches the realistic case — a
+revocation arriving between the read and the write. A revocation arriving
+mid-inference is not caught. That is a limit rather than a guarantee, and §7 records
+it.
+
+**Rejected: a check inside each read function** (`if not has_consent(...): raise`).
+Rejected for the reason §9.4 rejected a rule in prose — it is a convention that
+every new read function must remember, and the one that forgets becomes the leak.
+The token moves this from "remember to check" to "cannot be called without having
+checked".
 
 ---
 
