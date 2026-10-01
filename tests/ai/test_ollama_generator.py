@@ -23,6 +23,7 @@ from pai3.ai.generators import (
     resolve_citation,
 )
 from pai3.ai.projection import AIPatientView
+from pai3.entities.infrastructure import FlagTarget
 from pai3.entities.results import LabResult
 from pai3.enums import FlagCode, ProvenanceOrigin, Severity
 from pai3.ids import new_id
@@ -112,29 +113,41 @@ def test_the_prompt_labels_records_by_index_and_never_shows_an_id():
     assert "rejected" in lowered
 
 
-def test_a_flag_message_reaches_the_model_without_its_figures():
-    """The competing values belong to no citable record, so the model cannot declare them and
-    cannot state them undeclared. Printing them made every run fail check 6."""
+def test_a_flag_reaches_the_model_as_a_code_and_a_place_not_as_prose():
+    """The message never reaches the prompt. It is written for a physician, who may see the
+    competing readings; the model may not, and a placeholder would only be echoed back."""
+    lab = _lab(None, "glucose, fasting")
     flag = FlagSummary(
         flag_id="flag_0001",
         code=FlagCode.CONFLICTING_VALUES,
         severity=Severity.BLOCKING,
         message="fasting glucose: EMR 5.5 mmol/L against lab 7.2 mmol/L, unresolved",
     )
-    ctx = _ctx([_lab(5.6)]).model_copy(update={"unresolved": [flag]})
+    ctx = _ctx([_lab(5.6), lab]).model_copy(update={
+        "unresolved": [flag],
+        "flag_targets": {flag.flag_id: [FlagTarget(
+            entity_type="LabResult", entity_id=lab.id, field_path="quantity")]},
+    })
     prompt = ctx.render().text
 
-    for figure in ("5.5", "7.2"):
-        assert figure not in prompt
-    # An integer would survive guardrail 6 and must not survive this.
-    integer = flag.model_copy(update={"message": "HbA1c: EMR 54 against lab 7, unresolved"})
-    assert "54" not in _ctx([_lab(5.6)]).model_copy(
-        update={"unresolved": [integer]}
-    ).render().text
-    # What the model still needs: which analyte, who disagrees, and the code.
-    assert "fasting glucose" in prompt
-    assert "EMR" in prompt and "lab" in prompt
-    assert "CONFLICTING_VALUES" in prompt
+    # No figure, and no word standing in for one: the model echoes whatever it is given.
+    # "EMR" is the message's own wording, so its absence shows the message itself stayed out.
+    for leaked in ("5.5", "7.2", "withheld", "redacted", "EMR"):
+        assert leaked not in prompt
+    # What it is told instead: the code, the severity, the record by index, the field.
+    assert "CONFLICTING_VALUES (blocking) at [2], field quantity" in prompt
+    # Still no id anywhere -- an id in the prompt is an id the model can mangle.
+    assert lab.id not in prompt
+
+
+def test_a_flag_whose_target_is_unknown_degrades_to_its_code():
+    flag = FlagSummary(
+        flag_id="flag_0002", code=FlagCode.CONFLICTING_VALUES,
+        severity=Severity.BLOCKING, message="something with 9.9 in it",
+    )
+    prompt = _ctx([_lab(5.6)]).model_copy(update={"unresolved": [flag]}).render().text
+    assert "CONFLICTING_VALUES (blocking)" in prompt
+    assert "9.9" not in prompt
 
 
 def test_an_index_the_prompt_never_offered_cannot_resolve():

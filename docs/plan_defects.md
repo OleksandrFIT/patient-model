@@ -321,6 +321,51 @@ The lesson is about method rather than about prompts. A generation was checked o
 and the pass was the unlucky outcome: it hid a failure that eight runs made unmissable. Running
 a non-deterministic component once tests the run, not the component.
 
+## 22. The redaction placeholder was echoed back as clinical prose
+
+A defect in the fix for defect 21, shipped in the same commit. Withholding a flag's figures
+was done by substituting them: `EMR (withheld) mmol/L against lab (withheld) mmol/L`. The model
+read the placeholder as content and wrote it into a claim — "the EMR showing a withheld value
+that conflicts with a lab result that is also withheld". Had that claim cited a record instead
+of citing nothing, a brief would have told a physician about "a withheld value" sitting directly
+above the two numbers in the deterministic section, which that physician is entitled to see. The
+word was addressed to the model and read as though addressed to the reader.
+
+The mistake was treating the prose message as something to launder. It is written for a
+physician and has no business in a prompt at any level of redaction. The flag now reaches the
+model as structure instead: its code, its severity, the record **by prompt index**, and the
+field — `CONFLICTING_VALUES (blocking) at [4], field quantity`. There is no slot where a figure
+could appear, so nothing has to be removed from one.
+
+Naming the field needed the flag's target, which `FlagSummary` does not carry and must not grow
+to carry — that was settled in defect 19. The target reaches the prompt through a field on
+`GenerationContext` instead, which is the type whose whole job is deciding what the model may
+see. A flag whose target is not listed degrades to its code alone.
+
+## 23. Check 6 fired only when nothing at all was declared
+
+The hole its own first form left, one level in. The condition was
+`if undeclared and not claim.values`, so a claim that declared one figure and mentioned a second
+in prose passed, and the second was compared to nothing:
+
+```
+"TSH rose to 5.6 mIU/L, above the 4.0 ceiling."   values: [5.6]   verdict: pass
+```
+
+`4.0` is never checked against anything. Check 2 compares a declared value against the cited
+record's `quantity`, so it never sees a figure that was only stated. This is defect 15's shape
+exactly — a check whose tests all supplied what they then verified — narrowed rather than closed:
+the test suite had `test_declaring_the_number_satisfies_check_six`, with one number in the text
+and that same number declared.
+
+Every decimal in a claim's text must now be declared. The narrowness that remains is the
+decimal pattern itself, which ignores integers on purpose so that "type 2 diabetes" is not read
+as a measurement, and that limit was already recorded where the pattern lives.
+
+Found by reading the check against its own stated purpose while working on the prompt, not by a
+test. No test failed when the condition was tightened, which is the measure of the gap: the
+behaviour had never been pinned in either direction.
+
 ## Not numbered: the deliverables that went stale, found by the reviewer
 
 This one is deliberately outside the numbering, and the reason is a taxonomy rather than an
@@ -398,6 +443,7 @@ Defect density tracked **novelty, not care**:
 | rendering the brief for its actual reader | — | **1** |
 | switching the prompt from ids to indices | — | **1** |
 | running the same prompt eight times instead of once | — | **1** |
+| reading the model's own prose, and check 6 against its purpose | — | **2** |
 
 Phase 1 is where the plan designed something for the first time. Phases 2 and 3 applied
 patterns Phase 1 had already settled, and produced nothing worse than an import-order nit.

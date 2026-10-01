@@ -13,9 +13,9 @@ Trends already computed for you. Do not recompute them.
   free T4: indeterminate over 1 measurement(s)
   glucose, fasting: indeterminate over 0 measurement(s), 1 excluded
 
-Unresolved data problems you must not reason past. The competing figures are
-withheld because no record holds them — name the disagreement, not numbers:
-  CONFLICTING_VALUES: fasting glucose: EMR (withheld) mmol/L against lab (withheld) mmol/L, unresolved
+Unresolved data problems you must not reason past. Name one by its code if it
+is worth a physician's attention, and state no figure for it:
+  CONFLICTING_VALUES (blocking) at [4], field quantity
 
 Write one short claim per fact worth a physician's attention. Every claim cites
 at least one index, written as it appears above.

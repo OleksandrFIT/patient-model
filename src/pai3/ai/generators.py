@@ -11,7 +11,6 @@ anything real was wired in.
 """
 
 import json
-import re
 import urllib.error
 import urllib.request
 from typing import NamedTuple, Protocol
@@ -20,6 +19,7 @@ from pydantic import BaseModel
 
 from pai3.ai.artifact import AIClaim, ClaimValue, Engine
 from pai3.ai.projection import AIPatientView
+from pai3.entities.infrastructure import FlagTarget
 from pai3.entities.results import LabResult
 from pai3.ids import CanonicalRef
 from pai3.readmodels.trend import LabTrend
@@ -77,29 +77,6 @@ class RenderedPrompt(NamedTuple):
     by_index: dict[str, CanonicalRef]
 
 
-_FIGURE = re.compile(r"\d[\d.,]*")
-"""Any figure in a flag message, deliberately broader than guardrail 6's decimal pattern.
-
-The two are allowed to differ, and unifying them would reopen a hole. Check 6 is narrow
-because it reads a *claim*, where "type 2 diabetes" must not be mistaken for a measurement.
-This reads a *flag message*, where no number is one the model may use: the values a conflict
-names are the competing readings, and canonical holds neither of them. An integer left in
-would be restated and would pass every check, because check 6 ignores integers by design.
-"""
-
-
-def _without_figures(message: str) -> str:
-    """A flag message with its competing values removed.
-
-    The model is told which analyte is disputed and by whom, and not the figures, because
-    there is no legal way for it to use them. They belong to no citable record — an
-    unresolved conflict leaves the canonical value empty (§9.3) — so declaring one fails
-    check 2 or 3 and stating one undeclared fails check 6. Printing them made the context a
-    trap: every run restated them and every run was rejected.
-    """
-    return _FIGURE.sub("(withheld)", message)
-
-
 def resolve_citation(token: str, by_index: dict[str, CanonicalRef]) -> CanonicalRef:
     """Turn what the model wrote into a ref, or into one that cannot resolve.
 
@@ -124,6 +101,15 @@ class GenerationContext(BaseModel):
     trends: list[LabTrend]
     unresolved: list[FlagSummary]
 
+    flag_targets: dict[str, list[FlagTarget]] = {}
+    """What each open flag is about, by `flag_id`, for the prompt only.
+
+    Here rather than on `FlagSummary`, which is a value object kept deliberately narrow and
+    must not grow to serve a prompt. The prompt needs the subject of a flag in order to name
+    it without naming its figures; a summary handed to a read model does not. A flag whose
+    target is not listed is described by its code alone, which degrades honestly.
+    """
+
     def refs(self) -> dict[str, CanonicalRef]:
         return {
             lab.id: CanonicalRef(
@@ -143,6 +129,7 @@ class GenerationContext(BaseModel):
         offered still resolves to nothing and still fails as a fabricated citation.
         """
         by_index: dict[str, CanonicalRef] = {}
+        position_of: dict[str, str] = {}
         lines = [
             "Patient context (no identifying detail is available to you):",
             f"  age {self.view.age_years}, sex {self.view.sex}",
@@ -152,6 +139,7 @@ class GenerationContext(BaseModel):
         ]
         for position, lab in enumerate(self.labs, start=1):
             tag = f"[{position}]"
+            position_of[lab.id] = tag
             by_index[str(position)] = CanonicalRef(
                 entity_type="LabResult", entity_id=lab.id, version=lab.version
             )
@@ -180,11 +168,22 @@ class GenerationContext(BaseModel):
         if self.unresolved:
             lines += [
                 "",
-                "Unresolved data problems you must not reason past. The competing figures are",
-                "withheld because no record holds them — name the disagreement, not numbers:",
+                "Unresolved data problems you must not reason past. Name one by its code if it",
+                "is worth a physician's attention, and state no figure for it:",
             ]
             for f in self.unresolved:
-                lines.append(f"  {f.code.value}: {_without_figures(f.message)}")
+                where = []
+                for target in self.flag_targets.get(f.flag_id, []):
+                    # The index when the record is one the prompt listed, the type when it is
+                    # not. Never the id: an id in the prompt is an id the model can mangle.
+                    at = position_of.get(target.entity_id) or target.entity_type
+                    field = f", field {target.field_path}" if target.field_path else ""
+                    where.append(f"{at}{field}")
+                subject = " and ".join(where)
+                lines.append(
+                    f"  {f.code.value} ({f.severity.value})"
+                    + (f" at {subject}" if subject else "")
+                )
         lines += [
             "",
             "Write one short claim per fact worth a physician's attention. Every claim cites",

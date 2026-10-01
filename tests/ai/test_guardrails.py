@@ -310,6 +310,26 @@ def test_declaring_the_number_satisfies_check_six():
     assert verdict is Verdict.PASS
 
 
+def test_declaring_one_number_does_not_excuse_a_second_in_prose():
+    """The hole check 6 left when it fired only on an empty `values`. A claim declaring the
+    value and mentioning the range bound passed, and the bound was compared to nothing —
+    defect 15's shape one level in."""
+    lab = _lab(5.6)
+    summary = _summary(
+        [AIClaim(
+            text="TSH rose to 5.6 mIU/L, above the 4.0 ceiling.",
+            cites=[_ref(lab)],
+            values=[ClaimValue(value=5.6, unit="mIU/L", cites=_ref(lab))],
+        )],
+        [_ref(lab)],
+    )
+    verdict, failures = run_guardrails(summary, {lab.id: lab}, [])
+    assert verdict is Verdict.HARD_FAIL
+    stated = [f for f in failures if f.check == "numbers_in_text_are_declared"]
+    assert stated and "4.0" in stated[0].detail
+    assert "5.6" not in stated[0].detail, "the declared figure is not the complaint"
+
+
 def test_an_integer_in_prose_is_not_treated_as_a_measurement():
     # The pattern matches decimals only. "type 2 diabetes" and "one measurement" must not
     # trip it, and the cost of that narrowness is named: an integer measurement in prose

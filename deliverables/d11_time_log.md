@@ -25,6 +25,7 @@
 | Rendering every artifact for review, and the two defects that only the rendered output showed | |
 | Switching the prompt from ids to indices, after a run fabricated a near-miss ULID | |
 | Withholding a conflict's figures from the prompt, found by running it eight times | |
+| Flags to the model as structure rather than prose, and closing check 6's partial declaration | |
 | Review and correction of AI output | |
 | **Total** | |
 
@@ -35,13 +36,13 @@
 | Commits | One per task or per decision — see `git log --oneline` |
 | Design document | `docs/model_design.md`, 1,595 lines, 11 sections |
 | Implementation plan | `docs/implementation_plan.md`, 29 tasks, 153 steps |
-| Code | 4,627 lines in `src/`, 4,433 in `tests/` and `mock/` |
-| Tests | 322, all passing; ruff clean |
+| Code | 4,638 lines in `src/`, 4,466 in `tests/` and `mock/` |
+| Tests | 324, all passing; ruff clean |
 | Canonical entities | 22 of 22, tier placements verified against the spec programmatically |
 | Optional normalisation build | Four outputs in `deliverables/normalisation/`, 25 tests; 16 data-quality flags across 10 distinct codes — every code in the enum except `PARENT_RETRACTED` |
 | Real inference | `deliverables/d8_real_inference/` — prompt, artifact and run metadata from an actual `qwen2.5:7b` call, deliberately not reproducible |
 | Dimension audit | `scripts_audit_dimensions.py` exits non-zero on an unmapped dimension, an identifier that does not resolve, or an entity D2 names and the example record lacks |
-| Defects found in AI-written code | 21, each recorded in `docs/plan_defects.md` with how it surfaced |
+| Defects found in AI-written code | 23, each recorded in `docs/plan_defects.md` with how it surfaced |
 
 Figures are current as of this commit and are checked by `scripts_audit_figures.py`, which
 fails if any number in this table or in D10 has drifted from the repository. That script

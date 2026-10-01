@@ -17,7 +17,7 @@ AI produced three things, in order, each reviewed before the next began:
 |---|---|---|
 | The design specification | `docs/model_design.md` | 1,595 lines |
 | The implementation plan | `docs/implementation_plan.md` | 29 tasks, 153 TDD steps |
-| The implementation | `src/`, `tests/`, `mock/` | 4,627 + 4,433 lines, 322 tests |
+| The implementation | `src/`, `tests/`, `mock/` | 4,638 + 4,466 lines, 324 tests |
 
 AI was **not** used to decide the stack, the workflow for D8, or whether to do the optional
 normalisation build. Those were set before any prompting, and are recorded in `CLAUDE.md`.
@@ -44,6 +44,7 @@ written. Nothing was implemented from a plan that had not been read.
 | 10 | Claude Opus | *(paste)* | Re-running the 25-dimension audit against the code and the example record | Two gaps that four earlier passes over the same table had not shown | The first audit had been circular — it compared a hand-written mapping to itself | Accepted; audit rewritten as `scripts_audit_dimensions.py`, which now gates the submission |
 | 11 | Claude Opus | *(paste)* | Prompt indices in place of ULIDs, and the trend-flag fix | Removed the cause of a fabricated citation instead of relying on the catch; replies also became deterministic | A test that could no longer fail was introduced in the same change, and the switch exposed a prompt that hands the model unciteable numbers | Accepted; map kept local to one call, guardrails untouched |
 | 12 | Claude Opus | *(paste)* | Withholding a flag's competing figures from the prompt | Turned 8 rejections out of 8 into 8 narratives out of 8, by removing a number rather than loosening a check | The placeholder leaks into the model's prose, and the claim about the conflict is now dropped for citing nothing | Accepted; redaction pattern deliberately broader than check 6's, with the reason recorded |
+| 13 | Claude Opus | *(paste)* | Flags as structure rather than prose, and check 6 closed | Removed the slot a figure could sit in, instead of removing the figure from it; the conflict claim became legal and survived | Both were defects in the previous two commits, one of them in that commit's own fix | Accepted; target reaches the prompt via `GenerationContext`, not via `FlagSummary` |
 
 ---
 
@@ -52,16 +53,16 @@ written. Nothing was implemented from a plan that had not been read.
 The full record is `docs/plan_defects.md`. The summary, with the numbers rather than an
 impression.
 
-### Twenty-one defects in AI-written code, and how each surfaced
+### Twenty-three defects in AI-written code, and how each surfaced
 
 | How found | Count | Example |
 |---|---|---|
-| Reading the code against the spec, before or while writing it | 6 | A Pydantic attribute without `ClassVar`, which stops the module importing at all, repeated across five entities |
+| Reading the code against the spec, before or while writing it | 7 | A Pydantic attribute without `ClassVar`, which stops the module importing at all, repeated across five entities |
 | Running a component on real output from the one upstream of it | 5 | The guardrails and the projection held **separate definitions** of droppability, so a brief that correctly omitted a resolved condition was rejected |
 | The plan's own tests | 2 | `TypeError` on any half-open reference range — the commonest shape, since hs-CRP has no lower bound |
 | Resolving a documented identifier against the code, and a documented entity against the example record | 2 | `TreatmentPlan.plan_items` appears in the design document and in D2; the field is `items`, and had read that way since the design phase |
 | An exhaustive sweep of one function's inputs | 1 | A budget of zero returned an empty projection instead of refusing |
-| **Rendering the output for the reader it is for** | **1** | Every lab trend advertised the glucose conflict, so a clean rising TSH was marked unusable |
+| **Rendering the output for the reader it is for** | **2** | Every lab trend advertised the glucose conflict, so a clean rising TSH was marked unusable |
 | A type change that broke two sibling tests and silently satisfied a third | 1 | The one test behind "no identity reaches the model" had become unable to fail |
 | **Running the same prompt eight times instead of once** | **1** | The prompt printed the figures of an unresolved conflict, which no claim may legally use |
 | **Running a real local model** | **1** | **The design's output checks had a hole. See below** |
@@ -178,16 +179,16 @@ before run 2.
 
 ### What the indices changed, measured
 
-Eight runs after the switch, then eight more after the prompt defect it exposed was fixed.
-Same prompt within each set, same model, nothing else changed:
+Four sets, 28 runs. Same prompt and same model within each set; between sets, one change each:
 
 | Runs | `review` | narrative | guardrail |
 |---|---|---|---|
 | before indices, 4 runs | 3 `pending`, 1 `rejected` | 3 delivered | `cites_in_inputs` on the fabricated id |
 | after indices, 8 of 8 | `rejected_by_guardrail` | **none delivered** | `numbers_in_text_are_declared` |
-| after redaction, 8 of 8 | `pending` | 8 delivered | — |
+| after redaction, 8 of 8 | `pending` | 8 delivered, 2 claims | — |
+| after structured flag lines, 8 of 8 | `pending` | 8 delivered, **3 claims** | — |
 
-No fabricated citation in any of the sixteen runs after the switch, and the replies became
+No fabricated citation in any of the 24 runs after the switch, and the replies became
 identical to each other rather than merely similar — a model no longer spending its output on a
 26-character string stopped varying. Both are what the change was for. The middle row is the
 point of the exercise: eight runs turned a prompt defect from invisible into unmissable, where
@@ -215,23 +216,39 @@ and then forbade every use of it, which is a trap rather than an instruction, an
 there since check 6 landed. Flag messages now reach the model with their figures removed and a
 header saying why, which is defect 21 in the log.
 
-One thing the fix did not recover, recorded because it is the kind of detail a summary hides.
-The model still writes a third claim about the conflict, now without numbers, and emits it with
-an empty `cites` array:
+The first form of that fix substituted a placeholder for each figure, and the model read the
+placeholder as content and wrote it back: *"the EMR showing a withheld value that conflicts with
+a lab result that is also withheld"*. It emitted that claim with an empty `cites` array, so the
+parser dropped it and recorded the reason — but had it cited `[4]`, a brief would have told a
+physician about "a withheld value" sitting directly above the two numbers in the deterministic
+section, which a physician is entitled to see. That is defect 22, and the mistake behind it was
+treating the message as something to launder. It is written for a physician and has no business
+in a prompt at any level of redaction.
 
-```json
-{ "text": "There is a conflicting value for fasting glucose, with the EMR showing a withheld
-           value that conflicts with a lab result that is also withheld.", "cites": [], "values": [] }
+The flag now reaches the model as structure rather than prose — its code, its severity, the
+record by prompt index, and the field:
+
+```
+Unresolved data problems you must not reason past. Name one by its code if it
+is worth a physician's attention, and state no figure for it:
+  CONFLICTING_VALUES (blocking) at [4], field quantity
 ```
 
-§10.5 requires a claim to cite, so the parser drops it and records the reason in
-`generation_notes` rather than swallowing it. The conflict therefore reaches the physician only
-through the deterministic part of the brief — which is where it is already surfaced, with the
-real figures, because a physician may see them. Nothing clinical is lost. What the phrasing does
-show is that the placeholder leaks into the model's prose: had that claim cited `[4]`, a brief
-would have told a physician about "a withheld value" sitting directly above the two numbers in
-plain sight. The word is addressed to the model and reads as though it were addressed to the
-reader.
+There is no slot where a figure could appear, so nothing has to be taken out of one. Naming the
+field needed the flag's target, which `FlagSummary` does not carry and was deliberately not grown
+to carry — settled in defect 19. It reaches the prompt through a field on `GenerationContext`
+instead, the type whose whole job is deciding what the model may see.
+
+What the model writes about the conflict now is a legal claim, and the third row of the table is
+that claim surviving:
+
+```json
+{ "text": "There is a conflict in the fasting glucose value, and it is unresolved.",
+  "cites": ["[4]"] }
+```
+
+No figure, a citation that resolves, nothing dropped and nothing rejected. The deterministic part
+of the brief still carries the flag with the real readings, because that reader may see them.
 
 ### Where the AI output was systematically weakest
 
@@ -293,10 +310,10 @@ accept/reject decisions possible.
 ### The honest bottom line
 
 The design is defensible and the implementation works. Neither would be trustworthy as submitted
-if it had been accepted as produced: twenty-one defects, five of which only a cross-component check
-could find, one that only a real model could find, two that only resolving a document against the
-code could find, one that only reading the rendered output could find, five overstated claims, and
-one artifact that was itself a false claim.
+if it had been accepted as produced: twenty-three defects, five of which only a cross-component
+check could find, one that only a real model could find, two that only resolving a document against
+the code could find, two that only reading the rendered output could find, five overstated claims,
+and one artifact that was itself a false claim.
 
 The value came from the review discipline, not from the generation, and the table above ranks
 that discipline. Reading the code found the most defects. Crossing a seam found the worst of the

@@ -1,6 +1,6 @@
 {
-  "ran_at": "2026-10-01T12:51:16.418117+00:00",
-  "elapsed_seconds": 10.0,
+  "ran_at": "2026-10-01T13:02:39.235865+00:00",
+  "elapsed_seconds": 9.44,
   "engine": "ollama",
   "engine_version": "0.34.4",
   "model_id": "qwen2.5:7b",
@@ -8,10 +8,8 @@
   "execution": "local",
   "review": "pending",
   "guardrail_failures": [],
-  "generation_notes": [
-    "claim 2 dropped: it cited nothing or had no text"
-  ],
+  "generation_notes": [],
   "narrative_delivered": true,
-  "claims": 2,
+  "claims": 3,
   "_note": "Not reproducible. A model's reply may differ between runs and between versions."
 }

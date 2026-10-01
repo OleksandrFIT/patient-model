@@ -36,6 +36,12 @@ Narrow on purpose. Check 6 exists because a real local model restated values in 
 left `values` empty, so checks 2 and 3 had nothing to compare and passed an artifact carrying
 unverified numbers. A looser pattern would flag "type 2" and make the check unusable; this one
 accepts a known limit instead — an integer measurement stated in prose still slips through.
+
+The check requires *every* decimal to be declared, not at least one. Its first form fired only
+when `values` was empty, which left the same hole one level in: a claim declaring one figure
+and mentioning a second in prose passed, and the second was never compared to anything. That is
+defect 15's shape — a check whose tests all supplied what they then verified — narrowed rather
+than closed, so it is closed here.
 """
 
 
@@ -111,7 +117,7 @@ def run_guardrails(
                     )
                 )
 
-    # 6 — a claim that states a number must declare it, or checks 2 and 3 are vacuous.
+    # 6 — every number a claim states must be declared, not merely one of them.
     for claim in summary.claims:
         in_text = set(_DECIMAL.findall(claim.text))
         if not in_text:
@@ -120,13 +126,14 @@ def run_guardrails(
             f"{v.value:g}" for v in claim.values
         }
         undeclared = {n for n in in_text if n.replace(",", ".") not in declared}
-        if undeclared and not claim.values:
+        if undeclared:
             failures.append(
                 GuardrailFailure(
                     check="numbers_in_text_are_declared",
                     detail=(
-                        f"claim states {sorted(undeclared)} in prose and declares no values, "
-                        "so nothing can be compared against the record"
+                        f"claim states {sorted(undeclared)} in prose without declaring "
+                        f"{'it' if len(undeclared) == 1 else 'them'}, so nothing can be "
+                        "compared against the record"
                     ),
                 )
             )

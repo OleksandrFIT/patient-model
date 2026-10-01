@@ -112,11 +112,15 @@ class LocalInferenceAdapter:
             primary_mrn=fx.patient.identifiers[0].value,
             birth_date=fx.patient.birth_date,
         )
+        blocking = [f for f in fx.flags if f.blocks_autonomous_use]
         unresolved = [
             FlagSummary(flag_id=f.id, code=f.code, severity=f.severity, message=f.message)
-            for f in fx.flags
-            if f.blocks_autonomous_use
+            for f in blocking
         ]
+        # The prompt names what a flag is about so it can avoid naming its figures. The
+        # message stays out of the prompt entirely: it is written for a physician, who may
+        # see the competing readings, and the model may not.
+        flag_targets = {f.id: f.targets for f in blocking}
 
         # The deterministic brief has no budget: it holds every lab (§10.6).
         brief_kwargs = {
@@ -180,6 +184,7 @@ class LocalInferenceAdapter:
             labs=labs_in_context,
             trends=_trends_for(labs_in_context),
             unresolved=unresolved,
+            flag_targets=flag_targets,
         ))
 
         self.last_prompt = generated.prompt
