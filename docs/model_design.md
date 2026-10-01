@@ -314,7 +314,8 @@ story. Write events cannot.
 **What this promises, precisely.** With `trace_id` alone: which records were in
 context for a given generation. With `fields_read` populated: which fields. The
 second is best-effort by construction, and `None` says so rather than implying a
-precision that is not there. Sequencing is in §11, step 5.
+precision that is not there. Sequencing is in §11: `trace_id` in step 5, the
+projection layer's field-level recording in step 6.
 
 ### 6.4 `Condition` merges medical history and current diagnoses
 
@@ -1011,11 +1012,11 @@ same principle as `execution` in §10.2.
 read paths as a separate cost. Carried on `AIReadScope` it is threaded by the
 parameter being added anyway, and the two costs collapse into one.
 
-**This gate does not degrade.** Every other item in §11 step 5 fails honestly when
-time runs short: `fields_read` stays `None`, which is a legal value meaning "the
-whole record", and ids keep their prefixes without the registry. **An unimplemented
-consent gate is not a `None`. It is an open door.** It cannot be dropped the way
-the others can.
+**This gate does not degrade.** The items in §11 step 6 fail honestly when time runs
+short: `fields_read` stays `None`, a legal value meaning "the whole record", and ids
+keep their prefixes without the registry. **An unimplemented consent gate is not a
+`None`. It is an open door.** That is why it sits in step 5, which is mandatory, and
+not among them.
 
 That is not a deferral risk, and the reason is worth stating: before step 5 there is
 no projection layer, so there is no AI read path to guard. The door and its lock are
@@ -1178,9 +1179,19 @@ that was never written. §7 records this.
 
 ## 11. Build order
 
-Dangerous entities first.
+Dangerous entities first. **Steps 1–5 are mandatory. Step 6 is explicitly
+deferred.**
 
-1. Base models (`CanonicalRecord`, `PatientScoped`, `ClinicalRecord`), value
+D8's workflow is to be *demonstrated*, not specified, and that is what makes step 5
+mandatory: a specified workflow is one more long piece of prose, and §10 rests
+entirely on the projection layer. Governance enforced nowhere is worse than a
+smaller thing that works.
+
+Two items are therefore held back into step 6. They are the only two the document
+already sanctions dropping without the model misrepresenting itself (§8.4, §6.3),
+and nothing else may join them.
+
+1. Base models (`CanonicalRecord`, `PatientScoped`, `ClinicalRecord`), the value
    objects, `new_id`, then **Patient, Condition, Medication, LabResult,
    AllergyIntolerance, SourceReference, AuditEvent, DataQualityFlag**
 2. **Encounter, Supplement, VitalSign, ClinicalNote, TreatmentPlan,
@@ -1188,16 +1199,23 @@ Dangerous entities first.
 3. The thin five: **Coverage, Procedure, Goal, SocialFactor, Task**
 4. AI layer schema: **`AIArtifact`, `AISummary`, `ExtractionCandidate`** and the
    claim types of §10.2 and §10.5. D7 requires the AI-generated summary object, so
-   this precedes the deferrable work rather than sharing a step with it
-5. `EntityKind` registry, uniqueness assertions, id resolution (§8.4);
-   `trace_id` plumbing through the read-model builders and the projection layer
-   that populates `fields_read` (§6.3), labels every emitted text span with its
-   `TextOrigin` (§10.1), emits `AIPatientView` rather than `Patient` (§10.4), and
-   admits no caller without an `AIReadScope` (§10.3). The registry and the
-   `fields_read` plumbing are refactors over a working model and degrade honestly
-   if time runs short: ids keep their prefixes without the registry, and
-   `fields_read` stays `None`, a legal value meaning "the whole record". The
-   consent gate does not degrade — see §10.3. The `AuditEvent` schema itself is
-   built in step 1. The guardrail checks of §10.5 belong here too, with the adapter
-   that runs them
-6. Documentation
+   this precedes the deferrable work instead of sharing a step with it
+5. **Mandatory.** The projection layer: it admits no caller without an
+   `AIReadScope` (§10.3), emits `AIPatientView` rather than `Patient` (§10.4),
+   labels every text span with its `TextOrigin` (§10.1), and carries `trace_id`
+   on the token (§6.3). Then the guardrail checks of §10.5, with the adapter that
+   runs them, and the `PreVisitBrief` builder that D8 demonstrates.
+
+   None of this degrades. An unenforced consent gate is an open door rather than a
+   `None` (§10.3); without the guardrails §10.5 is decorative; without
+   `AIPatientView` §10.4 is a table nothing obeys.
+6. **Explicitly deferred.** The `EntityKind` registry with its uniqueness
+   assertions and id resolution (§8.4), and the field-level recording that
+   populates `fields_read` (§6.3).
+
+   Both degrade honestly, which is why they are here and not in step 5: ids keep
+   their prefixes and still read correctly without the registry, and `fields_read`
+   stays `None`, which is a legal value meaning "the whole record" rather than a
+   broken promise. The `AuditEvent` schema itself, including both fields, is built
+   in step 1.
+7. Documentation
