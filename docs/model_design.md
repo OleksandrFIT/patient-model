@@ -359,6 +359,25 @@ the only carrier of *why* a value is absent, and consumers branch on it:
 `DISCONTINUED_SHOWN_ACTIVE`, `DUPLICATE_CANDIDATE`, `UNCODED_CONCEPT`,
 `PARENT_RETRACTED` (§6.19), `RECORD_REJECTED_AT_INGEST` (§9.7).
 
+**Who raises each code.** Five come from layer-2 validation (§9.1) and the retraction
+cascade (§6.19). The rest are declared here and raised elsewhere — deliberately, not as
+dead code, since a code with no caller in the validation module reads as an oversight at
+review time.
+
+| Code | Raised by |
+|---|---|
+| `MISSING_UNIT` | Layer-2 validation: a lab with a value and no unit, or a current medication whose dose did not parse |
+| `MISSING_REFERENCE_RANGE` | Layer-2 validation |
+| `INTERPRETATION_DISAGREES_WITH_RANGE` | Layer-2 validation, via §9.5 |
+| `UNCODED_CONCEPT` | Layer-2 validation, per §6.10 |
+| `PARENT_RETRACTED` | The retraction cascade, §6.19 |
+| `CONFLICTING_VALUES` | The normaliser only. It needs *both* candidates (§9.3); an empty slot alone proves nothing, because three different situations present identically |
+| `DUPLICATE_CANDIDATE` | The normaliser |
+| `UNIT_MISMATCH` | The normaliser, and trend arithmetic as an exclusion reason (§9.4) |
+| `EXTRACTION_FAILED` | The ingestion pipeline, §9.7 |
+| `RECORD_REJECTED_AT_INGEST` | The ingestion pipeline, §9.7 |
+| `DISCONTINUED_SHOWN_ACTIVE` | **Nothing inside canonical — see §9.8** |
+
 `candidates` is what makes a conflict actionable: it lets the UI say "glucose —
 conflict between EMR 5.5 and lab 7.2, unresolved" rather than merely reporting
 that something is wrong.
@@ -985,6 +1004,29 @@ and not knowing it are different claims, and `None` is the second.
 
 The schema for all of this is built in §11 step 1. The pipeline that emits these
 events is exercised by the optional normalization build.
+
+### 9.8 A D5 rule that layer 1 makes unnecessary
+
+D5 lists: *"Discontinued medications must not be treated as active without review."* The
+obvious reading is a flag — detect the state, mark it, queue it for someone. This model
+answers it more strongly, and the stronger answer is worth nothing unwritten.
+
+`Medication` carries `status` and `stopped_on`, and a validator requires them to agree in
+both directions: a status of `stopped` or `completed` requires a stop date, and a stop date
+on an `active` or `held` record is refused. The two therefore cannot disagree, and **a
+discontinued medication presenting as active is not a defect to be flagged but a record
+that cannot be constructed.**
+
+`FlagCode.DISCONTINUED_SHOWN_ACTIVE` stays declared, with one consumer left: a normaliser
+reconciling two sources, where the EMR says active and the intake form says the patient
+stopped it months ago. That is a disagreement between documents rather than an incoherent
+record, so it belongs to §9.3's machinery — the field stays empty or an explicit
+source-trust rule decides it, and the flag names both candidates.
+
+This distinction is worth holding while reading D5's list. Some of its rules are satisfied
+by making the bad state unrepresentable, which is stronger than detecting it; others can
+only be flagged, because the data is genuinely ambiguous and no schema can resolve it.
+§9.2 splits one rule across both layers; this one leaves layer 2 altogether.
 
 ---
 
