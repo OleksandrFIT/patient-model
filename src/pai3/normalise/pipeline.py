@@ -16,7 +16,7 @@ from pathlib import Path
 
 from pydantic import ValidationError
 
-from pai3.entities.clinical import AllergyIntolerance, Condition, Criticality
+from pai3.entities.clinical import AllergyIntolerance, Condition, Criticality, Symptom
 from pai3.entities.infrastructure import (
     AuditAction,
     AuditEvent,
@@ -88,6 +88,7 @@ class Result:
     groups: list[Group] = field(default_factory=list)
     patient: Patient | None = None
     conditions: list[Condition] = field(default_factory=list)
+    symptoms: list[Symptom] = field(default_factory=list)
     medications: list[Medication] = field(default_factory=list)
     supplements: list[Supplement] = field(default_factory=list)
     allergies: list[AllergyIntolerance] = field(default_factory=list)
@@ -96,6 +97,25 @@ class Result:
     flags: list[DataQualityFlag] = field(default_factory=list)
     rejected: list[RejectedRow] = field(default_factory=list)
     audit: list[AuditEvent] = field(default_factory=list)
+
+    def record_by_id(self, entity_id: str) -> object | None:
+        """Any canonical record this run built, by id.
+
+        Used by the review queue so a layer-2 flag can show the citations of the record it
+        targets. Those flags carry no `candidates` of their own by construction -- they point
+        at a record rather than at competing readings -- and a queue entry reading
+        "0 source references" invites the reader to think the evidence is missing.
+        """
+        for group in (
+            self.conditions, self.symptoms, self.medications, self.supplements,
+            self.allergies, self.labs,
+        ):
+            for record in group:
+                if record.id == entity_id:
+                    return record
+        if self.patient is not None and self.patient.id == entity_id:
+            return self.patient
+        return None
 
     @property
     def review_queue(self) -> list[DataQualityFlag]:

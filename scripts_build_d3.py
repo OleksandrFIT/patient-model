@@ -84,6 +84,7 @@ def main() -> None:
             "consents": [c.model_dump(mode="json") for c in fx.consents],
             "encounters": [e.model_dump(mode="json") for e in fx.encounters],
             "conditions": [c.model_dump(mode="json") for c in fx.conditions],
+            "symptoms": [s.model_dump(mode="json") for s in fx.symptoms],
             "medications": [m.model_dump(mode="json") for m in fx.medications],
             "supplements": [s.model_dump(mode="json") for s in fx.supplements],
             "allergies": [a.model_dump(mode="json") for a in fx.allergies],
@@ -102,6 +103,7 @@ def main() -> None:
                 e.model_dump(mode="json")
                 for e in build_timeline(
                     encounters=fx.encounters, conditions=fx.conditions,
+                    symptoms=fx.symptoms,
                     medications=fx.medications, supplements=fx.supplements,
                     labs=fx.labs, reports=fx.reports, notes=fx.notes,
                 )

@@ -13,7 +13,7 @@ from enum import StrEnum
 
 from pydantic import AwareDatetime, BaseModel
 
-from pai3.entities.clinical import Condition, Encounter, Procedure, SocialFactor
+from pai3.entities.clinical import Condition, Encounter, Procedure, SocialFactor, Symptom
 from pai3.entities.narrative import ClinicalNote
 from pai3.entities.results import DiagnosticReport, LabResult
 from pai3.entities.therapy import Medication, Supplement
@@ -27,6 +27,8 @@ class EventKind(StrEnum):
     ENCOUNTER = "encounter"
     CONDITION_ONSET = "condition_onset"
     CONDITION_RESOLVED = "condition_resolved"
+    SYMPTOM_ONSET = "symptom_onset"
+    SYMPTOM_RESOLVED = "symptom_resolved"
     MEDICATION_STARTED = "medication_started"
     MEDICATION_STOPPED = "medication_stopped"
     SUPPLEMENT_STARTED = "supplement_started"
@@ -57,6 +59,7 @@ def build_timeline(
     *,
     encounters: list[Encounter] | None = None,
     conditions: list[Condition] | None = None,
+    symptoms: list[Symptom] | None = None,
     medications: list[Medication] | None = None,
     supplements: list[Supplement] | None = None,
     labs: list[LabResult] | None = None,
@@ -90,6 +93,9 @@ def build_timeline(
     for cond in conditions or []:
         add(cond.onset, EventKind.CONDITION_ONSET, cond.code.raw_text, cond)
         add(cond.abatement, EventKind.CONDITION_RESOLVED, cond.code.raw_text, cond)
+    for sym in symptoms or []:
+        add(sym.onset, EventKind.SYMPTOM_ONSET, sym.symptom.raw_text, sym)
+        add(sym.resolved_on, EventKind.SYMPTOM_RESOLVED, sym.symptom.raw_text, sym)
     for med in medications or []:
         add(med.started_on, EventKind.MEDICATION_STARTED, med.drug.raw_text, med)
         add(med.stopped_on, EventKind.MEDICATION_STOPPED, med.drug.raw_text, med)

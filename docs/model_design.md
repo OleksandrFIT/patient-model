@@ -21,7 +21,7 @@ required, fields are settled during implementation rather than invented here.
 | Layer | Contents | Mutability |
 |---|---|---|
 | Source | `SourceDocument` — the PDF, spreadsheet, EMR export, message, as received, with a content hash and storage pointer | Immutable |
-| Canonical | Accepted clinical fact. 21 entities (§4). Every value is vouched for by an identifiable actor | Versioned, never hard-deleted |
+| Canonical | Accepted clinical fact. 22 entities (§4). Every value is vouched for by an identifiable actor | Versioned, never hard-deleted |
 | AI | `AIArtifact`, `AISummary`, `ExtractionCandidate`, `ReviewDecision` | Own lifecycle |
 
 The AI layer references canonical by `id` + `version`. Canonical never
@@ -56,7 +56,7 @@ through `AIArtifact.produced` instead of an `artifact_ref` on provenance.
 ## 2. Shared fields — three tiers
 
 Not every entity is patient-scoped, and not every patient-scoped entity belongs
-to an encounter. A single universal base would give nine of twenty-one entities
+to an encounter. A single universal base would give nine of twenty-two entities
 a nullable field that is never set.
 
 Three tiers. The class an entity inherits from states what kind of data it is.
@@ -94,7 +94,7 @@ Applies to: **Encounter, Consent, Coverage, Goal, SourceReference.**
 
 Adds `encounter_id: ULID | None`.
 
-Applies to: **Condition, Medication, Supplement, LabResult, VitalSign,
+Applies to: **Condition, Symptom, Medication, Supplement, LabResult, VitalSign,
 ClinicalNote, TreatmentPlan, Procedure, DiagnosticReport, AllergyIntolerance,
 Task, SocialFactor.**
 
@@ -135,7 +135,7 @@ owner): `Provenance`, `Actor`, `Quantity`, `CodeableConcept`, `ReferenceRange`,
 
 ## 4. Entities
 
-Twenty-one entities. Every one has a requirement behind it; D7's list of twelve
+Twenty-two entities. Every one has a requirement behind it; D7's list of twelve
 is a floor, not a ceiling. What is managed is depth, not count, and the split is
 by risk.
 
@@ -148,6 +148,9 @@ VitalSign, Consent, Provider, DiagnosticReport.
 modelled and can be deepened later: Coverage, Procedure, Goal, SocialFactor,
 Task.
 
+**Added after the first pass (1)**: Symptom. It was missing, and the omission is recorded
+rather than smoothed over — see §6.20.
+
 | Entity | Tier | Embedded within it | Note |
 |---|---|---|---|
 | `Patient` | Canonical | `identifiers[]`, `names[]`, `contacts[]`, `addresses[]`, `preferences`, care-team memberships | Identifiers are a list — §6.12. Contacts embedded: read with the patient 100% of the time, never queried alone. The AI projection carries no identity — §10.4 |
@@ -156,6 +159,7 @@ Task.
 | `Coverage` | PatientScoped | payer, member id, effective dates | Thin. Concierge practices commonly bill labs and procedures through insurance even when membership is self-pay |
 | `Encounter` | PatientScoped | type, period, participants | Grouping anchor for the pre-visit brief |
 | `Condition` | Clinical | `code: CodeableConcept`, `clinical_status`, `verification_status`, onset, abatement | Merges history and current diagnoses — §6.4 |
+| `Symptom` | Clinical | `symptom`, `status`, `reported_by`, `severity`, onset, `patient_concern` | What the patient reports experiencing, kept apart from a diagnosis — §6.20 |
 | `AllergyIntolerance` | Clinical | substance, reactions[], `criticality`, `severity`, `verification_status` | Never embedded on Patient. The most safety-critical list in the model needs its own audit trail. `criticality` (is it life-threatening) is separate from the `severity` of a past reaction |
 | `Medication` | Clinical | `dosage: Dosage`, status, prescriber, start/stop | Split from Supplement — §6.7 |
 | `Supplement` | Clinical | dose as reported, status, start/stop | Almost always patient-reported |
@@ -211,8 +215,8 @@ reasoning and the replacement are stated here in full.
 entities whose `provenance.origin` can be `ai_extraction`. That narrows nothing:
 `Patient` can be extracted from an intake spreadsheet, `Provider` from an
 outside specialist named in a note, `Consent` from a scanned PDF, `Coverage`
-from a photographed insurance card. Eighteen of twenty-one qualify, and all
-twenty-one can have a non-human origin.
+from a photographed insurance card. Nineteen of twenty-two qualify, and all
+twenty-two can have a non-human origin.
 
 **Why the axis was wrong.** Review is not an AI concept. A lab result arriving
 from an EMR export with no unit needs review and no AI touched it.
@@ -662,6 +666,46 @@ is gone, so no autonomous conclusion may rest on it until a human has looked.
 
 Without the cascade `derived_from` is documentation. With it the chain is actionable.
 
+### 6.20 Symptoms are not weak diagnoses
+
+**This dimension was missed on the first pass.** The assignment lists "symptoms and patient
+concerns" among the required dimensions and nothing in the model held them: there was no
+`Symptom`, and the word did not appear in this document. Recorded as an omission rather than
+presented as a late refinement, because the difference matters to anyone reading §4 as a
+checklist.
+
+Three ways to cover it were available and two are wrong.
+
+**Folding them into `Condition` with `verification_status = unconfirmed`** is the tempting one,
+and it inverts the field's meaning. `unconfirmed` says *we do not know whether this diagnosis
+holds*. A symptom's existence is not in doubt — the patient reports fatigue, and that report is
+a fact. What is uncertain is what it signifies, which is the Condition's question. Folded in,
+every symptom would read as a weak diagnosis, and a brief could no longer distinguish "reports
+fatigue" from "has hypothyroidism".
+
+**Leaving them in `ClinicalNote` prose** contradicts §6.14, which says a fact mentioned in a
+note does not live there. It also makes "which patients report fatigue" unanswerable.
+
+So `Symptom` is its own entity, and it carries **no `verification_status`** — the absence is
+the argument. The clinical workflow runs symptom → differential → diagnosis, and the model has
+to hold the left-hand side before the right-hand side exists, which is the ordinary case in a
+practice where most visits produce a complaint and no new diagnosis.
+
+`reported_by` distinguishes a patient report from a clinician observation. That is the same
+trust axis §6.7 used to split `Medication` from `Supplement`, applied again rather than invented.
+
+`severity` defaults to `unspecified`, because an unrecorded severity is not a mild one.
+
+A resolved symptom needs no resolution date, unlike a stopped medication under §9.8. A patient
+who says the headache stopped rarely knows when, and demanding the date would discard the fact
+that it stopped — the same reasoning as `Supplement`.
+
+**`patient_concern` closes a gap §7 had named.** It holds why the symptom worries the patient,
+in their words, as `ClinicalText` — and a validator requires its origin to be one that crossed
+the perimeter, because a concern in the patient's own words cannot be practice-authored. Until
+this field existed, `TextOrigin.PATIENT_SUBMITTED` had no canonical carrier and §7 listed that
+as a known limit. It no longer does.
+
 ---
 
 ## 7. Deliberately out of scope
@@ -680,9 +724,6 @@ Without the cascade `derived_from` is documentation. With it the chain is action
   from one who typed it. It can only be declared by the author, and a declaration
   in a UI will be skipped. Phase 1 makes the bulk case explicit and names this
   residue rather than claiming to cover it.
-- **A canonical carrier for `patient_submitted`** — §10.1 wraps four narrative
-  fields, and patient-authored free text such as `Goal.description` is not among
-  them.
 - **Proving completeness of a source that declares no count** — §9.7. `expected` is
   `None` for a free-form document, so completeness cannot be proved for it. This is a
   limit on what can be *known*, not on what is recorded: the `None` sits on the ingest

@@ -13,6 +13,7 @@ from pydantic import AwareDatetime, BaseModel, Field, model_validator
 from pai3.base import ClinicalRecord, PatientScoped
 from pai3.enums import ClinicalStatus, VerificationStatus
 from pai3.values.codeable import CodeableConcept
+from pai3.values.text import ClinicalText
 
 _NOT_ASSERTABLE = {
     VerificationStatus.REFUTED,
@@ -133,3 +134,74 @@ class SocialFactor(ClinicalRecord):
     factor: CodeableConcept
     value: str
     asserted_on: date
+
+
+class SymptomStatus(StrEnum):
+    ACTIVE = "active"
+    RESOLVED = "resolved"
+
+
+class SymptomReporter(StrEnum):
+    """Who said so. The same trust axis §6.7 used to split Medication from Supplement."""
+
+    PATIENT = "patient"
+    CLINICIAN_OBSERVED = "clinician_observed"
+
+
+class SymptomSeverity(StrEnum):
+    MILD = "mild"
+    MODERATE = "moderate"
+    SEVERE = "severe"
+    UNSPECIFIED = "unspecified"
+    """An unrecorded severity is not a mild one."""
+
+
+class Symptom(ClinicalRecord):
+    """What the patient reports experiencing, and why it worries them (§6.20).
+
+    Separate from Condition, and the reason is the one §6.4 is built on. A `Condition` carries
+    `verification_status` because a diagnosis can be wrong; a symptom has none, because its
+    existence is not in doubt — the patient reports fatigue, and whether that means
+    hypothyroidism is the Condition's question, not this one. Folding symptoms into Condition
+    as `unconfirmed` would make them read as weak diagnoses, and a brief could no longer tell
+    "reports fatigue" from "has hypothyroidism".
+
+    The clinical workflow runs symptom → differential → diagnosis, and the model has to be
+    able to hold the left-hand side before the right-hand side exists.
+    """
+
+    FIELD_PROVENANCE_WHITELIST: ClassVar[frozenset[str]] = frozenset({"status", "severity"})
+
+    symptom: CodeableConcept
+    status: SymptomStatus
+    reported_by: SymptomReporter
+    severity: SymptomSeverity = SymptomSeverity.UNSPECIFIED
+    onset: date | None = None
+    resolved_on: date | None = None
+    patient_concern: ClinicalText | None = Field(
+        default=None,
+        description="Why it worries the patient, in their words. Carries PATIENT_SUBMITTED",
+    )
+
+    @model_validator(mode="after")
+    def _resolution_follows_onset(self) -> "Symptom":
+        # No date is demanded for a resolved symptom, unlike a stopped Medication (§9.8).
+        # A patient who says the headache stopped rarely knows when, and demanding the date
+        # would discard the fact that it stopped.
+        if self.onset and self.resolved_on and self.resolved_on < self.onset:
+            raise ValueError("resolved_on precedes onset")
+        return self
+
+    @model_validator(mode="after")
+    def _a_concern_came_from_outside(self) -> "Symptom":
+        """A concern in the patient's own words cannot be practice-authored (§10.1)."""
+        if self.patient_concern is not None and not self.patient_concern.crossed_perimeter:
+            raise ValueError(
+                "patient_concern must carry an origin that crossed the perimeter; "
+                f"got {self.patient_concern.origin.value}"
+            )
+        return self
+
+    @property
+    def is_current(self) -> bool:
+        return self.status is SymptomStatus.ACTIVE

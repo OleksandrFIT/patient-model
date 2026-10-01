@@ -122,6 +122,11 @@ class LocalInferenceAdapter:
                 for c in fx.conditions
                 if c.clinical_status is ClinicalStatus.ACTIVE
             ],
+            "active_symptoms": [
+                f"{s.symptom.raw_text} ({s.severity.value}, {s.reported_by.value})"
+                for s in fx.symptoms
+                if s.is_current
+            ],
             "active_medications": [m.drug.raw_text for m in fx.medications if m.is_current],
             "active_supplements": [
                 s.substance.raw_text for s in fx.supplements if s.is_current
@@ -136,6 +141,7 @@ class LocalInferenceAdapter:
             "timeline": build_timeline(
                 encounters=fx.encounters,
                 conditions=fx.conditions,
+                symptoms=fx.symptoms,
                 medications=fx.medications,
                 supplements=fx.supplements,
                 labs=fx.labs,
@@ -145,7 +151,7 @@ class LocalInferenceAdapter:
         }
 
         records = [
-            *fx.conditions, *fx.medications, *fx.supplements, *fx.allergies,
+            *fx.conditions, *fx.symptoms, *fx.medications, *fx.supplements, *fx.allergies,
             *fx.labs, *fx.vitals, *fx.notes,
         ]
         try:

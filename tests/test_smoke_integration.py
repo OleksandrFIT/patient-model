@@ -21,6 +21,9 @@ from pai3.entities.clinical import (
     Procedure,
     Reaction,
     SocialFactor,
+    Symptom,
+    SymptomReporter,
+    SymptomStatus,
 )
 from pai3.entities.infrastructure import (
     AuditAction,
@@ -141,6 +144,19 @@ def build_cohort() -> dict[str, object]:
         verification_status=VerificationStatus.CONFIRMED,
         onset=date(2021, 5, 14),
         recorded_by=provider.id,
+    )
+
+    symptom = Symptom(
+        **_base("sym"),
+        patient_id=patient_id,
+        encounter_id=encounter_id,
+        symptom=CodeableConcept(raw_text="fatigue", system="SNOMED-CT", code="84229001"),
+        status=SymptomStatus.ACTIVE,
+        reported_by=SymptomReporter.PATIENT,
+        patient_concern=ClinicalText(
+            value="Worried the tiredness means something is wrong.",
+            origin=TextOrigin.PATIENT_SUBMITTED,
+        ),
     )
 
     allergy = AllergyIntolerance(
@@ -311,7 +327,8 @@ def build_cohort() -> dict[str, object]:
     return {
         "patient": patient, "provider": provider, "consent": consent,
         "encounter": encounter, "source_ref": source_ref, "condition": condition,
-        "allergy": allergy, "medication": medication, "supplement": supplement,
+        "allergy": allergy, "symptom": symptom, "medication": medication,
+        "supplement": supplement,
         "lab": lab, "report": report, "vital": vital, "note": note, "plan": plan,
         "flag": flag, "audit": audit, "coverage": coverage, "procedure": procedure,
         "goal": goal, "social": social, "task": task,
@@ -319,9 +336,9 @@ def build_cohort() -> dict[str, object]:
 
 
 def test_every_built_entity_constructs_for_one_patient():
-    # All twenty-one canonical entities, for one patient.
+    # All twenty-two canonical entities, for one patient.
     cohort = build_cohort()
-    assert len(cohort) == 21
+    assert len(cohort) == 22
 
 
 def test_every_id_one_record_holds_about_another_resolves():

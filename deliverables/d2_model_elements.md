@@ -8,6 +8,46 @@ the per-element reference. Section numbers point there.
 
 ---
 
+## The assignment's required dimensions, and where each one lives
+
+A reviewer walking the list in the brief should be able to tick every line. One of them —
+symptoms and patient concerns — was **missed on the first pass** and is recorded as an omission
+in §6.20 rather than presented as a refinement.
+
+| # | Required dimension | Where it lives |
+|---|---|---|
+| 1 | Patient identity and demographics | `Patient` |
+| 2 | Contact information | `Patient.contacts`, `Patient.addresses` (embedded — §5) |
+| 3 | Consent and authorization | `Consent`, enforced as a capability (§10.3) |
+| 4 | Care team and provider relationships | `Provider` + `Patient.care_team` |
+| 5 | Insurance or payment context | `Coverage` (thin; outside AI read scope) |
+| 6 | Medical history | `Condition` with `clinical_status` resolved — **one entity with 7** (§6.4) |
+| 7 | Current conditions and diagnoses | `Condition` with `clinical_status` active |
+| 8 | **Symptoms and patient concerns** | **`Symptom`, with `patient_concern` in the patient's own words (§6.20)** |
+| 9 | Medications | `Medication` |
+| 10 | Supplements | `Supplement` — split from 9 on trust, not fields (§6.7) |
+| 11 | Allergies and contraindications | `AllergyIntolerance` |
+| 12 | Lab results and biomarkers | `LabResult`, grouped by `DiagnosticReport` (§6.8) |
+| 13 | Vitals and measurements | `VitalSign` with `measurement_context` (§6.6) |
+| 14 | Imaging and diagnostic reports | `DiagnosticReport` — narrative, no discrete values |
+| 15 | Clinical notes | `ClinicalNote`, body marked with its perimeter origin (§10.1) |
+| 16 | Treatment plans | `TreatmentPlan` with embedded `plan_items` |
+| 17 | Procedures and interventions | `Procedure` |
+| 18 | Patient goals and preferences | `Goal` (patient-owned) + `Patient.preferences` |
+| 19 | Lifestyle and social factors | `SocialFactor`, dated so staleness is visible (§6.16) |
+| 20 | Timeline of clinical events | `TimelineEvent` — **derived, never stored** (§6.13) |
+| 21 | Documents and source references | `SourceDocument` (source layer) + `SourceReference` |
+| 22 | Tasks, follow-ups, workflow state | `Task`, AI may only propose |
+| 23 | Data provenance and audit trail | `Provenance` (a value) + `AuditEvent` (a record) — §6.3 |
+| 24 | Data quality flags | `DataQualityFlag`, an entity not a list (§6.5) |
+| 25 | AI summaries and human review status | `AISummary` + `review`; status is **derived** in canonical (§6.1) |
+
+Two of these are answered by a decision rather than by an entity, and both are defended rather
+than assumed: 6 and 7 are one `Condition` because they differ by a single field, and 25's review
+status is derived from open flags because a stored one goes stale.
+
+---
+
 ## Identity and context
 
 | Element | What it contains | Why it matters | Source systems | AI / workflow use | Risks if missing, stale, duplicated or wrong |
@@ -25,6 +65,7 @@ the per-element reference. Section numbers point there.
 | Element | What it contains | Why it matters | Source systems | AI / workflow use | Risks if missing, stale, duplicated or wrong |
 |---|---|---|---|---|---|
 | **Condition** | Coded concept, `clinical_status`, `verification_status`, onset, abatement | Medical history and current diagnoses in **one** entity: they differ by `clinical_status` alone (§6.4) | EMR problem list, notes, intake forms | Read; active ones are non-droppable from any projection | Two entities would let the same diabetes exist as a history row and a current row that diverge at the first update. Without `verification_status`, "suspected lupus" enters a summary as "has lupus" — the cheapest safeguard against the most expensive error |
+| **Symptom** | Coded symptom, `status`, `reported_by`, `severity`, onset, `patient_concern` | What the patient reports experiencing. **Not** a `Condition` with `verification_status=unconfirmed`: that field means "we do not know whether this diagnosis holds", and a symptom's existence is not in doubt (§6.20) | Intake forms, visit notes, portal messages, triage calls | Read; the complaint a brief is usually about | Folded into `Condition`, every symptom reads as a weak diagnosis and a brief cannot tell "reports fatigue" from "has hypothyroidism". Left in note prose, "which patients report fatigue" is unanswerable. `severity` defaults to `unspecified` because an unrecorded severity is not a mild one |
 | **AllergyIntolerance** | Substance, reactions, `criticality`, `verification_status` | The most safety-critical list in the model, with its own audit trail. `criticality` — is it life-threatening — is separate from the `severity` of a past reaction | EMR allergy list, intake forms, patient report | Read; **never droppable**, whatever its verification status | A missed allergy is the canonical harm case. Never embedded on `Patient`, so a change is attributable. A brief that omits one passes every output guardrail, which is why §7 names omission as undetectable |
 | **Medication** | Drug, `Dosage`, status, start and stop dates, prescriber | `status` and `stopped_on` must agree in both directions, so a discontinued medication presenting as active is a record that **cannot be constructed** (§9.8) | EMR, e-prescribing, notes, intake | Read; current ones non-droppable | D5 asks for a flag on "discontinued shown as active"; layer 1 removes the state instead. Conflicting doses between EMR and intake leave the field empty with a blocking flag, never a silently chosen winner |
 | **Supplement** | Substance, dose as reported, status, reported reason | Split from `Medication` on **trust**, not field overlap: a drug was asserted by a prescriber, a supplement is self-reported (§6.7) | Intake forms, patient messages, visit notes | Read; current ones non-droppable | Interaction checking uses a different knowledge base. Biotin distorts thyroid immunoassays: a brief that hides supplements hides the likeliest explanation for an abnormal TSH. Unlike medications, no stop date is demanded — a patient rarely knows when they stopped, and demanding it discards the fact that they did |

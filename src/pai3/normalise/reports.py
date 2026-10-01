@@ -236,11 +236,42 @@ def review_queue(r: Result) -> str:
             "",
             f"{f.message}",
             "",
-            (
-                f"**Evidence:** {len(f.candidates) or len(f.source_locator)} source"
-                f" reference(s) attached"
-                f" (`{', '.join(f.candidates or f.source_locator) or '—'}`)"
-            ),
+            _evidence(f, r),
             "",
         ]
     return "\n".join(lines)
+
+
+def _evidence(flag, r: Result) -> str:
+    """What a reviewer can open, and what kind of evidence it is.
+
+    Three cases, and the first version of this renderer showed "0 source reference(s)" for the
+    third — which reads as missing evidence when it is a different kind of evidence. A conflict
+    cites the competing readings; an ingest failure cites the page; a layer-2 defect has neither,
+    because it is a property of one record, so what it can show is that record's own citations.
+    """
+    if flag.candidates:
+        refs = ", ".join(f"`{c}`" for c in flag.candidates)
+        return (
+            f"**Evidence:** {len(flag.candidates)} competing reading(s) — {refs}. "
+            "Open these to see what each source asserted."
+        )
+    if flag.source_locator:
+        refs = ", ".join(f"`{s}`" for s in flag.source_locator)
+        return (
+            f"**Evidence:** the place in the document — {refs}. "
+            "No canonical record exists to open."
+        )
+    record = r.record_by_id(flag.targets[0].entity_id) if flag.targets else None
+    own = list(getattr(getattr(record, "provenance", None), "source_refs", []) or [])
+    if own:
+        refs = ", ".join(f"`{s}`" for s in own)
+        return (
+            f"**Evidence:** a property of the record itself, not a disagreement, so there are "
+            f"no competing readings. The record's own citations are {refs} — open them to see "
+            "what the source actually printed."
+        )
+    return (
+        "**Evidence:** a property of the record itself, and the record carries no citation. "
+        "That is itself worth the reviewer's attention."
+    )

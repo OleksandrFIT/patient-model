@@ -1,6 +1,6 @@
 # Canonical patient data model — PAI3 practical test
 
-A governed patient data foundation for a concierge medical practice: twenty-one canonical
+A governed patient data foundation for a concierge medical practice: twenty-two canonical
 entities in Python and Pydantic v2, with provenance, validation, and an AI layer that can
 read the record but cannot write to it.
 
@@ -81,7 +81,7 @@ fine for a stub and wrong the moment a model needs to receive it.
 | Layer | Holds | Written by |
 |---|---|---|
 | Source | The PDF, spreadsheet, EMR export as received, with a content hash | Nobody — immutable |
-| Canonical | Accepted clinical fact. 21 entities | Humans and source systems |
+| Canonical | Accepted clinical fact. 22 entities | Humans and source systems |
 | AI | Summaries, extraction candidates | The AI layer only |
 
 The rule is that **AI never writes to the canonical layer**. Not because its output is poor,
@@ -108,7 +108,7 @@ CanonicalRecord   id, provenance, record_status, version, created/updated, updat
 that is governance rather than tidiness: a provider record is not covered by any patient's
 consent and is not part of a patient data export.
 
-A single universal base would have given nine of twenty-one entities a nullable
+A single universal base would have given nine of twenty-two entities a nullable
 `encounter_id` they never set. `Consent` and `Goal` have no encounter; `Encounter` *is* the
 encounter.
 

@@ -310,6 +310,100 @@
         "recorded_by": null
       }
     ],
+    "symptoms": [
+      {
+        "id": "sym_0001",
+        "provenance": {
+          "origin": "human",
+          "asserted_by": {
+            "kind": "human",
+            "ref": "prov_0001",
+            "label": "Dr A. Reyes"
+          },
+          "asserted_at": "2026-03-12T09:00:00Z",
+          "imported_at": null,
+          "source_refs": [],
+          "derived_from": [],
+          "depth": 0,
+          "extraction_confidence": null
+        },
+        "field_provenance": {},
+        "record_status": "active",
+        "version": 1,
+        "superseded_by": null,
+        "created_at": "2026-03-12T09:00:00Z",
+        "updated_at": "2026-03-12T09:00:00Z",
+        "updated_by": {
+          "kind": "human",
+          "ref": "prov_0001",
+          "label": "Dr A. Reyes"
+        },
+        "patient_id": "pat_0001",
+        "encounter_id": "enc_0001",
+        "symptom": {
+          "raw_text": "fatigue",
+          "system": "SNOMED-CT",
+          "code": "84229001",
+          "display": null
+        },
+        "status": "active",
+        "reported_by": "patient",
+        "severity": "moderate",
+        "onset": "2025-12-01",
+        "resolved_on": null,
+        "patient_concern": {
+          "value": "I am tired all the time even after a full night. I keep wondering whether something is wrong with my heart.",
+          "origin": "patient_submitted",
+          "captured_by": {
+            "kind": "human",
+            "ref": "prov_0001",
+            "label": "Dr A. Reyes"
+          }
+        }
+      },
+      {
+        "id": "sym_0002",
+        "provenance": {
+          "origin": "human",
+          "asserted_by": {
+            "kind": "human",
+            "ref": "prov_0001",
+            "label": "Dr A. Reyes"
+          },
+          "asserted_at": "2026-03-12T09:00:00Z",
+          "imported_at": null,
+          "source_refs": [],
+          "derived_from": [],
+          "depth": 0,
+          "extraction_confidence": null
+        },
+        "field_provenance": {},
+        "record_status": "active",
+        "version": 1,
+        "superseded_by": null,
+        "created_at": "2026-03-12T09:00:00Z",
+        "updated_at": "2026-03-12T09:00:00Z",
+        "updated_by": {
+          "kind": "human",
+          "ref": "prov_0001",
+          "label": "Dr A. Reyes"
+        },
+        "patient_id": "pat_0001",
+        "encounter_id": "enc_0001",
+        "symptom": {
+          "raw_text": "cold intolerance",
+          "system": "SNOMED-CT",
+          "code": "20010003",
+          "display": null
+        },
+        "status": "active",
+        "reported_by": "patient",
+        "severity": "mild",
+        "onset": "2026-01-15",
+        "resolved_on": null,
+        "patient_concern": null
+      }
+    ],
     "medications": [
       {
         "id": "med_0001",
@@ -1259,6 +1353,20 @@
         "source_id": "lab_0001"
       },
       {
+        "at": "2025-12-01T00:00:00Z",
+        "kind": "symptom_onset",
+        "label": "fatigue",
+        "source_type": "Symptom",
+        "source_id": "sym_0001"
+      },
+      {
+        "at": "2026-01-15T00:00:00Z",
+        "kind": "symptom_onset",
+        "label": "cold intolerance",
+        "source_type": "Symptom",
+        "source_id": "sym_0002"
+      },
+      {
         "at": "2026-02-26T09:00:00Z",
         "kind": "lab_collected",
         "label": "TSH",
@@ -1439,6 +1547,10 @@
       "active_conditions": [
         "hypothyroidism"
       ],
+      "active_symptoms": [
+        "fatigue (moderate, patient)",
+        "cold intolerance (mild, patient)"
+      ],
       "active_medications": [
         "levothyroxine"
       ],
@@ -1617,6 +1729,20 @@
           "source_id": "lab_0001"
         },
         {
+          "at": "2025-12-01T00:00:00Z",
+          "kind": "symptom_onset",
+          "label": "fatigue",
+          "source_type": "Symptom",
+          "source_id": "sym_0001"
+        },
+        {
+          "at": "2026-01-15T00:00:00Z",
+          "kind": "symptom_onset",
+          "label": "cold intolerance",
+          "source_type": "Symptom",
+          "source_id": "sym_0002"
+        },
+        {
           "at": "2026-02-26T09:00:00Z",
           "kind": "lab_collected",
           "label": "TSH",
@@ -1694,6 +1820,16 @@
         {
           "entity_type": "Condition",
           "entity_id": "cond_0002",
+          "version": 1
+        },
+        {
+          "entity_type": "Symptom",
+          "entity_id": "sym_0001",
+          "version": 1
+        },
+        {
+          "entity_type": "Symptom",
+          "entity_id": "sym_0002",
           "version": 1
         },
         {
@@ -2062,6 +2198,62 @@
         "label": "previsit-brief"
       },
       "targets": [
+        "sym_0001",
+        "sym_0002"
+      ],
+      "fields_read": null,
+      "field_delta": {},
+      "ingest": null,
+      "occurred_at": null,
+      "inputs": [
+        {
+          "entity_type": "Symptom",
+          "entity_id": "sym_0001",
+          "version": 1
+        },
+        {
+          "entity_type": "Symptom",
+          "entity_id": "sym_0002",
+          "version": 1
+        }
+      ]
+    },
+    {
+      "id": "aud_0005",
+      "provenance": {
+        "origin": "system_derived",
+        "asserted_by": {
+          "kind": "agent",
+          "ref": "previsit-brief",
+          "label": "previsit-brief"
+        },
+        "asserted_at": "2026-03-12T09:00:00Z",
+        "imported_at": null,
+        "source_refs": [],
+        "derived_from": [],
+        "depth": 0,
+        "extraction_confidence": null
+      },
+      "field_provenance": {},
+      "record_status": "active",
+      "version": 1,
+      "superseded_by": null,
+      "created_at": "2026-03-12T09:00:00Z",
+      "updated_at": "2026-03-12T09:00:00Z",
+      "updated_by": {
+        "kind": "agent",
+        "ref": "previsit-brief",
+        "label": "previsit-brief"
+      },
+      "patient_id": "pat_0001",
+      "action": "read",
+      "trace_id": "trc_0001",
+      "actor": {
+        "kind": "agent",
+        "ref": "previsit-brief",
+        "label": "previsit-brief"
+      },
+      "targets": [
         "supp_0001",
         "supp_0002"
       ],
@@ -2083,7 +2275,7 @@
       ]
     },
     {
-      "id": "aud_0005",
+      "id": "aud_0006",
       "provenance": {
         "origin": "system_derived",
         "asserted_by": {
@@ -2151,7 +2343,7 @@
       ]
     },
     {
-      "id": "aud_0006",
+      "id": "aud_0007",
       "provenance": {
         "origin": "system_derived",
         "asserted_by": {
@@ -2213,7 +2405,7 @@
       ]
     },
     {
-      "id": "aud_0007",
+      "id": "aud_0008",
       "provenance": {
         "origin": "system_derived",
         "asserted_by": {

@@ -10,7 +10,16 @@ from dataclasses import dataclass, field
 from datetime import UTC, date, datetime, timedelta
 
 from pai3.entities.administrative import Consent
-from pai3.entities.clinical import AllergyIntolerance, Condition, Criticality, Encounter
+from pai3.entities.clinical import (
+    AllergyIntolerance,
+    Condition,
+    Criticality,
+    Encounter,
+    Symptom,
+    SymptomReporter,
+    SymptomSeverity,
+    SymptomStatus,
+)
 from pai3.entities.infrastructure import DataQualityFlag, FlagTarget, SourceReference
 from pai3.entities.narrative import ClinicalNote, NoteType
 from pai3.entities.people import CareTeamMembership, Patient, Provider
@@ -68,6 +77,7 @@ class Fixture:
     consents: list[Consent]
     encounters: list[Encounter]
     conditions: list[Condition]
+    symptoms: list[Symptom]
     medications: list[Medication]
     supplements: list[Supplement]
     allergies: list[AllergyIntolerance]
@@ -155,6 +165,35 @@ def build_fixture(
             clinical_status=ClinicalStatus.RESOLVED,
             verification_status=VerificationStatus.CONFIRMED,
             onset=date(2019, 2, 3), abatement=date(2019, 11, 20),
+        ),
+    ]
+
+    symptoms = [
+        Symptom(
+            id=new_id("sym"), **_base(), patient_id=patient_id, encounter_id=encounter_id,
+            symptom=CodeableConcept(raw_text="fatigue", system="SNOMED-CT", code="84229001"),
+            status=SymptomStatus.ACTIVE,
+            reported_by=SymptomReporter.PATIENT,
+            severity=SymptomSeverity.MODERATE,
+            onset=date(2025, 12, 1),
+            patient_concern=ClinicalText(
+                value=(
+                    "I am tired all the time even after a full night. I keep wondering "
+                    "whether something is wrong with my heart."
+                ),
+                origin=TextOrigin.PATIENT_SUBMITTED,
+                captured_by=DOC,
+            ),
+        ),
+        Symptom(
+            id=new_id("sym"), **_base(), patient_id=patient_id, encounter_id=encounter_id,
+            symptom=CodeableConcept(
+                raw_text="cold intolerance", system="SNOMED-CT", code="20010003"
+            ),
+            status=SymptomStatus.ACTIVE,
+            reported_by=SymptomReporter.PATIENT,
+            severity=SymptomSeverity.MILD,
+            onset=date(2026, 1, 15),
         ),
     ]
 
@@ -374,7 +413,8 @@ def build_fixture(
 
     return Fixture(
         now=NOW, patient=patient, provider=provider, consents=consents,
-        encounters=encounters, conditions=conditions, medications=medications,
+        encounters=encounters, conditions=conditions, symptoms=symptoms,
+        medications=medications,
         supplements=supplements, allergies=allergies, labs=labs, reports=reports,
         vitals=vitals, notes=notes, plans=plans, flags=flags, source_refs=source_refs,
     )

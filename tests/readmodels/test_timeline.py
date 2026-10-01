@@ -111,3 +111,15 @@ def test_the_timeline_is_not_an_entity():
 
     assert not hasattr(entities, "TimelineEvent")
     assert "id" not in TimelineEvent.model_fields
+
+
+def test_a_symptom_contributes_onset_and_resolution():
+    from pai3.entities.clinical import Symptom, SymptomReporter, SymptomStatus
+
+    sym = Symptom(
+        **B("sym"), symptom=CodeableConcept(raw_text="fatigue"),
+        status=SymptomStatus.RESOLVED, reported_by=SymptomReporter.PATIENT,
+        onset=date(2025, 12, 1), resolved_on=date(2026, 2, 20),
+    )
+    kinds = [e.kind for e in build_timeline(symptoms=[sym])]
+    assert kinds == [EventKind.SYMPTOM_ONSET, EventKind.SYMPTOM_RESOLVED]

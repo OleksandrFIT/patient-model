@@ -34,6 +34,7 @@ class PreVisitBrief(BaseModel):
     generated_at: AwareDatetime
     unresolved: list[FlagSummary]
     active_conditions: list[str] = Field(default_factory=list)
+    active_symptoms: list[str] = Field(default_factory=list)
     active_medications: list[str] = Field(default_factory=list)
     active_supplements: list[str] = Field(default_factory=list)
     allergies: list[str] = Field(default_factory=list)
