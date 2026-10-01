@@ -8,9 +8,9 @@ from datetime import date
 from enum import StrEnum
 from typing import ClassVar
 
-from pydantic import BaseModel, Field, model_validator
+from pydantic import AwareDatetime, BaseModel, Field, model_validator
 
-from pai3.base import ClinicalRecord
+from pai3.base import ClinicalRecord, PatientScoped
 from pai3.enums import ClinicalStatus, VerificationStatus
 from pai3.values.codeable import CodeableConcept
 
@@ -80,3 +80,22 @@ class AllergyIntolerance(ClinicalRecord):
     @property
     def is_assertable(self) -> bool:
         return self.verification_status not in _NOT_ASSERTABLE
+
+
+class Encounter(PatientScoped):
+    """A visit or contact — the grouping anchor for the pre-visit brief (§4).
+
+    PatientScoped rather than ClinicalRecord: it is the encounter (§2.4).
+    """
+
+    encounter_type: str
+    started_at: AwareDatetime
+    ended_at: AwareDatetime | None = None
+    participant_ids: list[str] = Field(default_factory=list)
+    reason: CodeableConcept | None = None
+
+    @model_validator(mode="after")
+    def _period_is_ordered(self) -> "Encounter":
+        if self.ended_at is not None and self.ended_at < self.started_at:
+            raise ValueError("ended_at precedes started_at")
+        return self
