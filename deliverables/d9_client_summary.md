@@ -42,9 +42,9 @@ checked.
 
 ## Why AI needs structured, validated data
 
-AI is good at synthesis and poor at knowing what it does not know. Given clean structure, it
-turns twelve records into four readable sentences. Given a free-text dump, it fills gaps with
-plausible text, and plausible text is indistinguishable from fact at a glance.
+AI is good at synthesis and poor at knowing what it does not know. Given clean structure it
+turns twelve records into four readable sentences. Given a free-text dump it fills gaps with
+plausible text, which is indistinguishable from fact at a glance.
 
 So the foundation does three things. It validates: a lab value arriving without a unit is
 flagged for review, not silently accepted. It restricts: the model receives clinical facts
