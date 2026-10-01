@@ -15,6 +15,7 @@ from pydantic import Field, model_validator
 from pai3.base import ClinicalRecord
 from pai3.values.codeable import CodeableConcept
 from pai3.values.dosage import Dosage
+from pai3.values.plan import PlanItem
 
 
 class MedicationStatus(StrEnum):
@@ -53,3 +54,43 @@ class Medication(ClinicalRecord):
     def is_current(self) -> bool:
         """§10.6 makes a current medication non-droppable from any projection."""
         return self.status in (MedicationStatus.ACTIVE, MedicationStatus.HELD)
+
+
+class SupplementStatus(StrEnum):
+    ACTIVE = "active"
+    STOPPED = "stopped"
+
+
+class Supplement(ClinicalRecord):
+    """Almost always patient-reported (§6.7).
+
+    No prescriber, no reliable numeric dose, usually no RxNorm code. Interaction
+    checking against supplements uses a different knowledge base, so every consumer
+    would branch on a `kind` discriminator anyway if this were merged with Medication.
+
+    Unlike Medication there is no rule tying `status` to `stopped_on`, and that is the
+    trust axis showing through rather than an omission: a patient who says they stopped
+    the vitamin D rarely knows when, and demanding the date would throw away the fact
+    that they stopped. Medication can demand it because a prescriber recorded the change.
+    """
+
+    FIELD_PROVENANCE_WHITELIST: ClassVar[frozenset[str]] = frozenset({"dose", "status"})
+
+    substance: CodeableConcept
+    dosage: Dosage
+    status: SupplementStatus
+    started_on: date | None = None
+    stopped_on: date | None = None
+    reported_reason: str | None = None
+
+    @property
+    def is_current(self) -> bool:
+        return self.status is SupplementStatus.ACTIVE
+
+
+class TreatmentPlan(ClinicalRecord):
+    """Items are embedded: no independent lifecycle, revised with the plan (§5)."""
+
+    title: str = Field(min_length=1)
+    items: list[PlanItem] = Field(min_length=1)
+    authored_by: str | None = Field(default=None, description="Provider id")
