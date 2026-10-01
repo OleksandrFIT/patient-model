@@ -61,6 +61,7 @@ def facts() -> dict[str, int]:
     defects = pathlib.Path("docs/plan_defects.md").read_text()
     return {
         "spec_lines": len(spec.splitlines()),
+        "claude_md_lines": len(pathlib.Path("CLAUDE.md").read_text().splitlines()),
         "src_lines": lines_in("src/**/*.py"),
         "test_lines": lines_in("tests/**/*.py", "mock/**/*.py"),
         "tests": collected_tests("tests"),
@@ -89,6 +90,9 @@ def expected(f: dict[str, int]) -> list[tuple[pathlib.Path, str, str]]:
          f"| {f['src_lines']:,} + {f['test_lines']:,} lines, {f['tests']} tests |"),
         (D10, "defect count in the critique heading",
          f"### {WORDS[f['defects']]} defects in AI-written code"),
+        # The four decisions taken before any prompt in this repository.
+        (D10, "size of the hand-written CLAUDE.md",
+         f"a {f['claude_md_lines']}-line `CLAUDE.md`"),
         (D11, "design document size",
          f"`docs/model_design.md`, {f['spec_lines']:,} lines"),
         (D11, "implementation plan size",
@@ -131,6 +135,23 @@ def main() -> int:
             f"the log records {f['defects']}"
         )
 
+    # D11's activity rows must account for the total it states. The same shape as the
+    # instrument table above: a document whose own figures have to add up.
+    breakdown = D11.read_text().split("## What the repository can attest to")[0]
+    rows = re.findall(r"^\| (?!\*\*Total)(?!Activity)(?!---)(.+?) \| (\d+):(\d\d) \|$", breakdown, re.MULTILINE)
+    stated = re.search(r"^\| \*\*Total\*\* \| \*\*(\d+):(\d\d)\*\* \|$", breakdown, re.MULTILINE)
+    if not rows or stated is None:
+        problems.append("d11_time_log.md: could not read the activity breakdown or its total")
+    else:
+        counted = sum(int(h) * 60 + int(m) for _, h, m in rows)
+        claimed = int(stated.group(1)) * 60 + int(stated.group(2))
+        if counted != claimed:
+            problems.append(
+                f"d11_time_log.md: {len(rows)} activity rows sum to "
+                f"{counted // 60}:{counted % 60:02d}, the total states "
+                f"{claimed // 60}:{claimed % 60:02d}"
+            )
+
     # The claim this gate was built after. Kept as a named check rather than left to the
     # figures above, because it was prose and no number would have caught it.
     if "normalisation build was not started" in D11.read_text():
@@ -139,7 +160,7 @@ def main() -> int:
     print(
         f"spec {f['spec_lines']:,} lines  |  src {f['src_lines']:,}  |  tests+mock "
         f"{f['test_lines']:,}  |  {f['tests']} tests  |  {f['entities']} entities  |  "
-        f"{f['defects']} defects"
+        f"{f['defects']} defects  |  CLAUDE.md {f['claude_md_lines']}"
     )
     if problems:
         print(f"\n{len(problems)} PROBLEM(S):")
