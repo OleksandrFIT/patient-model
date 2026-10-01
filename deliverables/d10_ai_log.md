@@ -49,20 +49,24 @@ written. Nothing was implemented from a plan that had not been read.
 The full record is `docs/plan_defects.md`. The summary, with the numbers rather than an
 impression.
 
-### Fifteen defects in AI-written code, and how each surfaced
+### Sixteen defects in AI-written code, and how each surfaced
 
 | How found | Count | Example |
 |---|---|---|
-| The plan's own tests | 3 | `TypeError` on any half-open reference range — the commonest shape, since hs-CRP has no lower bound |
-| Checking an assumption before writing | 4 | A Pydantic attribute without `ClassVar`, which stops the module importing at all, repeated across five entities |
-| Running a component on real output from the one upstream of it | 4 | The guardrails and the projection held **separate definitions** of droppability, so a brief that correctly omitted a resolved condition was rejected |
-| Running a real local model | **1** | **The design's five output checks had a hole. See below** |
+| Reading the code against the spec, before or while writing it | 6 | A Pydantic attribute without `ClassVar`, which stops the module importing at all, repeated across five entities |
+| Running a component on real output from the one upstream of it | 5 | The guardrails and the projection held **separate definitions** of droppability, so a brief that correctly omitted a resolved condition was rejected |
+| The plan's own tests | 2 | `TypeError` on any half-open reference range — the commonest shape, since hs-CRP has no lower bound |
+| An exhaustive sweep of one function's inputs | 1 | A budget of zero returned an empty projection instead of refusing |
+| **Running a real local model** | **1** | **The design's output checks had a hole. See below** |
+| **Being asked whether the artifact was real** | **1** | **The stub reported a real engine and model for a run that never happened** |
 
-The third row matters because each of those defects made two parts of the system disagree while
+The second row matters because each of those defects made two parts of the system disagree while
 **both passed their own unit tests** — a unit test constructs its own input and so never sees
 what its neighbour emits. They were invisible to the test suite the AI wrote for its own code.
 
-The fourth row matters more, and is the single strongest finding in the submission.
+The last two rows matter more. Neither was reachable by any amount of reading, and the final one
+is the least comfortable line in this file: that defect was not found by a method at all. It was
+found because the reviewer asked whether the inference was real, and the honest answer was no.
 
 ### The one defect reasoning could not have found
 
@@ -168,12 +172,15 @@ accept/reject decisions possible.
 ### The honest bottom line
 
 The design is defensible and the implementation works. Neither would be trustworthy as submitted
-if it had been accepted as produced: fifteen defects, four of which only a cross-component check
+if it had been accepted as produced: sixteen defects, five of which only a cross-component check
 could find, one that only a real model could find, four overstated claims, and one artifact that
 was itself a false claim.
 
-The value came from the review discipline, not from the generation. And the ranking of that
-discipline is clear from the table above: reading the code found the most defects, crossing a
-seam found the worst of the implementation ones, and **running the real thing found the one that
-was wrong in the design** — the only category where neither the author nor the tests could have
-known what they had assumed.
+The value came from the review discipline, not from the generation, and the table above ranks
+that discipline. Reading the code found the most defects. Crossing a seam found the worst of the
+implementation ones. Running the real thing found the one that was wrong in the design — the only
+category where neither the author nor the tests could have known what they had assumed.
+
+And one was found by none of those. A reviewer asked a question the work had not asked itself.
+Of the six instruments, that is the only one a submission cannot supply on its own, which is a
+poor note to end on and the accurate one.

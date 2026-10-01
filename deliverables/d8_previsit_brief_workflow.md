@@ -161,7 +161,7 @@ instead of producing an answer.
 | It cites a record it never read | Guardrail 1 is a set difference against `inputs` | — |
 | A known conflict never reaches the physician | Guardrail 4, plus `unresolved` being required on the brief | — |
 | The context window silently truncates | Non-droppable categories refuse rather than truncate; everything else omitted is named with a reason | Convert mismatched units — they are excluded instead |
-| **The brief omits something critical** | **Nothing.** A brief that failed to mention an allergy passes all five checks | There is nothing to diff a summary against that was never written. This is the sharpest limit in the submission and is named in §7 |
+| **The brief omits something critical** | **Nothing.** A brief that failed to mention an allergy passes all six checks | There is nothing to diff a summary against that was never written. This is the sharpest limit in the submission and is named in §7 |
 | A pasted patient message contains an instruction | The span arrives marked `transcribed_external`, so the AI layer can refuse to act on it | Make the text safe. There is deliberately no `sanitized` flag — marking is the schema's job, refusing is policy |
 | An agent reads without consent | Unexpressible: the projection takes a capability the consent check alone can mint | Cover clinical access by staff — that is `treatment` consent and out of scope |
 | Consent revoked mid-generation | `valid_until` bounds the token and the adapter re-checks before constructing the artifact | Catch a revocation arriving mid-inference |

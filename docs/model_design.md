@@ -1376,6 +1376,12 @@ job there is synthesis rather than prose.
 Checks 1 and 3 are the valuable pair: together they are what catches "the model
 produced a number that is not in the data".
 
+**Every check fails closed.** Where a record a claim cites, or one listed in `omitted`, is
+not among the records handed to the checker, that is a failure of its own
+(`record_available_for_checking`) rather than a skipped check. A checker that cannot see what it
+is checking must not report a pass — which the first implementation did, silently, for any id the
+caller forgot to supply.
+
 **Check 6 exists because the first five were not enough, and that was found by running a real
 model rather than by reasoning.** This section specified that every `ClaimValue` is compared
 against the record it cites, and left `values` optional — so a model can satisfy the schema,
