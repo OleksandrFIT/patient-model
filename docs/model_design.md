@@ -153,7 +153,7 @@ Task.
 | `Task` | Clinical | status, assignee, due, origin | AI-extracted tasks land `proposed`, never `open` and assigned |
 | `SourceReference` | PatientScoped | document ref, page, `field_path`, span, `quote` | The single citation primitive — §6.17 |
 | `DataQualityFlag` | Canonical | `code`, `severity`, `targets[]`, `candidates[]`, lifecycle | An entity, not an embedded list — §6.5 |
-| `AuditEvent` | Canonical | actor, action, target, field delta | Append-only. Logs reads as well as writes — §6.3 |
+| `AuditEvent` | Canonical | actor, action, `trace_id`, `targets`, `fields_read`, field delta | Append-only. Logs reads as well as writes, correlated by `trace_id` — §6.3 |
 
 ---
 
@@ -268,8 +268,48 @@ Conflating these is the most common failure in models of this kind.
   the status at 14:05." "Agent Y read this patient."
 
 `AuditEvent` logs **reads**, not only writes. Without read events there is no
-way to reconstruct what an agent saw when it produced a summary — which for
-local inference is the only way to reproduce a result after the fact.
+way to reconstruct what an agent saw when it produced a summary, which for local
+inference is the only way to reproduce a result after the fact.
+
+An uncorrelated read log does not deliver that. One brief reads forty records,
+and forty unlinked events say that something touched them without saying which
+operation did. Such a log carries the full cost of read auditing and answers
+nothing. The real choice is therefore between correlating reads and not logging
+them at all — the second being the honest form of dropping this capability. It is
+rejected.
+
+**Shape for read events:**
+
+| Field | Purpose |
+|---|---|
+| `trace_id: ULID` | The unit of work, not a record: one brief generation, one extraction run, one agent turn. `AIArtifact` carries the same `trace_id`, which is what makes the join possible. An operation that produced nothing still has a trace, and those are the ones worth investigating |
+| `targets: list[ULID]` | Read events batch by `(trace_id, entity_type)`. Write events keep a single target |
+| `fields_read: list[str] \| None` | Which fields of those records entered the context |
+
+**`fields_read` is trustworthy only for reads that pass through a projection
+layer that records it.** If a caller runs `model_dump()` and puts the result in a
+prompt, this field lies — and a lying audit field is exactly the defect this
+section exists to remove. So `None` is legal and means *unknown; assume the whole
+record was read*. It is never an empty list standing in for "nothing". Assembling
+context for a model is required to go through the recording path. The same
+discipline as `field_provenance.get(f) or provenance` in §6.2.
+
+**Why reads batch and writes do not.** One brief is forty-odd read events;
+batching by entity type collapses that to roughly eight. The asymmetry inside a
+single entity is not elegant, and it loses nothing — the question an incident
+asks is "what was in context", which a batch answers as well as forty rows with
+millisecond timestamps. For a local deployment with no log store, a fivefold
+reduction outweighs symmetry.
+
+**Retention is separate for reads.** §6.15 reconstructs state as of a date by
+replaying audit deltas, and only **write** events carry deltas. Read events can
+therefore be truncated on their own schedule without touching the versioning
+story. Write events cannot.
+
+**What this promises, precisely.** With `trace_id` alone: which records were in
+context for a given generation. With `fields_read` populated: which fields. The
+second is best-effort by construction, and `None` says so rather than implying a
+precision that is not there. Sequencing is in §10, step 4.
 
 ### 6.4 `Condition` merges medical history and current diagnoses
 
@@ -762,5 +802,10 @@ Dangerous entities first.
 2. **Encounter, Supplement, VitalSign, ClinicalNote, TreatmentPlan,
    DiagnosticReport, Consent, Provider**
 3. The thin five: **Coverage, Procedure, Goal, SocialFactor, Task**
-4. `EntityKind` registry, uniqueness assertions, id resolution (§8.4)
+4. `EntityKind` registry, uniqueness assertions, id resolution (§8.4);
+   `trace_id` plumbing through the read-model builders and the projection layer
+   that populates `fields_read` (§6.3). Both are refactors over a working model,
+   and both degrade honestly if time runs short: ids keep their prefixes without
+   the registry, and `fields_read` stays `None`, which is a legal value meaning
+   "the whole record". The `AuditEvent` schema itself is built in step 1
 5. Documentation
