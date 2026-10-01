@@ -165,6 +165,49 @@ Defect 13 is the one that would have mattered clinically. §6.4 separates verifi
 clinical status so a suspicion cannot be rendered as a diagnosis; a normaliser that stamps
 `CONFIRMED` on everything it reads undoes that for every record it touches.
 
+## 15. The design's output checks had a hole, found by a real model
+
+Not a defect in code against design. A defect **in the design**, and the only one in this file
+that no amount of reading could have found.
+
+§10.5 argues that AI output must be structured claims because over prose nothing is checkable,
+and then specifies five checks on that shape. Check 2 compares every `ClaimValue` against the
+record it cites. **`values` was optional.**
+
+A model can therefore satisfy the schema, put its figures in the prose of `text`, declare
+nothing, and leave check 2 iterating an empty list. `qwen2.5:7b` did it on the first real run:
+*"TSH 3.8 mIU/L and 5.6 mIU/L"*, `values: []`, verdict pass. Four unverified numbers reached a
+physician through a layer built to stop exactly that.
+
+**What it survived.** The structured-output decision was proposed with its cost, argued over
+several exchanges, and approved. The plan specified the checks. Fourteen tests were written
+against them — including one whose only job is to pin a known limit. None caught it, for a reason
+that generalises: **every test of check 2 supplied the values it then verified.** They proved a
+declared number is compared correctly. They could not show that declaring was assumed, because
+the test author and the design author held the same assumption. A real model held none of it and
+read an optional field as optional.
+
+Fixed by check 6: a claim stating a decimal must declare it. Narrow on purpose — "type 2
+diabetes" must not trip it — and the residue is named: an integer measurement in prose still
+passes.
+
+The lesson, now in §10.5: **a structured field the model may omit is free text with extra
+steps.** The original argument against prose was right and was applied one level too shallow.
+
+## 16. An artifact that was itself a false claim
+
+The stub standing in for a model reported `engine=ollama`, `model_id=llama-3.3-70b-instruct`,
+`engine_version=0.5.1`, `execution=local` and a genuine SHA-256 prompt digest — of a prompt never
+sent, for a model not installed on the machine. Five cited claims sat beneath it.
+
+Every field was individually defensible. The record as a whole asserted that a 70-billion
+parameter model had run locally, which it had not, inside a submission whose subject is
+provenance. A different failure mode from the others in this log: not a wrong sentence in prose,
+but a well-formed data record whose every part was plausible and whose sum was untrue.
+
+Fixed by adding `Engine.STUB`, so a run with no inference says so in the artifact rather than in
+a footnote a reviewer may not reach.
+
 ## The pattern, which is the point
 
 Defect density tracked **novelty, not care**:
@@ -177,6 +220,7 @@ Defect density tracked **novelty, not care**:
 | 4 — AI layer schema | 1 | 1 |
 | 5 — gate, projection, guardrails, adapter, D8 | 5 | **6** |
 | optional — normalisation (written after the plan) | — | **4** |
+| real inference, and auditing what the stub looked like | — | **2** |
 
 Phase 1 is where the plan designed something for the first time. Phases 2 and 3 applied
 patterns Phase 1 had already settled, and produced nothing worse than an import-order nit.
@@ -199,6 +243,13 @@ The instrument that found them was the same one each time: run the component on 
 from the component upstream of it. That is also what the cross-entity smoke test did at the
 Phase 2/3 boundary, seven tasks before the plan's first integration — and the lesson is that it
 should have come earlier still, and been repeated at each seam rather than once.
+
+**A fourth instrument appeared last and found the worst defect of all: run the real thing.**
+Defects 15 and 16 were invisible to every other method — one because the tests and the design
+shared an assumption, the other because each field of the artifact was defensible in isolation.
+Reading found the most defects; crossing a seam found the worst implementation ones; running a
+real model found the one that was wrong in the **design**, which is the only category where
+neither the author nor the tests could know what they had assumed.
 
 Phase 5 was also the only place where a missing piece does not degrade honestly: an
 unimplemented consent gate is an open door, not a `None`. Nothing in it was deferred.
