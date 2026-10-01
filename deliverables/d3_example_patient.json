@@ -1,0 +1,2212 @@
+{
+  "_note": "Entirely fictional. Generated from mock/patient_fixture.py by scripts_build_d3.py so it cannot drift from the Pydantic models.",
+  "_sections": {
+    "canonical": "accepted clinical fact; every value names who vouched for it",
+    "derived": "read-models, never stored (model_design.md §6.13, §9.4)",
+    "ai_layer": "generated, references canonical by id and version; never the reverse"
+  },
+  "canonical": {
+    "patient": {
+      "id": "pat_01M3VFSH711TZP22DMBSM9TJHB",
+      "provenance": {
+        "origin": "human",
+        "asserted_by": {
+          "kind": "human",
+          "ref": "prov_01M3VFSH6JCRY6EWDR5FVVN4WK",
+          "label": "Dr A. Reyes"
+        },
+        "asserted_at": "2026-03-12T09:00:00Z",
+        "imported_at": null,
+        "source_refs": [],
+        "derived_from": [],
+        "depth": 0,
+        "extraction_confidence": null
+      },
+      "field_provenance": {},
+      "record_status": "active",
+      "version": 1,
+      "superseded_by": null,
+      "created_at": "2026-03-12T09:00:00Z",
+      "updated_at": "2026-03-12T09:00:00Z",
+      "updated_by": {
+        "kind": "human",
+        "ref": "prov_01M3VFSH6JCRY6EWDR5FVVN4WK",
+        "label": "Dr A. Reyes"
+      },
+      "identifiers": [
+        {
+          "system": "emr-west",
+          "value": "MRN-4471",
+          "assigner": "West Clinic"
+        },
+        {
+          "system": "lab-portal",
+          "value": "LP-99812",
+          "assigner": null
+        }
+      ],
+      "names": [
+        {
+          "given": [
+            "Dana"
+          ],
+          "family": "Okafor",
+          "prefix": null
+        }
+      ],
+      "birth_date": "1979-04-02",
+      "sex_at_birth": "female",
+      "gender_identity": null,
+      "contacts": [],
+      "addresses": [],
+      "preferences": {
+        "language": "en",
+        "contact_preference": "portal message",
+        "notes": null
+      },
+      "care_team": [
+        {
+          "provider_id": "prov_01M3VFSH711TZP22DMBSM9TJHA",
+          "role": "internist",
+          "since": "2021-04-01",
+          "is_primary": true
+        }
+      ]
+    },
+    "provider": {
+      "id": "prov_01M3VFSH711TZP22DMBSM9TJHA",
+      "provenance": {
+        "origin": "human",
+        "asserted_by": {
+          "kind": "human",
+          "ref": "prov_01M3VFSH6JCRY6EWDR5FVVN4WK",
+          "label": "Dr A. Reyes"
+        },
+        "asserted_at": "2026-03-12T09:00:00Z",
+        "imported_at": null,
+        "source_refs": [],
+        "derived_from": [],
+        "depth": 0,
+        "extraction_confidence": null
+      },
+      "field_provenance": {},
+      "record_status": "active",
+      "version": 1,
+      "superseded_by": null,
+      "created_at": "2026-03-12T09:00:00Z",
+      "updated_at": "2026-03-12T09:00:00Z",
+      "updated_by": {
+        "kind": "human",
+        "ref": "prov_01M3VFSH6JCRY6EWDR5FVVN4WK",
+        "label": "Dr A. Reyes"
+      },
+      "name": {
+        "given": [
+          "Ana"
+        ],
+        "family": "Reyes",
+        "prefix": "Dr"
+      },
+      "identifiers": [],
+      "specialty": "internal medicine",
+      "is_external": false
+    },
+    "consents": [
+      {
+        "id": "cons_01M3VFSH711TZP22DMBSM9TJHD",
+        "provenance": {
+          "origin": "human",
+          "asserted_by": {
+            "kind": "human",
+            "ref": "prov_01M3VFSH6JCRY6EWDR5FVVN4WK",
+            "label": "Dr A. Reyes"
+          },
+          "asserted_at": "2026-03-12T09:00:00Z",
+          "imported_at": null,
+          "source_refs": [],
+          "derived_from": [],
+          "depth": 0,
+          "extraction_confidence": null
+        },
+        "field_provenance": {},
+        "record_status": "active",
+        "version": 1,
+        "superseded_by": null,
+        "created_at": "2026-03-12T09:00:00Z",
+        "updated_at": "2026-03-12T09:00:00Z",
+        "updated_by": {
+          "kind": "human",
+          "ref": "prov_01M3VFSH6JCRY6EWDR5FVVN4WK",
+          "label": "Dr A. Reyes"
+        },
+        "patient_id": "pat_01M3VFSH711TZP22DMBSM9TJHB",
+        "scope": "treatment",
+        "effective_from": "2025-02-05T09:00:00Z",
+        "effective_until": null,
+        "revoked_at": null,
+        "revoked_by": null,
+        "document_ref": null
+      },
+      {
+        "id": "cons_01M3VFSH711TZP22DMBSM9TJHE",
+        "provenance": {
+          "origin": "human",
+          "asserted_by": {
+            "kind": "human",
+            "ref": "prov_01M3VFSH6JCRY6EWDR5FVVN4WK",
+            "label": "Dr A. Reyes"
+          },
+          "asserted_at": "2026-03-12T09:00:00Z",
+          "imported_at": null,
+          "source_refs": [],
+          "derived_from": [],
+          "depth": 0,
+          "extraction_confidence": null
+        },
+        "field_provenance": {},
+        "record_status": "active",
+        "version": 1,
+        "superseded_by": null,
+        "created_at": "2026-03-12T09:00:00Z",
+        "updated_at": "2026-03-12T09:00:00Z",
+        "updated_by": {
+          "kind": "human",
+          "ref": "prov_01M3VFSH6JCRY6EWDR5FVVN4WK",
+          "label": "Dr A. Reyes"
+        },
+        "patient_id": "pat_01M3VFSH711TZP22DMBSM9TJHB",
+        "scope": "ai_processing",
+        "effective_from": "2025-11-12T09:00:00Z",
+        "effective_until": null,
+        "revoked_at": null,
+        "revoked_by": null,
+        "document_ref": null
+      }
+    ],
+    "encounters": [
+      {
+        "id": "enc_01M3VFSH711TZP22DMBSM9TJHC",
+        "provenance": {
+          "origin": "human",
+          "asserted_by": {
+            "kind": "human",
+            "ref": "prov_01M3VFSH6JCRY6EWDR5FVVN4WK",
+            "label": "Dr A. Reyes"
+          },
+          "asserted_at": "2026-03-12T09:00:00Z",
+          "imported_at": null,
+          "source_refs": [],
+          "derived_from": [],
+          "depth": 0,
+          "extraction_confidence": null
+        },
+        "field_provenance": {},
+        "record_status": "active",
+        "version": 1,
+        "superseded_by": null,
+        "created_at": "2026-03-12T09:00:00Z",
+        "updated_at": "2026-03-12T09:00:00Z",
+        "updated_by": {
+          "kind": "human",
+          "ref": "prov_01M3VFSH6JCRY6EWDR5FVVN4WK",
+          "label": "Dr A. Reyes"
+        },
+        "patient_id": "pat_01M3VFSH711TZP22DMBSM9TJHB",
+        "encounter_type": "office visit",
+        "started_at": "2026-03-11T07:00:00Z",
+        "ended_at": "2026-03-11T08:00:00Z",
+        "participant_ids": [
+          "prov_01M3VFSH711TZP22DMBSM9TJHA"
+        ],
+        "reason": {
+          "raw_text": "thyroid follow-up",
+          "system": null,
+          "code": null,
+          "display": null
+        }
+      }
+    ],
+    "conditions": [
+      {
+        "id": "cond_01M3VFSH711TZP22DMBSM9TJHF",
+        "provenance": {
+          "origin": "human",
+          "asserted_by": {
+            "kind": "human",
+            "ref": "prov_01M3VFSH6JCRY6EWDR5FVVN4WK",
+            "label": "Dr A. Reyes"
+          },
+          "asserted_at": "2026-03-12T09:00:00Z",
+          "imported_at": null,
+          "source_refs": [],
+          "derived_from": [],
+          "depth": 0,
+          "extraction_confidence": null
+        },
+        "field_provenance": {},
+        "record_status": "active",
+        "version": 1,
+        "superseded_by": null,
+        "created_at": "2026-03-12T09:00:00Z",
+        "updated_at": "2026-03-12T09:00:00Z",
+        "updated_by": {
+          "kind": "human",
+          "ref": "prov_01M3VFSH6JCRY6EWDR5FVVN4WK",
+          "label": "Dr A. Reyes"
+        },
+        "patient_id": "pat_01M3VFSH711TZP22DMBSM9TJHB",
+        "encounter_id": null,
+        "code": {
+          "raw_text": "hypothyroidism",
+          "system": "ICD-10",
+          "code": "E03.9",
+          "display": null
+        },
+        "clinical_status": "active",
+        "verification_status": "confirmed",
+        "onset": "2021-05-14",
+        "abatement": null,
+        "recorded_by": null
+      },
+      {
+        "id": "cond_01M3VFSH711TZP22DMBSM9TJHG",
+        "provenance": {
+          "origin": "human",
+          "asserted_by": {
+            "kind": "human",
+            "ref": "prov_01M3VFSH6JCRY6EWDR5FVVN4WK",
+            "label": "Dr A. Reyes"
+          },
+          "asserted_at": "2026-03-12T09:00:00Z",
+          "imported_at": null,
+          "source_refs": [],
+          "derived_from": [],
+          "depth": 0,
+          "extraction_confidence": null
+        },
+        "field_provenance": {},
+        "record_status": "active",
+        "version": 1,
+        "superseded_by": null,
+        "created_at": "2026-03-12T09:00:00Z",
+        "updated_at": "2026-03-12T09:00:00Z",
+        "updated_by": {
+          "kind": "human",
+          "ref": "prov_01M3VFSH6JCRY6EWDR5FVVN4WK",
+          "label": "Dr A. Reyes"
+        },
+        "patient_id": "pat_01M3VFSH711TZP22DMBSM9TJHB",
+        "encounter_id": null,
+        "code": {
+          "raw_text": "iron deficiency anaemia",
+          "system": "ICD-10",
+          "code": "D50.9",
+          "display": null
+        },
+        "clinical_status": "resolved",
+        "verification_status": "confirmed",
+        "onset": "2019-02-03",
+        "abatement": "2019-11-20",
+        "recorded_by": null
+      }
+    ],
+    "medications": [
+      {
+        "id": "med_01M3VFSH711TZP22DMBSM9TJHH",
+        "provenance": {
+          "origin": "human",
+          "asserted_by": {
+            "kind": "human",
+            "ref": "prov_01M3VFSH6JCRY6EWDR5FVVN4WK",
+            "label": "Dr A. Reyes"
+          },
+          "asserted_at": "2026-03-12T09:00:00Z",
+          "imported_at": null,
+          "source_refs": [],
+          "derived_from": [],
+          "depth": 0,
+          "extraction_confidence": null
+        },
+        "field_provenance": {},
+        "record_status": "active",
+        "version": 1,
+        "superseded_by": null,
+        "created_at": "2026-03-12T09:00:00Z",
+        "updated_at": "2026-03-12T09:00:00Z",
+        "updated_by": {
+          "kind": "human",
+          "ref": "prov_01M3VFSH6JCRY6EWDR5FVVN4WK",
+          "label": "Dr A. Reyes"
+        },
+        "patient_id": "pat_01M3VFSH711TZP22DMBSM9TJHB",
+        "encounter_id": null,
+        "drug": {
+          "raw_text": "levothyroxine",
+          "system": "RxNorm",
+          "code": "10582",
+          "display": null
+        },
+        "dosage": {
+          "text": "75 mcg daily",
+          "amount": 75.0,
+          "unit": "mcg",
+          "frequency": "daily",
+          "route": null
+        },
+        "status": "active",
+        "started_on": "2021-06-01",
+        "stopped_on": null,
+        "prescriber_id": "prov_01M3VFSH6JCRY6EWDR5FVVN4WK",
+        "indication": null
+      }
+    ],
+    "supplements": [
+      {
+        "id": "supp_01M3VFSH711TZP22DMBSM9TJHN",
+        "provenance": {
+          "origin": "human",
+          "asserted_by": {
+            "kind": "human",
+            "ref": "prov_01M3VFSH6JCRY6EWDR5FVVN4WK",
+            "label": "Dr A. Reyes"
+          },
+          "asserted_at": "2026-03-12T09:00:00Z",
+          "imported_at": null,
+          "source_refs": [],
+          "derived_from": [],
+          "depth": 0,
+          "extraction_confidence": null
+        },
+        "field_provenance": {},
+        "record_status": "active",
+        "version": 1,
+        "superseded_by": null,
+        "created_at": "2026-03-12T09:00:00Z",
+        "updated_at": "2026-03-12T09:00:00Z",
+        "updated_by": {
+          "kind": "human",
+          "ref": "prov_01M3VFSH6JCRY6EWDR5FVVN4WK",
+          "label": "Dr A. Reyes"
+        },
+        "patient_id": "pat_01M3VFSH711TZP22DMBSM9TJHB",
+        "encounter_id": null,
+        "substance": {
+          "raw_text": "vitamin D3",
+          "system": null,
+          "code": null,
+          "display": null
+        },
+        "dosage": {
+          "text": "one dropper daily",
+          "amount": null,
+          "unit": null,
+          "frequency": null,
+          "route": null
+        },
+        "status": "active",
+        "started_on": "2024-11-01",
+        "stopped_on": null,
+        "reported_reason": "low vitamin D on a prior panel"
+      },
+      {
+        "id": "supp_01M3VFSH711TZP22DMBSM9TJHP",
+        "provenance": {
+          "origin": "human",
+          "asserted_by": {
+            "kind": "human",
+            "ref": "prov_01M3VFSH6JCRY6EWDR5FVVN4WK",
+            "label": "Dr A. Reyes"
+          },
+          "asserted_at": "2026-03-12T09:00:00Z",
+          "imported_at": null,
+          "source_refs": [],
+          "derived_from": [],
+          "depth": 0,
+          "extraction_confidence": null
+        },
+        "field_provenance": {},
+        "record_status": "active",
+        "version": 1,
+        "superseded_by": null,
+        "created_at": "2026-03-12T09:00:00Z",
+        "updated_at": "2026-03-12T09:00:00Z",
+        "updated_by": {
+          "kind": "human",
+          "ref": "prov_01M3VFSH6JCRY6EWDR5FVVN4WK",
+          "label": "Dr A. Reyes"
+        },
+        "patient_id": "pat_01M3VFSH711TZP22DMBSM9TJHB",
+        "encounter_id": null,
+        "substance": {
+          "raw_text": "biotin",
+          "system": null,
+          "code": null,
+          "display": null
+        },
+        "dosage": {
+          "text": "5000 mcg daily",
+          "amount": 5000.0,
+          "unit": "mcg",
+          "frequency": null,
+          "route": null
+        },
+        "status": "active",
+        "started_on": "2025-09-01",
+        "stopped_on": null,
+        "reported_reason": "hair and nails"
+      }
+    ],
+    "allergies": [
+      {
+        "id": "alg_01M3VFSH711TZP22DMBSM9TJHJ",
+        "provenance": {
+          "origin": "human",
+          "asserted_by": {
+            "kind": "human",
+            "ref": "prov_01M3VFSH6JCRY6EWDR5FVVN4WK",
+            "label": "Dr A. Reyes"
+          },
+          "asserted_at": "2026-03-12T09:00:00Z",
+          "imported_at": null,
+          "source_refs": [],
+          "derived_from": [],
+          "depth": 0,
+          "extraction_confidence": null
+        },
+        "field_provenance": {},
+        "record_status": "active",
+        "version": 1,
+        "superseded_by": null,
+        "created_at": "2026-03-12T09:00:00Z",
+        "updated_at": "2026-03-12T09:00:00Z",
+        "updated_by": {
+          "kind": "human",
+          "ref": "prov_01M3VFSH6JCRY6EWDR5FVVN4WK",
+          "label": "Dr A. Reyes"
+        },
+        "patient_id": "pat_01M3VFSH711TZP22DMBSM9TJHB",
+        "encounter_id": null,
+        "substance": {
+          "raw_text": "penicillin",
+          "system": "RxNorm",
+          "code": "7980",
+          "display": null
+        },
+        "criticality": "high",
+        "verification_status": "confirmed",
+        "reactions": [],
+        "recorded_by": null
+      }
+    ],
+    "lab_results": [
+      {
+        "id": "lab_01M3VFSH711TZP22DMBSM9TJHK",
+        "provenance": {
+          "origin": "human",
+          "asserted_by": {
+            "kind": "system",
+            "ref": "lab-portal",
+            "label": "lab-portal"
+          },
+          "asserted_at": "2026-03-12T09:00:00Z",
+          "imported_at": null,
+          "source_refs": [],
+          "derived_from": [],
+          "depth": 0,
+          "extraction_confidence": null
+        },
+        "field_provenance": {},
+        "record_status": "active",
+        "version": 1,
+        "superseded_by": null,
+        "created_at": "2026-03-12T09:00:00Z",
+        "updated_at": "2026-03-12T09:00:00Z",
+        "updated_by": {
+          "kind": "system",
+          "ref": "lab-portal",
+          "label": "lab-portal"
+        },
+        "patient_id": "pat_01M3VFSH711TZP22DMBSM9TJHB",
+        "encounter_id": null,
+        "biomarker": {
+          "raw_text": "TSH",
+          "system": "LOINC",
+          "code": "3016-3",
+          "display": null
+        },
+        "collection_date": "2025-09-13T09:00:00Z",
+        "quantity": {
+          "value": 3.8,
+          "unit": "mIU/L",
+          "ucum_code": null,
+          "comparator": null
+        },
+        "coded_value": null,
+        "reference_range": {
+          "low": 0.4,
+          "high": 4.0,
+          "source_label": null
+        },
+        "reported_interpretation": null,
+        "specimen": null,
+        "performing_lab": "Meridian Labs",
+        "ordering_provider_id": null,
+        "report_id": null
+      },
+      {
+        "id": "lab_01M3VFSH711TZP22DMBSM9TJHM",
+        "provenance": {
+          "origin": "human",
+          "asserted_by": {
+            "kind": "system",
+            "ref": "lab-portal",
+            "label": "lab-portal"
+          },
+          "asserted_at": "2026-03-12T09:00:00Z",
+          "imported_at": null,
+          "source_refs": [],
+          "derived_from": [],
+          "depth": 0,
+          "extraction_confidence": null
+        },
+        "field_provenance": {},
+        "record_status": "active",
+        "version": 1,
+        "superseded_by": null,
+        "created_at": "2026-03-12T09:00:00Z",
+        "updated_at": "2026-03-12T09:00:00Z",
+        "updated_by": {
+          "kind": "system",
+          "ref": "lab-portal",
+          "label": "lab-portal"
+        },
+        "patient_id": "pat_01M3VFSH711TZP22DMBSM9TJHB",
+        "encounter_id": null,
+        "biomarker": {
+          "raw_text": "TSH",
+          "system": "LOINC",
+          "code": "3016-3",
+          "display": null
+        },
+        "collection_date": "2026-02-26T09:00:00Z",
+        "quantity": {
+          "value": 5.6,
+          "unit": "mIU/L",
+          "ucum_code": null,
+          "comparator": null
+        },
+        "coded_value": null,
+        "reference_range": {
+          "low": 0.4,
+          "high": 4.0,
+          "source_label": null
+        },
+        "reported_interpretation": {
+          "raw_text": "H",
+          "system": null,
+          "code": null,
+          "display": null
+        },
+        "specimen": null,
+        "performing_lab": "Meridian Labs",
+        "ordering_provider_id": null,
+        "report_id": null
+      },
+      {
+        "id": "lab_01M3VFSH711TZP22DMBSM9TJHX",
+        "provenance": {
+          "origin": "human",
+          "asserted_by": {
+            "kind": "system",
+            "ref": "lab-portal",
+            "label": "lab-portal"
+          },
+          "asserted_at": "2026-03-12T09:00:00Z",
+          "imported_at": null,
+          "source_refs": [],
+          "derived_from": [],
+          "depth": 0,
+          "extraction_confidence": null
+        },
+        "field_provenance": {},
+        "record_status": "active",
+        "version": 1,
+        "superseded_by": null,
+        "created_at": "2026-03-12T09:00:00Z",
+        "updated_at": "2026-03-12T09:00:00Z",
+        "updated_by": {
+          "kind": "system",
+          "ref": "lab-portal",
+          "label": "lab-portal"
+        },
+        "patient_id": "pat_01M3VFSH711TZP22DMBSM9TJHB",
+        "encounter_id": null,
+        "biomarker": {
+          "raw_text": "free T4",
+          "system": "LOINC",
+          "code": "3024-7",
+          "display": null
+        },
+        "collection_date": "2026-02-26T09:00:00Z",
+        "quantity": {
+          "value": 11.2,
+          "unit": "pmol/L",
+          "ucum_code": null,
+          "comparator": null
+        },
+        "coded_value": null,
+        "reference_range": null,
+        "reported_interpretation": null,
+        "specimen": null,
+        "performing_lab": "Northgate Reference Lab",
+        "ordering_provider_id": null,
+        "report_id": null
+      },
+      {
+        "id": "lab_01M3VFSH711TZP22DMBSM9TJJ2",
+        "provenance": {
+          "origin": "human",
+          "asserted_by": {
+            "kind": "system",
+            "ref": "lab-portal",
+            "label": "lab-portal"
+          },
+          "asserted_at": "2026-03-12T09:00:00Z",
+          "imported_at": null,
+          "source_refs": [],
+          "derived_from": [],
+          "depth": 0,
+          "extraction_confidence": null
+        },
+        "field_provenance": {},
+        "record_status": "active",
+        "version": 1,
+        "superseded_by": null,
+        "created_at": "2026-03-12T09:00:00Z",
+        "updated_at": "2026-03-12T09:00:00Z",
+        "updated_by": {
+          "kind": "system",
+          "ref": "lab-portal",
+          "label": "lab-portal"
+        },
+        "patient_id": "pat_01M3VFSH711TZP22DMBSM9TJHB",
+        "encounter_id": null,
+        "biomarker": {
+          "raw_text": "glucose, fasting",
+          "system": "LOINC",
+          "code": "1558-6",
+          "display": null
+        },
+        "collection_date": "2026-02-26T09:00:00Z",
+        "quantity": null,
+        "coded_value": null,
+        "reference_range": {
+          "low": 3.9,
+          "high": 5.5,
+          "source_label": null
+        },
+        "reported_interpretation": null,
+        "specimen": null,
+        "performing_lab": "Meridian Labs",
+        "ordering_provider_id": null,
+        "report_id": null
+      }
+    ],
+    "vitals": [
+      {
+        "id": "vit_01M3VFSH711TZP22DMBSM9TJHQ",
+        "provenance": {
+          "origin": "human",
+          "asserted_by": {
+            "kind": "human",
+            "ref": "prov_01M3VFSH6JCRY6EWDR5FVVN4WK",
+            "label": "Dr A. Reyes"
+          },
+          "asserted_at": "2026-03-12T09:00:00Z",
+          "imported_at": null,
+          "source_refs": [],
+          "derived_from": [],
+          "depth": 0,
+          "extraction_confidence": null
+        },
+        "field_provenance": {},
+        "record_status": "active",
+        "version": 1,
+        "superseded_by": null,
+        "created_at": "2026-03-12T09:00:00Z",
+        "updated_at": "2026-03-12T09:00:00Z",
+        "updated_by": {
+          "kind": "human",
+          "ref": "prov_01M3VFSH6JCRY6EWDR5FVVN4WK",
+          "label": "Dr A. Reyes"
+        },
+        "patient_id": "pat_01M3VFSH711TZP22DMBSM9TJHB",
+        "encounter_id": "enc_01M3VFSH711TZP22DMBSM9TJHC",
+        "kind": {
+          "raw_text": "body weight",
+          "system": "LOINC",
+          "code": "29463-7",
+          "display": null
+        },
+        "measured_at": "2026-03-11T07:00:00Z",
+        "quantity": {
+          "value": 71.2,
+          "unit": "kg",
+          "ucum_code": null,
+          "comparator": null
+        },
+        "measurement_context": "clinical",
+        "body_position": null,
+        "cuff_size": null
+      },
+      {
+        "id": "vit_01M3VFSH711TZP22DMBSM9TJHR",
+        "provenance": {
+          "origin": "human",
+          "asserted_by": {
+            "kind": "human",
+            "ref": "prov_01M3VFSH6JCRY6EWDR5FVVN4WK",
+            "label": "Dr A. Reyes"
+          },
+          "asserted_at": "2026-03-12T09:00:00Z",
+          "imported_at": null,
+          "source_refs": [],
+          "derived_from": [],
+          "depth": 0,
+          "extraction_confidence": null
+        },
+        "field_provenance": {},
+        "record_status": "active",
+        "version": 1,
+        "superseded_by": null,
+        "created_at": "2026-03-12T09:00:00Z",
+        "updated_at": "2026-03-12T09:00:00Z",
+        "updated_by": {
+          "kind": "human",
+          "ref": "prov_01M3VFSH6JCRY6EWDR5FVVN4WK",
+          "label": "Dr A. Reyes"
+        },
+        "patient_id": "pat_01M3VFSH711TZP22DMBSM9TJHB",
+        "encounter_id": null,
+        "kind": {
+          "raw_text": "body weight",
+          "system": "LOINC",
+          "code": "29463-7",
+          "display": null
+        },
+        "measured_at": "2026-03-09T09:00:00Z",
+        "quantity": {
+          "value": 73.0,
+          "unit": "kg",
+          "ucum_code": null,
+          "comparator": null
+        },
+        "measurement_context": "patient_reported",
+        "body_position": null,
+        "cuff_size": null
+      },
+      {
+        "id": "vit_01M3VFSH711TZP22DMBSM9TJHS",
+        "provenance": {
+          "origin": "human",
+          "asserted_by": {
+            "kind": "human",
+            "ref": "prov_01M3VFSH6JCRY6EWDR5FVVN4WK",
+            "label": "Dr A. Reyes"
+          },
+          "asserted_at": "2026-03-12T09:00:00Z",
+          "imported_at": null,
+          "source_refs": [],
+          "derived_from": [],
+          "depth": 0,
+          "extraction_confidence": null
+        },
+        "field_provenance": {},
+        "record_status": "active",
+        "version": 1,
+        "superseded_by": null,
+        "created_at": "2026-03-12T09:00:00Z",
+        "updated_at": "2026-03-12T09:00:00Z",
+        "updated_by": {
+          "kind": "human",
+          "ref": "prov_01M3VFSH6JCRY6EWDR5FVVN4WK",
+          "label": "Dr A. Reyes"
+        },
+        "patient_id": "pat_01M3VFSH711TZP22DMBSM9TJHB",
+        "encounter_id": "enc_01M3VFSH711TZP22DMBSM9TJHC",
+        "kind": {
+          "raw_text": "systolic blood pressure",
+          "system": "LOINC",
+          "code": "8480-6",
+          "display": null
+        },
+        "measured_at": "2026-03-11T07:00:00Z",
+        "quantity": {
+          "value": 128.0,
+          "unit": "mmHg",
+          "ucum_code": null,
+          "comparator": null
+        },
+        "measurement_context": "clinical",
+        "body_position": "seated",
+        "cuff_size": null
+      }
+    ],
+    "clinical_notes": [
+      {
+        "id": "note_01M3VFSH711TZP22DMBSM9TJHT",
+        "provenance": {
+          "origin": "human",
+          "asserted_by": {
+            "kind": "human",
+            "ref": "prov_01M3VFSH6JCRY6EWDR5FVVN4WK",
+            "label": "Dr A. Reyes"
+          },
+          "asserted_at": "2026-03-12T09:00:00Z",
+          "imported_at": null,
+          "source_refs": [],
+          "derived_from": [],
+          "depth": 0,
+          "extraction_confidence": null
+        },
+        "field_provenance": {},
+        "record_status": "active",
+        "version": 1,
+        "superseded_by": null,
+        "created_at": "2026-03-12T09:00:00Z",
+        "updated_at": "2026-03-12T09:00:00Z",
+        "updated_by": {
+          "kind": "human",
+          "ref": "prov_01M3VFSH6JCRY6EWDR5FVVN4WK",
+          "label": "Dr A. Reyes"
+        },
+        "patient_id": "pat_01M3VFSH711TZP22DMBSM9TJHB",
+        "encounter_id": "enc_01M3VFSH711TZP22DMBSM9TJHC",
+        "note_type": "progress",
+        "authored_at": "2026-03-11T08:00:00Z",
+        "author_id": "prov_01M3VFSH711TZP22DMBSM9TJHA",
+        "body": {
+          "value": "TSH 5.6 on the 26 Feb panel, up from 3.8 in September. Reports fatigue and cold intolerance. Discussed raising levothyroxine to 88 mcg and repeating TSH in six weeks. Notes she started biotin in the autumn.",
+          "origin": "practice_authored",
+          "captured_by": {
+            "kind": "human",
+            "ref": "prov_01M3VFSH6JCRY6EWDR5FVVN4WK",
+            "label": "Dr A. Reyes"
+          }
+        },
+        "addenda": [],
+        "signed_at": "2026-03-11T09:00:00Z"
+      },
+      {
+        "id": "note_01M3VFSH711TZP22DMBSM9TJHV",
+        "provenance": {
+          "origin": "human",
+          "asserted_by": {
+            "kind": "human",
+            "ref": "prov_01M3VFSH6JCRY6EWDR5FVVN4WK",
+            "label": "Dr A. Reyes"
+          },
+          "asserted_at": "2026-03-12T09:00:00Z",
+          "imported_at": null,
+          "source_refs": [],
+          "derived_from": [],
+          "depth": 0,
+          "extraction_confidence": null
+        },
+        "field_provenance": {},
+        "record_status": "active",
+        "version": 1,
+        "superseded_by": null,
+        "created_at": "2026-03-12T09:00:00Z",
+        "updated_at": "2026-03-12T09:00:00Z",
+        "updated_by": {
+          "kind": "human",
+          "ref": "prov_01M3VFSH6JCRY6EWDR5FVVN4WK",
+          "label": "Dr A. Reyes"
+        },
+        "patient_id": "pat_01M3VFSH711TZP22DMBSM9TJHB",
+        "encounter_id": null,
+        "note_type": "telephone",
+        "authored_at": "2026-03-07T09:00:00Z",
+        "author_id": "prov_01M3VFSH711TZP22DMBSM9TJHA",
+        "body": {
+          "value": "Patient portal message, pasted: \"I have been taking the biotin supplement since autumn, could that affect the thyroid blood test?\"",
+          "origin": "transcribed_external",
+          "captured_by": {
+            "kind": "human",
+            "ref": "prov_01M3VFSH6JCRY6EWDR5FVVN4WK",
+            "label": "Dr A. Reyes"
+          }
+        },
+        "addenda": [],
+        "signed_at": null
+      }
+    ],
+    "treatment_plans": [
+      {
+        "id": "plan_01M3VFSH711TZP22DMBSM9TJHW",
+        "provenance": {
+          "origin": "human",
+          "asserted_by": {
+            "kind": "human",
+            "ref": "prov_01M3VFSH6JCRY6EWDR5FVVN4WK",
+            "label": "Dr A. Reyes"
+          },
+          "asserted_at": "2026-03-12T09:00:00Z",
+          "imported_at": null,
+          "source_refs": [],
+          "derived_from": [],
+          "depth": 0,
+          "extraction_confidence": null
+        },
+        "field_provenance": {},
+        "record_status": "active",
+        "version": 1,
+        "superseded_by": null,
+        "created_at": "2026-03-12T09:00:00Z",
+        "updated_at": "2026-03-12T09:00:00Z",
+        "updated_by": {
+          "kind": "human",
+          "ref": "prov_01M3VFSH6JCRY6EWDR5FVVN4WK",
+          "label": "Dr A. Reyes"
+        },
+        "patient_id": "pat_01M3VFSH711TZP22DMBSM9TJHB",
+        "encounter_id": "enc_01M3VFSH711TZP22DMBSM9TJHC",
+        "title": "Thyroid optimisation, Q2 2026",
+        "items": [
+          {
+            "description": "Increase levothyroxine to 88 mcg daily",
+            "targets": [
+              "med_01M3VFSH711TZP22DMBSM9TJHH",
+              "cond_01M3VFSH711TZP22DMBSM9TJHF"
+            ],
+            "due": "2026-03-20"
+          },
+          {
+            "description": "Repeat TSH and free T4 in six weeks",
+            "targets": [
+              "cond_01M3VFSH711TZP22DMBSM9TJHF"
+            ],
+            "due": "2026-04-23"
+          },
+          {
+            "description": "Pause biotin for three days before the next draw",
+            "targets": [
+              "supp_01M3VFSH711TZP22DMBSM9TJHP"
+            ],
+            "due": null
+          }
+        ],
+        "authored_by": "prov_01M3VFSH711TZP22DMBSM9TJHA"
+      }
+    ],
+    "source_references": [
+      {
+        "id": "sref_01M3VFSH711TZP22DMBSM9TJHY",
+        "provenance": {
+          "origin": "human",
+          "asserted_by": {
+            "kind": "system",
+            "ref": "lab-portal",
+            "label": "lab-portal"
+          },
+          "asserted_at": "2026-03-12T09:00:00Z",
+          "imported_at": null,
+          "source_refs": [],
+          "derived_from": [],
+          "depth": 0,
+          "extraction_confidence": null
+        },
+        "field_provenance": {},
+        "record_status": "active",
+        "version": 1,
+        "superseded_by": null,
+        "created_at": "2026-03-12T09:00:00Z",
+        "updated_at": "2026-03-12T09:00:00Z",
+        "updated_by": {
+          "kind": "system",
+          "ref": "lab-portal",
+          "label": "lab-portal"
+        },
+        "patient_id": "pat_01M3VFSH711TZP22DMBSM9TJHB",
+        "document_id": "doc_01M3VFSH711TZP22DMBSM9TJHZ",
+        "page": null,
+        "field_path": "labs[3].value",
+        "span_start": null,
+        "span_end": null,
+        "quote": "Glucose 5.5 mmol/L"
+      },
+      {
+        "id": "sref_01M3VFSH711TZP22DMBSM9TJJ0",
+        "provenance": {
+          "origin": "human",
+          "asserted_by": {
+            "kind": "system",
+            "ref": "lab-portal",
+            "label": "lab-portal"
+          },
+          "asserted_at": "2026-03-12T09:00:00Z",
+          "imported_at": null,
+          "source_refs": [],
+          "derived_from": [],
+          "depth": 0,
+          "extraction_confidence": null
+        },
+        "field_provenance": {},
+        "record_status": "active",
+        "version": 1,
+        "superseded_by": null,
+        "created_at": "2026-03-12T09:00:00Z",
+        "updated_at": "2026-03-12T09:00:00Z",
+        "updated_by": {
+          "kind": "system",
+          "ref": "lab-portal",
+          "label": "lab-portal"
+        },
+        "patient_id": "pat_01M3VFSH711TZP22DMBSM9TJHB",
+        "document_id": "doc_01M3VFSH711TZP22DMBSM9TJJ1",
+        "page": 2,
+        "field_path": "results[1].value",
+        "span_start": null,
+        "span_end": null,
+        "quote": "Glucose 7.2 mmol/L"
+      }
+    ],
+    "data_quality_flags": [
+      {
+        "id": "flag_01M3VFSH711TZP22DMBSM9TJJ3",
+        "provenance": {
+          "origin": "human",
+          "asserted_by": {
+            "kind": "pipeline",
+            "ref": "normaliser",
+            "label": "normaliser"
+          },
+          "asserted_at": "2026-03-12T09:00:00Z",
+          "imported_at": null,
+          "source_refs": [],
+          "derived_from": [],
+          "depth": 0,
+          "extraction_confidence": null
+        },
+        "field_provenance": {},
+        "record_status": "active",
+        "version": 1,
+        "superseded_by": null,
+        "created_at": "2026-03-12T09:00:00Z",
+        "updated_at": "2026-03-12T09:00:00Z",
+        "updated_by": {
+          "kind": "pipeline",
+          "ref": "normaliser",
+          "label": "normaliser"
+        },
+        "patient_id": "pat_01M3VFSH711TZP22DMBSM9TJHB",
+        "code": "CONFLICTING_VALUES",
+        "severity": "blocking",
+        "message": "fasting glucose: EMR 5.5 mmol/L against lab 7.2 mmol/L, unresolved",
+        "status": "open",
+        "targets": [
+          {
+            "entity_type": "LabResult",
+            "entity_id": "lab_01M3VFSH711TZP22DMBSM9TJJ2",
+            "field_path": "quantity"
+          }
+        ],
+        "candidates": [
+          "sref_01M3VFSH711TZP22DMBSM9TJHY",
+          "sref_01M3VFSH711TZP22DMBSM9TJJ0"
+        ],
+        "source_locator": []
+      },
+      {
+        "id": "flag_01M3VFSH72915QVGWGJ120S80Z",
+        "provenance": {
+          "origin": "system_derived",
+          "asserted_by": {
+            "kind": "human",
+            "ref": "prov_01M3VFSH711TZP22DMBSM9TJHA",
+            "label": "Dr A. Reyes"
+          },
+          "asserted_at": "2026-03-12T09:00:00Z",
+          "imported_at": null,
+          "source_refs": [],
+          "derived_from": [],
+          "depth": 0,
+          "extraction_confidence": null
+        },
+        "field_provenance": {},
+        "record_status": "active",
+        "version": 1,
+        "superseded_by": null,
+        "created_at": "2026-03-12T09:00:00Z",
+        "updated_at": "2026-03-12T09:00:00Z",
+        "updated_by": {
+          "kind": "human",
+          "ref": "prov_01M3VFSH711TZP22DMBSM9TJHA",
+          "label": "Dr A. Reyes"
+        },
+        "patient_id": "pat_01M3VFSH711TZP22DMBSM9TJHB",
+        "code": "MISSING_REFERENCE_RANGE",
+        "severity": "warning",
+        "message": "free T4: no reference range from the performing lab",
+        "status": "open",
+        "targets": [
+          {
+            "entity_type": "LabResult",
+            "entity_id": "lab_01M3VFSH711TZP22DMBSM9TJHX",
+            "field_path": "reference_range"
+          }
+        ],
+        "candidates": [],
+        "source_locator": []
+      }
+    ]
+  },
+  "derived": {
+    "timeline": [
+      {
+        "at": "2019-02-03T00:00:00Z",
+        "kind": "condition_onset",
+        "label": "iron deficiency anaemia",
+        "source_type": "Condition",
+        "source_id": "cond_01M3VFSH711TZP22DMBSM9TJHG"
+      },
+      {
+        "at": "2019-11-20T00:00:00Z",
+        "kind": "condition_resolved",
+        "label": "iron deficiency anaemia",
+        "source_type": "Condition",
+        "source_id": "cond_01M3VFSH711TZP22DMBSM9TJHG"
+      },
+      {
+        "at": "2021-05-14T00:00:00Z",
+        "kind": "condition_onset",
+        "label": "hypothyroidism",
+        "source_type": "Condition",
+        "source_id": "cond_01M3VFSH711TZP22DMBSM9TJHF"
+      },
+      {
+        "at": "2021-06-01T00:00:00Z",
+        "kind": "medication_started",
+        "label": "levothyroxine",
+        "source_type": "Medication",
+        "source_id": "med_01M3VFSH711TZP22DMBSM9TJHH"
+      },
+      {
+        "at": "2024-11-01T00:00:00Z",
+        "kind": "supplement_started",
+        "label": "vitamin D3",
+        "source_type": "Supplement",
+        "source_id": "supp_01M3VFSH711TZP22DMBSM9TJHN"
+      },
+      {
+        "at": "2025-09-01T00:00:00Z",
+        "kind": "supplement_started",
+        "label": "biotin",
+        "source_type": "Supplement",
+        "source_id": "supp_01M3VFSH711TZP22DMBSM9TJHP"
+      },
+      {
+        "at": "2025-09-13T09:00:00Z",
+        "kind": "lab_collected",
+        "label": "TSH",
+        "source_type": "LabResult",
+        "source_id": "lab_01M3VFSH711TZP22DMBSM9TJHK"
+      },
+      {
+        "at": "2026-02-26T09:00:00Z",
+        "kind": "lab_collected",
+        "label": "TSH",
+        "source_type": "LabResult",
+        "source_id": "lab_01M3VFSH711TZP22DMBSM9TJHM"
+      },
+      {
+        "at": "2026-02-26T09:00:00Z",
+        "kind": "lab_collected",
+        "label": "free T4",
+        "source_type": "LabResult",
+        "source_id": "lab_01M3VFSH711TZP22DMBSM9TJHX"
+      },
+      {
+        "at": "2026-02-26T09:00:00Z",
+        "kind": "lab_collected",
+        "label": "glucose, fasting",
+        "source_type": "LabResult",
+        "source_id": "lab_01M3VFSH711TZP22DMBSM9TJJ2"
+      },
+      {
+        "at": "2026-03-07T09:00:00Z",
+        "kind": "note_authored",
+        "label": "telephone",
+        "source_type": "ClinicalNote",
+        "source_id": "note_01M3VFSH711TZP22DMBSM9TJHV"
+      },
+      {
+        "at": "2026-03-11T07:00:00Z",
+        "kind": "encounter",
+        "label": "office visit",
+        "source_type": "Encounter",
+        "source_id": "enc_01M3VFSH711TZP22DMBSM9TJHC"
+      },
+      {
+        "at": "2026-03-11T08:00:00Z",
+        "kind": "note_authored",
+        "label": "progress",
+        "source_type": "ClinicalNote",
+        "source_id": "note_01M3VFSH711TZP22DMBSM9TJHT"
+      }
+    ],
+    "lab_trends": [
+      {
+        "analyte": {
+          "raw_text": "TSH",
+          "system": "LOINC",
+          "code": "3016-3",
+          "display": null
+        },
+        "series": [
+          {
+            "result_id": "lab_01M3VFSH711TZP22DMBSM9TJHK",
+            "at": "2025-09-13T09:00:00Z",
+            "quantity": {
+              "value": 3.8,
+              "unit": "mIU/L",
+              "ucum_code": null,
+              "comparator": null
+            }
+          },
+          {
+            "result_id": "lab_01M3VFSH711TZP22DMBSM9TJHM",
+            "at": "2026-02-26T09:00:00Z",
+            "quantity": {
+              "value": 5.6,
+              "unit": "mIU/L",
+              "ucum_code": null,
+              "comparator": null
+            }
+          }
+        ],
+        "numeric_basis": [
+          "lab_01M3VFSH711TZP22DMBSM9TJHK",
+          "lab_01M3VFSH711TZP22DMBSM9TJHM"
+        ],
+        "excluded": [],
+        "direction": "rising",
+        "unresolved": [
+          {
+            "flag_id": "flag_01M3VFSH711TZP22DMBSM9TJJ3",
+            "code": "CONFLICTING_VALUES",
+            "severity": "blocking",
+            "message": "fasting glucose: EMR 5.5 mmol/L against lab 7.2 mmol/L, unresolved"
+          }
+        ]
+      },
+      {
+        "analyte": {
+          "raw_text": "free T4",
+          "system": "LOINC",
+          "code": "3024-7",
+          "display": null
+        },
+        "series": [
+          {
+            "result_id": "lab_01M3VFSH711TZP22DMBSM9TJHX",
+            "at": "2026-02-26T09:00:00Z",
+            "quantity": {
+              "value": 11.2,
+              "unit": "pmol/L",
+              "ucum_code": null,
+              "comparator": null
+            }
+          }
+        ],
+        "numeric_basis": [
+          "lab_01M3VFSH711TZP22DMBSM9TJHX"
+        ],
+        "excluded": [],
+        "direction": "indeterminate",
+        "unresolved": [
+          {
+            "flag_id": "flag_01M3VFSH711TZP22DMBSM9TJJ3",
+            "code": "CONFLICTING_VALUES",
+            "severity": "blocking",
+            "message": "fasting glucose: EMR 5.5 mmol/L against lab 7.2 mmol/L, unresolved"
+          }
+        ]
+      },
+      {
+        "analyte": {
+          "raw_text": "glucose, fasting",
+          "system": "LOINC",
+          "code": "1558-6",
+          "display": null
+        },
+        "series": [
+          {
+            "result_id": "lab_01M3VFSH711TZP22DMBSM9TJJ2",
+            "at": "2026-02-26T09:00:00Z",
+            "quantity": null
+          }
+        ],
+        "numeric_basis": [],
+        "excluded": [
+          {
+            "result_id": "lab_01M3VFSH711TZP22DMBSM9TJJ2",
+            "at": "2026-02-26T09:00:00Z",
+            "quantity": null,
+            "reason": "no_value"
+          }
+        ],
+        "direction": "indeterminate",
+        "unresolved": [
+          {
+            "flag_id": "flag_01M3VFSH711TZP22DMBSM9TJJ3",
+            "code": "CONFLICTING_VALUES",
+            "severity": "blocking",
+            "message": "fasting glucose: EMR 5.5 mmol/L against lab 7.2 mmol/L, unresolved"
+          }
+        ]
+      }
+    ],
+    "pre_visit_brief": {
+      "header": {
+        "patient_id": "pat_01M3VFSH711TZP22DMBSM9TJHB",
+        "display_name": "Dana Okafor",
+        "primary_mrn": "MRN-4471",
+        "birth_date": "1979-04-02"
+      },
+      "generated_at": "2026-03-12T09:00:00Z",
+      "unresolved": [
+        {
+          "flag_id": "flag_01M3VFSH711TZP22DMBSM9TJJ3",
+          "code": "CONFLICTING_VALUES",
+          "severity": "blocking",
+          "message": "fasting glucose: EMR 5.5 mmol/L against lab 7.2 mmol/L, unresolved"
+        }
+      ],
+      "active_conditions": [
+        "hypothyroidism"
+      ],
+      "active_medications": [
+        "levothyroxine"
+      ],
+      "active_supplements": [
+        "vitamin D3",
+        "biotin"
+      ],
+      "allergies": [
+        "penicillin"
+      ],
+      "recent_vitals": [
+        "body weight 71.2 kg (clinical)",
+        "systolic blood pressure 128.0 mmHg (clinical)",
+        "body weight 73.0 kg (patient_reported)"
+      ],
+      "trends": [
+        {
+          "analyte": {
+            "raw_text": "TSH",
+            "system": "LOINC",
+            "code": "3016-3",
+            "display": null
+          },
+          "series": [
+            {
+              "result_id": "lab_01M3VFSH711TZP22DMBSM9TJHK",
+              "at": "2025-09-13T09:00:00Z",
+              "quantity": {
+                "value": 3.8,
+                "unit": "mIU/L",
+                "ucum_code": null,
+                "comparator": null
+              }
+            },
+            {
+              "result_id": "lab_01M3VFSH711TZP22DMBSM9TJHM",
+              "at": "2026-02-26T09:00:00Z",
+              "quantity": {
+                "value": 5.6,
+                "unit": "mIU/L",
+                "ucum_code": null,
+                "comparator": null
+              }
+            }
+          ],
+          "numeric_basis": [
+            "lab_01M3VFSH711TZP22DMBSM9TJHK",
+            "lab_01M3VFSH711TZP22DMBSM9TJHM"
+          ],
+          "excluded": [],
+          "direction": "rising",
+          "unresolved": [
+            {
+              "flag_id": "flag_01M3VFSH711TZP22DMBSM9TJJ3",
+              "code": "CONFLICTING_VALUES",
+              "severity": "blocking",
+              "message": "fasting glucose: EMR 5.5 mmol/L against lab 7.2 mmol/L, unresolved"
+            }
+          ]
+        },
+        {
+          "analyte": {
+            "raw_text": "free T4",
+            "system": "LOINC",
+            "code": "3024-7",
+            "display": null
+          },
+          "series": [
+            {
+              "result_id": "lab_01M3VFSH711TZP22DMBSM9TJHX",
+              "at": "2026-02-26T09:00:00Z",
+              "quantity": {
+                "value": 11.2,
+                "unit": "pmol/L",
+                "ucum_code": null,
+                "comparator": null
+              }
+            }
+          ],
+          "numeric_basis": [
+            "lab_01M3VFSH711TZP22DMBSM9TJHX"
+          ],
+          "excluded": [],
+          "direction": "indeterminate",
+          "unresolved": [
+            {
+              "flag_id": "flag_01M3VFSH711TZP22DMBSM9TJJ3",
+              "code": "CONFLICTING_VALUES",
+              "severity": "blocking",
+              "message": "fasting glucose: EMR 5.5 mmol/L against lab 7.2 mmol/L, unresolved"
+            }
+          ]
+        },
+        {
+          "analyte": {
+            "raw_text": "glucose, fasting",
+            "system": "LOINC",
+            "code": "1558-6",
+            "display": null
+          },
+          "series": [
+            {
+              "result_id": "lab_01M3VFSH711TZP22DMBSM9TJJ2",
+              "at": "2026-02-26T09:00:00Z",
+              "quantity": null
+            }
+          ],
+          "numeric_basis": [],
+          "excluded": [
+            {
+              "result_id": "lab_01M3VFSH711TZP22DMBSM9TJJ2",
+              "at": "2026-02-26T09:00:00Z",
+              "quantity": null,
+              "reason": "no_value"
+            }
+          ],
+          "direction": "indeterminate",
+          "unresolved": [
+            {
+              "flag_id": "flag_01M3VFSH711TZP22DMBSM9TJJ3",
+              "code": "CONFLICTING_VALUES",
+              "severity": "blocking",
+              "message": "fasting glucose: EMR 5.5 mmol/L against lab 7.2 mmol/L, unresolved"
+            }
+          ]
+        }
+      ],
+      "timeline": [
+        {
+          "at": "2019-02-03T00:00:00Z",
+          "kind": "condition_onset",
+          "label": "iron deficiency anaemia",
+          "source_type": "Condition",
+          "source_id": "cond_01M3VFSH711TZP22DMBSM9TJHG"
+        },
+        {
+          "at": "2019-11-20T00:00:00Z",
+          "kind": "condition_resolved",
+          "label": "iron deficiency anaemia",
+          "source_type": "Condition",
+          "source_id": "cond_01M3VFSH711TZP22DMBSM9TJHG"
+        },
+        {
+          "at": "2021-05-14T00:00:00Z",
+          "kind": "condition_onset",
+          "label": "hypothyroidism",
+          "source_type": "Condition",
+          "source_id": "cond_01M3VFSH711TZP22DMBSM9TJHF"
+        },
+        {
+          "at": "2021-06-01T00:00:00Z",
+          "kind": "medication_started",
+          "label": "levothyroxine",
+          "source_type": "Medication",
+          "source_id": "med_01M3VFSH711TZP22DMBSM9TJHH"
+        },
+        {
+          "at": "2024-11-01T00:00:00Z",
+          "kind": "supplement_started",
+          "label": "vitamin D3",
+          "source_type": "Supplement",
+          "source_id": "supp_01M3VFSH711TZP22DMBSM9TJHN"
+        },
+        {
+          "at": "2025-09-01T00:00:00Z",
+          "kind": "supplement_started",
+          "label": "biotin",
+          "source_type": "Supplement",
+          "source_id": "supp_01M3VFSH711TZP22DMBSM9TJHP"
+        },
+        {
+          "at": "2025-09-13T09:00:00Z",
+          "kind": "lab_collected",
+          "label": "TSH",
+          "source_type": "LabResult",
+          "source_id": "lab_01M3VFSH711TZP22DMBSM9TJHK"
+        },
+        {
+          "at": "2026-02-26T09:00:00Z",
+          "kind": "lab_collected",
+          "label": "TSH",
+          "source_type": "LabResult",
+          "source_id": "lab_01M3VFSH711TZP22DMBSM9TJHM"
+        },
+        {
+          "at": "2026-02-26T09:00:00Z",
+          "kind": "lab_collected",
+          "label": "free T4",
+          "source_type": "LabResult",
+          "source_id": "lab_01M3VFSH711TZP22DMBSM9TJHX"
+        },
+        {
+          "at": "2026-02-26T09:00:00Z",
+          "kind": "lab_collected",
+          "label": "glucose, fasting",
+          "source_type": "LabResult",
+          "source_id": "lab_01M3VFSH711TZP22DMBSM9TJJ2"
+        },
+        {
+          "at": "2026-03-07T09:00:00Z",
+          "kind": "note_authored",
+          "label": "telephone",
+          "source_type": "ClinicalNote",
+          "source_id": "note_01M3VFSH711TZP22DMBSM9TJHV"
+        },
+        {
+          "at": "2026-03-11T07:00:00Z",
+          "kind": "encounter",
+          "label": "office visit",
+          "source_type": "Encounter",
+          "source_id": "enc_01M3VFSH711TZP22DMBSM9TJHC"
+        },
+        {
+          "at": "2026-03-11T08:00:00Z",
+          "kind": "note_authored",
+          "label": "progress",
+          "source_type": "ClinicalNote",
+          "source_id": "note_01M3VFSH711TZP22DMBSM9TJHT"
+        }
+      ],
+      "narrative_withheld_reason": null
+    }
+  },
+  "ai_layer": {
+    "summary": {
+      "id": "aia_01M3VFSH72915QVGWGJ120S80Y",
+      "patient_id": "pat_01M3VFSH711TZP22DMBSM9TJHB",
+      "trace_id": "trc_01M3VFSH711TZP22DMBSM9TJJ4",
+      "created_at": "2026-03-12T09:00:00Z",
+      "inputs": [
+        {
+          "entity_type": "Condition",
+          "entity_id": "cond_01M3VFSH711TZP22DMBSM9TJHF",
+          "version": 1
+        },
+        {
+          "entity_type": "Medication",
+          "entity_id": "med_01M3VFSH711TZP22DMBSM9TJHH",
+          "version": 1
+        },
+        {
+          "entity_type": "AllergyIntolerance",
+          "entity_id": "alg_01M3VFSH711TZP22DMBSM9TJHJ",
+          "version": 1
+        },
+        {
+          "entity_type": "Condition",
+          "entity_id": "cond_01M3VFSH711TZP22DMBSM9TJHG",
+          "version": 1
+        },
+        {
+          "entity_type": "Supplement",
+          "entity_id": "supp_01M3VFSH711TZP22DMBSM9TJHN",
+          "version": 1
+        },
+        {
+          "entity_type": "Supplement",
+          "entity_id": "supp_01M3VFSH711TZP22DMBSM9TJHP",
+          "version": 1
+        },
+        {
+          "entity_type": "LabResult",
+          "entity_id": "lab_01M3VFSH711TZP22DMBSM9TJHK",
+          "version": 1
+        },
+        {
+          "entity_type": "LabResult",
+          "entity_id": "lab_01M3VFSH711TZP22DMBSM9TJHM",
+          "version": 1
+        },
+        {
+          "entity_type": "LabResult",
+          "entity_id": "lab_01M3VFSH711TZP22DMBSM9TJHX",
+          "version": 1
+        },
+        {
+          "entity_type": "LabResult",
+          "entity_id": "lab_01M3VFSH711TZP22DMBSM9TJJ2",
+          "version": 1
+        },
+        {
+          "entity_type": "VitalSign",
+          "entity_id": "vit_01M3VFSH711TZP22DMBSM9TJHQ",
+          "version": 1
+        },
+        {
+          "entity_type": "VitalSign",
+          "entity_id": "vit_01M3VFSH711TZP22DMBSM9TJHR",
+          "version": 1
+        },
+        {
+          "entity_type": "VitalSign",
+          "entity_id": "vit_01M3VFSH711TZP22DMBSM9TJHS",
+          "version": 1
+        },
+        {
+          "entity_type": "ClinicalNote",
+          "entity_id": "note_01M3VFSH711TZP22DMBSM9TJHT",
+          "version": 1
+        },
+        {
+          "entity_type": "ClinicalNote",
+          "entity_id": "note_01M3VFSH711TZP22DMBSM9TJHV",
+          "version": 1
+        }
+      ],
+      "omitted": [],
+      "produced": [],
+      "prompt_digest": "sha256:04d28e75bb884e276022e8b9d6f14eb4a3dfbb192baab742ae7e33cbd9121f0b",
+      "model_id": "llama-3.3-70b-instruct",
+      "model_digest": "sha256:8f4a1c…(illustrative)",
+      "engine": "ollama",
+      "engine_version": "0.5.1",
+      "execution": "local",
+      "consent_ref": "cons_01M3VFSH711TZP22DMBSM9TJHE",
+      "review": "pending",
+      "reviewed_by": null,
+      "reviewed_at": null,
+      "guardrail_failures": [],
+      "claims": [
+        {
+          "text": "TSH measured 3.8 mIU/L.",
+          "cites": [
+            {
+              "entity_type": "LabResult",
+              "entity_id": "lab_01M3VFSH711TZP22DMBSM9TJHK",
+              "version": 1
+            }
+          ],
+          "values": [
+            {
+              "value": 3.8,
+              "unit": "mIU/L",
+              "cites": {
+                "entity_type": "LabResult",
+                "entity_id": "lab_01M3VFSH711TZP22DMBSM9TJHK",
+                "version": 1
+              }
+            }
+          ]
+        },
+        {
+          "text": "TSH measured 5.6 mIU/L.",
+          "cites": [
+            {
+              "entity_type": "LabResult",
+              "entity_id": "lab_01M3VFSH711TZP22DMBSM9TJHM",
+              "version": 1
+            }
+          ],
+          "values": [
+            {
+              "value": 5.6,
+              "unit": "mIU/L",
+              "cites": {
+                "entity_type": "LabResult",
+                "entity_id": "lab_01M3VFSH711TZP22DMBSM9TJHM",
+                "version": 1
+              }
+            }
+          ]
+        },
+        {
+          "text": "free T4 measured 11.2 pmol/L.",
+          "cites": [
+            {
+              "entity_type": "LabResult",
+              "entity_id": "lab_01M3VFSH711TZP22DMBSM9TJHX",
+              "version": 1
+            }
+          ],
+          "values": [
+            {
+              "value": 11.2,
+              "unit": "pmol/L",
+              "cites": {
+                "entity_type": "LabResult",
+                "entity_id": "lab_01M3VFSH711TZP22DMBSM9TJHX",
+                "version": 1
+              }
+            }
+          ]
+        },
+        {
+          "text": "TSH trend is rising.",
+          "cites": [
+            {
+              "entity_type": "LabResult",
+              "entity_id": "lab_01M3VFSH711TZP22DMBSM9TJHK",
+              "version": 1
+            },
+            {
+              "entity_type": "LabResult",
+              "entity_id": "lab_01M3VFSH711TZP22DMBSM9TJHM",
+              "version": 1
+            }
+          ],
+          "values": []
+        },
+        {
+          "text": "free T4 trend is indeterminate.",
+          "cites": [
+            {
+              "entity_type": "LabResult",
+              "entity_id": "lab_01M3VFSH711TZP22DMBSM9TJHX",
+              "version": 1
+            }
+          ],
+          "values": []
+        }
+      ],
+      "unresolved": [
+        {
+          "flag_id": "flag_01M3VFSH711TZP22DMBSM9TJJ3",
+          "code": "CONFLICTING_VALUES",
+          "severity": "blocking",
+          "message": "fasting glucose: EMR 5.5 mmol/L against lab 7.2 mmol/L, unresolved"
+        }
+      ]
+    },
+    "human_review_status": "pending"
+  },
+  "audit": [
+    {
+      "id": "aud_01M3VFSH72915QVGWGJ120S80Q",
+      "provenance": {
+        "origin": "system_derived",
+        "asserted_by": {
+          "kind": "agent",
+          "ref": "previsit-brief",
+          "label": "previsit-brief"
+        },
+        "asserted_at": "2026-03-12T09:00:00Z",
+        "imported_at": null,
+        "source_refs": [],
+        "derived_from": [],
+        "depth": 0,
+        "extraction_confidence": null
+      },
+      "field_provenance": {},
+      "record_status": "active",
+      "version": 1,
+      "superseded_by": null,
+      "created_at": "2026-03-12T09:00:00Z",
+      "updated_at": "2026-03-12T09:00:00Z",
+      "updated_by": {
+        "kind": "agent",
+        "ref": "previsit-brief",
+        "label": "previsit-brief"
+      },
+      "patient_id": "pat_01M3VFSH711TZP22DMBSM9TJHB",
+      "action": "read",
+      "trace_id": "trc_01M3VFSH711TZP22DMBSM9TJJ4",
+      "actor": {
+        "kind": "agent",
+        "ref": "previsit-brief",
+        "label": "previsit-brief"
+      },
+      "targets": [
+        "cond_01M3VFSH711TZP22DMBSM9TJHF",
+        "cond_01M3VFSH711TZP22DMBSM9TJHG"
+      ],
+      "fields_read": null,
+      "field_delta": {},
+      "ingest": null,
+      "occurred_at": null,
+      "inputs": [
+        {
+          "entity_type": "Condition",
+          "entity_id": "cond_01M3VFSH711TZP22DMBSM9TJHF",
+          "version": 1
+        },
+        {
+          "entity_type": "Condition",
+          "entity_id": "cond_01M3VFSH711TZP22DMBSM9TJHG",
+          "version": 1
+        }
+      ]
+    },
+    {
+      "id": "aud_01M3VFSH72915QVGWGJ120S80R",
+      "provenance": {
+        "origin": "system_derived",
+        "asserted_by": {
+          "kind": "agent",
+          "ref": "previsit-brief",
+          "label": "previsit-brief"
+        },
+        "asserted_at": "2026-03-12T09:00:00Z",
+        "imported_at": null,
+        "source_refs": [],
+        "derived_from": [],
+        "depth": 0,
+        "extraction_confidence": null
+      },
+      "field_provenance": {},
+      "record_status": "active",
+      "version": 1,
+      "superseded_by": null,
+      "created_at": "2026-03-12T09:00:00Z",
+      "updated_at": "2026-03-12T09:00:00Z",
+      "updated_by": {
+        "kind": "agent",
+        "ref": "previsit-brief",
+        "label": "previsit-brief"
+      },
+      "patient_id": "pat_01M3VFSH711TZP22DMBSM9TJHB",
+      "action": "read",
+      "trace_id": "trc_01M3VFSH711TZP22DMBSM9TJJ4",
+      "actor": {
+        "kind": "agent",
+        "ref": "previsit-brief",
+        "label": "previsit-brief"
+      },
+      "targets": [
+        "med_01M3VFSH711TZP22DMBSM9TJHH"
+      ],
+      "fields_read": null,
+      "field_delta": {},
+      "ingest": null,
+      "occurred_at": null,
+      "inputs": [
+        {
+          "entity_type": "Medication",
+          "entity_id": "med_01M3VFSH711TZP22DMBSM9TJHH",
+          "version": 1
+        }
+      ]
+    },
+    {
+      "id": "aud_01M3VFSH72915QVGWGJ120S80S",
+      "provenance": {
+        "origin": "system_derived",
+        "asserted_by": {
+          "kind": "agent",
+          "ref": "previsit-brief",
+          "label": "previsit-brief"
+        },
+        "asserted_at": "2026-03-12T09:00:00Z",
+        "imported_at": null,
+        "source_refs": [],
+        "derived_from": [],
+        "depth": 0,
+        "extraction_confidence": null
+      },
+      "field_provenance": {},
+      "record_status": "active",
+      "version": 1,
+      "superseded_by": null,
+      "created_at": "2026-03-12T09:00:00Z",
+      "updated_at": "2026-03-12T09:00:00Z",
+      "updated_by": {
+        "kind": "agent",
+        "ref": "previsit-brief",
+        "label": "previsit-brief"
+      },
+      "patient_id": "pat_01M3VFSH711TZP22DMBSM9TJHB",
+      "action": "read",
+      "trace_id": "trc_01M3VFSH711TZP22DMBSM9TJJ4",
+      "actor": {
+        "kind": "agent",
+        "ref": "previsit-brief",
+        "label": "previsit-brief"
+      },
+      "targets": [
+        "alg_01M3VFSH711TZP22DMBSM9TJHJ"
+      ],
+      "fields_read": null,
+      "field_delta": {},
+      "ingest": null,
+      "occurred_at": null,
+      "inputs": [
+        {
+          "entity_type": "AllergyIntolerance",
+          "entity_id": "alg_01M3VFSH711TZP22DMBSM9TJHJ",
+          "version": 1
+        }
+      ]
+    },
+    {
+      "id": "aud_01M3VFSH72915QVGWGJ120S80T",
+      "provenance": {
+        "origin": "system_derived",
+        "asserted_by": {
+          "kind": "agent",
+          "ref": "previsit-brief",
+          "label": "previsit-brief"
+        },
+        "asserted_at": "2026-03-12T09:00:00Z",
+        "imported_at": null,
+        "source_refs": [],
+        "derived_from": [],
+        "depth": 0,
+        "extraction_confidence": null
+      },
+      "field_provenance": {},
+      "record_status": "active",
+      "version": 1,
+      "superseded_by": null,
+      "created_at": "2026-03-12T09:00:00Z",
+      "updated_at": "2026-03-12T09:00:00Z",
+      "updated_by": {
+        "kind": "agent",
+        "ref": "previsit-brief",
+        "label": "previsit-brief"
+      },
+      "patient_id": "pat_01M3VFSH711TZP22DMBSM9TJHB",
+      "action": "read",
+      "trace_id": "trc_01M3VFSH711TZP22DMBSM9TJJ4",
+      "actor": {
+        "kind": "agent",
+        "ref": "previsit-brief",
+        "label": "previsit-brief"
+      },
+      "targets": [
+        "supp_01M3VFSH711TZP22DMBSM9TJHN",
+        "supp_01M3VFSH711TZP22DMBSM9TJHP"
+      ],
+      "fields_read": null,
+      "field_delta": {},
+      "ingest": null,
+      "occurred_at": null,
+      "inputs": [
+        {
+          "entity_type": "Supplement",
+          "entity_id": "supp_01M3VFSH711TZP22DMBSM9TJHN",
+          "version": 1
+        },
+        {
+          "entity_type": "Supplement",
+          "entity_id": "supp_01M3VFSH711TZP22DMBSM9TJHP",
+          "version": 1
+        }
+      ]
+    },
+    {
+      "id": "aud_01M3VFSH72915QVGWGJ120S80V",
+      "provenance": {
+        "origin": "system_derived",
+        "asserted_by": {
+          "kind": "agent",
+          "ref": "previsit-brief",
+          "label": "previsit-brief"
+        },
+        "asserted_at": "2026-03-12T09:00:00Z",
+        "imported_at": null,
+        "source_refs": [],
+        "derived_from": [],
+        "depth": 0,
+        "extraction_confidence": null
+      },
+      "field_provenance": {},
+      "record_status": "active",
+      "version": 1,
+      "superseded_by": null,
+      "created_at": "2026-03-12T09:00:00Z",
+      "updated_at": "2026-03-12T09:00:00Z",
+      "updated_by": {
+        "kind": "agent",
+        "ref": "previsit-brief",
+        "label": "previsit-brief"
+      },
+      "patient_id": "pat_01M3VFSH711TZP22DMBSM9TJHB",
+      "action": "read",
+      "trace_id": "trc_01M3VFSH711TZP22DMBSM9TJJ4",
+      "actor": {
+        "kind": "agent",
+        "ref": "previsit-brief",
+        "label": "previsit-brief"
+      },
+      "targets": [
+        "lab_01M3VFSH711TZP22DMBSM9TJHK",
+        "lab_01M3VFSH711TZP22DMBSM9TJHM",
+        "lab_01M3VFSH711TZP22DMBSM9TJHX",
+        "lab_01M3VFSH711TZP22DMBSM9TJJ2"
+      ],
+      "fields_read": null,
+      "field_delta": {},
+      "ingest": null,
+      "occurred_at": null,
+      "inputs": [
+        {
+          "entity_type": "LabResult",
+          "entity_id": "lab_01M3VFSH711TZP22DMBSM9TJHK",
+          "version": 1
+        },
+        {
+          "entity_type": "LabResult",
+          "entity_id": "lab_01M3VFSH711TZP22DMBSM9TJHM",
+          "version": 1
+        },
+        {
+          "entity_type": "LabResult",
+          "entity_id": "lab_01M3VFSH711TZP22DMBSM9TJHX",
+          "version": 1
+        },
+        {
+          "entity_type": "LabResult",
+          "entity_id": "lab_01M3VFSH711TZP22DMBSM9TJJ2",
+          "version": 1
+        }
+      ]
+    },
+    {
+      "id": "aud_01M3VFSH72915QVGWGJ120S80W",
+      "provenance": {
+        "origin": "system_derived",
+        "asserted_by": {
+          "kind": "agent",
+          "ref": "previsit-brief",
+          "label": "previsit-brief"
+        },
+        "asserted_at": "2026-03-12T09:00:00Z",
+        "imported_at": null,
+        "source_refs": [],
+        "derived_from": [],
+        "depth": 0,
+        "extraction_confidence": null
+      },
+      "field_provenance": {},
+      "record_status": "active",
+      "version": 1,
+      "superseded_by": null,
+      "created_at": "2026-03-12T09:00:00Z",
+      "updated_at": "2026-03-12T09:00:00Z",
+      "updated_by": {
+        "kind": "agent",
+        "ref": "previsit-brief",
+        "label": "previsit-brief"
+      },
+      "patient_id": "pat_01M3VFSH711TZP22DMBSM9TJHB",
+      "action": "read",
+      "trace_id": "trc_01M3VFSH711TZP22DMBSM9TJJ4",
+      "actor": {
+        "kind": "agent",
+        "ref": "previsit-brief",
+        "label": "previsit-brief"
+      },
+      "targets": [
+        "vit_01M3VFSH711TZP22DMBSM9TJHQ",
+        "vit_01M3VFSH711TZP22DMBSM9TJHR",
+        "vit_01M3VFSH711TZP22DMBSM9TJHS"
+      ],
+      "fields_read": null,
+      "field_delta": {},
+      "ingest": null,
+      "occurred_at": null,
+      "inputs": [
+        {
+          "entity_type": "VitalSign",
+          "entity_id": "vit_01M3VFSH711TZP22DMBSM9TJHQ",
+          "version": 1
+        },
+        {
+          "entity_type": "VitalSign",
+          "entity_id": "vit_01M3VFSH711TZP22DMBSM9TJHR",
+          "version": 1
+        },
+        {
+          "entity_type": "VitalSign",
+          "entity_id": "vit_01M3VFSH711TZP22DMBSM9TJHS",
+          "version": 1
+        }
+      ]
+    },
+    {
+      "id": "aud_01M3VFSH72915QVGWGJ120S80X",
+      "provenance": {
+        "origin": "system_derived",
+        "asserted_by": {
+          "kind": "agent",
+          "ref": "previsit-brief",
+          "label": "previsit-brief"
+        },
+        "asserted_at": "2026-03-12T09:00:00Z",
+        "imported_at": null,
+        "source_refs": [],
+        "derived_from": [],
+        "depth": 0,
+        "extraction_confidence": null
+      },
+      "field_provenance": {},
+      "record_status": "active",
+      "version": 1,
+      "superseded_by": null,
+      "created_at": "2026-03-12T09:00:00Z",
+      "updated_at": "2026-03-12T09:00:00Z",
+      "updated_by": {
+        "kind": "agent",
+        "ref": "previsit-brief",
+        "label": "previsit-brief"
+      },
+      "patient_id": "pat_01M3VFSH711TZP22DMBSM9TJHB",
+      "action": "read",
+      "trace_id": "trc_01M3VFSH711TZP22DMBSM9TJJ4",
+      "actor": {
+        "kind": "agent",
+        "ref": "previsit-brief",
+        "label": "previsit-brief"
+      },
+      "targets": [
+        "note_01M3VFSH711TZP22DMBSM9TJHT",
+        "note_01M3VFSH711TZP22DMBSM9TJHV"
+      ],
+      "fields_read": null,
+      "field_delta": {},
+      "ingest": null,
+      "occurred_at": null,
+      "inputs": [
+        {
+          "entity_type": "ClinicalNote",
+          "entity_id": "note_01M3VFSH711TZP22DMBSM9TJHT",
+          "version": 1
+        },
+        {
+          "entity_type": "ClinicalNote",
+          "entity_id": "note_01M3VFSH711TZP22DMBSM9TJHV",
+          "version": 1
+        }
+      ]
+    }
+  ]
+}

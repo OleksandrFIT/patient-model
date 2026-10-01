@@ -78,6 +78,11 @@ class Fixture:
     flags: list[DataQualityFlag] = field(default_factory=list)
     source_refs: list[SourceReference] = field(default_factory=list)
 
+    @property
+    def provider_actor(self) -> Actor:
+        """The provider as an Actor, for validators that record who ran them."""
+        return Actor(kind=ActorKind.HUMAN, ref=self.provider.id, label="Dr A. Reyes")
+
 
 def build_fixture(
     with_ai_consent: bool = True, with_conflicting_glucose: bool = False
@@ -291,6 +296,19 @@ def build_fixture(
             authored_by=provider.id,
         )
     ]
+
+    # An outside lab that reported no reference range. Realistic, and it exercises a
+    # second severity class: layer 2 raises MISSING_REFERENCE_RANGE as a WARNING, the
+    # record stays visible, and nothing blocks (§9.1).
+    labs.append(
+        LabResult(
+            id=new_id("lab"), **_base(LAB_SYS), patient_id=patient_id,
+            biomarker=CodeableConcept(raw_text="free T4", system="LOINC", code="3024-7"),
+            collection_date=NOW - timedelta(days=14),
+            quantity=Quantity(value=11.2, unit="pmol/L"),
+            performing_lab="Northgate Reference Lab",
+        )
+    )
 
     flags: list[DataQualityFlag] = []
     source_refs: list[SourceReference] = []
