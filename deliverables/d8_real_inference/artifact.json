@@ -1,0 +1,174 @@
+{
+  "id": "aia_01M3VHZVYX8NYX6KG9JZAJS1ZE",
+  "patient_id": "pat_01M3VHZAWPJCS0169XYN65KM1K",
+  "trace_id": "trc_01M3VHZAWPJCS0169XYN65KM2D",
+  "created_at": "2026-03-12T09:00:00Z",
+  "inputs": [
+    {
+      "entity_type": "Condition",
+      "entity_id": "cond_01M3VHZAWPJCS0169XYN65KM1Q",
+      "version": 1
+    },
+    {
+      "entity_type": "Medication",
+      "entity_id": "med_01M3VHZAWPJCS0169XYN65KM1S",
+      "version": 1
+    },
+    {
+      "entity_type": "AllergyIntolerance",
+      "entity_id": "alg_01M3VHZAWPJCS0169XYN65KM1T",
+      "version": 1
+    },
+    {
+      "entity_type": "Condition",
+      "entity_id": "cond_01M3VHZAWPJCS0169XYN65KM1R",
+      "version": 1
+    },
+    {
+      "entity_type": "Supplement",
+      "entity_id": "supp_01M3VHZAWPJCS0169XYN65KM1Y",
+      "version": 1
+    },
+    {
+      "entity_type": "Supplement",
+      "entity_id": "supp_01M3VHZAWPJCS0169XYN65KM1Z",
+      "version": 1
+    },
+    {
+      "entity_type": "LabResult",
+      "entity_id": "lab_01M3VHZAWPJCS0169XYN65KM1W",
+      "version": 1
+    },
+    {
+      "entity_type": "LabResult",
+      "entity_id": "lab_01M3VHZAWPJCS0169XYN65KM1X",
+      "version": 1
+    },
+    {
+      "entity_type": "LabResult",
+      "entity_id": "lab_01M3VHZAWPJCS0169XYN65KM26",
+      "version": 1
+    },
+    {
+      "entity_type": "LabResult",
+      "entity_id": "lab_01M3VHZAWPJCS0169XYN65KM2B",
+      "version": 1
+    },
+    {
+      "entity_type": "VitalSign",
+      "entity_id": "vit_01M3VHZAWPJCS0169XYN65KM20",
+      "version": 1
+    },
+    {
+      "entity_type": "VitalSign",
+      "entity_id": "vit_01M3VHZAWPJCS0169XYN65KM21",
+      "version": 1
+    },
+    {
+      "entity_type": "VitalSign",
+      "entity_id": "vit_01M3VHZAWPJCS0169XYN65KM22",
+      "version": 1
+    },
+    {
+      "entity_type": "ClinicalNote",
+      "entity_id": "note_01M3VHZAWPJCS0169XYN65KM23",
+      "version": 1
+    },
+    {
+      "entity_type": "ClinicalNote",
+      "entity_id": "note_01M3VHZAWPJCS0169XYN65KM24",
+      "version": 1
+    }
+  ],
+  "omitted": [],
+  "produced": [],
+  "prompt_digest": "sha256:b88901b39a6aa5281d93bc14534ca4c70df2863bacbdb22e5c6e2907085e1f0b",
+  "model_id": "qwen2.5:7b",
+  "model_digest": null,
+  "engine": "ollama",
+  "engine_version": "0.34.4",
+  "execution": "local",
+  "consent_ref": "cons_01M3VHZAWPJCS0169XYN65KM1P",
+  "review": "pending",
+  "reviewed_by": null,
+  "reviewed_at": null,
+  "guardrail_failures": [],
+  "generation_notes": [],
+  "claims": [
+    {
+      "text": "The TSH level is rising, indicating a possible thyroid dysfunction.",
+      "cites": [
+        {
+          "entity_type": "LabResult",
+          "entity_id": "lab_01M3VHZAWPJCS0169XYN65KM1W",
+          "version": 1
+        },
+        {
+          "entity_type": "LabResult",
+          "entity_id": "lab_01M3VHZAWPJCS0169XYN65KM1X",
+          "version": 1
+        }
+      ],
+      "values": [
+        {
+          "value": 3.8,
+          "unit": null,
+          "cites": {
+            "entity_type": "LabResult",
+            "entity_id": "lab_01M3VHZAWPJCS0169XYN65KM1W",
+            "version": 1
+          }
+        },
+        {
+          "value": 5.6,
+          "unit": null,
+          "cites": {
+            "entity_type": "LabResult",
+            "entity_id": "lab_01M3VHZAWPJCS0169XYN65KM1X",
+            "version": 1
+          }
+        }
+      ]
+    },
+    {
+      "text": "The free T4 level is within the reference range, but its trend is indeterminate.",
+      "cites": [
+        {
+          "entity_type": "LabResult",
+          "entity_id": "lab_01M3VHZAWPJCS0169XYN65KM26",
+          "version": 1
+        }
+      ],
+      "values": [
+        {
+          "value": 11.2,
+          "unit": null,
+          "cites": {
+            "entity_type": "LabResult",
+            "entity_id": "lab_01M3VHZAWPJCS0169XYN65KM26",
+            "version": 1
+          }
+        }
+      ]
+    },
+    {
+      "text": "There is an unresolved conflict regarding the fasting glucose level.",
+      "cites": [
+        {
+          "entity_type": "LabResult",
+          "entity_id": "lab_01M3VHZAWPJCS0169XYN65KM2B",
+          "version": 1
+        }
+      ],
+      "values": []
+    }
+  ],
+  "unresolved": [
+    {
+      "flag_id": "flag_01M3VHZAWPJCS0169XYN65KM2C",
+      "code": "CONFLICTING_VALUES",
+      "severity": "blocking",
+      "message": "fasting glucose: EMR 5.5 mmol/L against lab 7.2 mmol/L, unresolved"
+    }
+  ]
+}

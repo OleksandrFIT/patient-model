@@ -10,6 +10,7 @@ python3.12 -m venv .venv && .venv/bin/pip install -e ".[dev]"
 .venv/bin/ruff check src tests mock
 .venv/bin/python scripts_build_d3.py   # regenerate the example patient record
 .venv/bin/python scripts_normalise.py  # run the optional normalisation build
+.venv/bin/python scripts_run_ollama.py # D8 against a real local model
 ```
 
 The design document, `docs/model_design.md`, is the specification. Where it and this README
@@ -43,6 +44,35 @@ D10 asks what the AI produced and what was wrong with it, and the plan is the la
 of AI output in the submission.
 
 ---
+
+## Which parts ran on a real model, and which did not
+
+Stated here rather than left to be inferred, because the artifacts look alike and only one of
+them is evidence of inference.
+
+| | Generator | `engine` | What it is |
+|---|---|---|---|
+| `deliverables/d3_example_patient.json` | `StubGenerator` | `stub` | **No inference ran.** Claims are built deterministically so the record is byte-reproducible |
+| `tests/test_d8_previsit_brief.py` | `StubGenerator` | `stub` | Same, so the suite is deterministic and needs no model |
+| `deliverables/d8_real_inference/` | `OllamaGenerator` | `ollama` | A real call to a model on this machine. `run.json` records the engine version, the elapsed time and the verdict |
+
+`Engine.STUB` exists for exactly this reason. An earlier version of the stub reported
+`engine=ollama` with `model_id=llama-3.3-70b-instruct` and a genuine SHA-256 prompt digest —
+of a prompt that was never sent anywhere, for a model that was not even installed. In a
+submission about provenance, that artifact was the one piece of unverifiable provenance in it.
+A stub now says it is one, in the artifact, where a reviewer cannot miss it.
+
+**What the real run found.** Running `qwen2.5:7b` locally produced a defect reasoning had not:
+the model restated lab values in its prose and left the structured `values` list empty, so
+checks 2 and 3 had nothing to compare and an artifact carrying unverified numbers passed. A
+sixth check closes it — a claim stating a decimal must declare it — and the same model, same
+prompt, same temperature, has since been both rejected and accepted by it across runs. The
+guardrail is what makes that variance survivable instead of silent.
+
+Wiring it took one protocol and two implementations; the adapter does not know which answered.
+One thing had to change beyond the generator, and the previous docstring was wrong to claim
+otherwise: the prompt used to be assembled *after* generation purely to be hashed, which is
+fine for a stub and wrong the moment a model needs to receive it.
 
 ## How the model is structured
 

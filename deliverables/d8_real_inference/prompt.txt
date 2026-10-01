@@ -1,0 +1,25 @@
+Patient context (no identifying detail is available to you):
+  age 46, sex female
+
+Lab results. Cite a result by its id. Do not state a value for a result whose
+value is absent.
+  lab_01M3VHZAWPJCS0169XYN65KM1W: TSH 3.8 mIU/L, reference 0.4-4.0
+  lab_01M3VHZAWPJCS0169XYN65KM1X: TSH 5.6 mIU/L, reference 0.4-4.0
+  lab_01M3VHZAWPJCS0169XYN65KM26: free T4 11.2 pmol/L
+  lab_01M3VHZAWPJCS0169XYN65KM2B: glucose, fasting — VALUE ABSENT (unresolved conflict)
+
+Trends already computed for you. Do not recompute them.
+  TSH: rising over 2 measurement(s)
+  free T4: indeterminate over 1 measurement(s)
+  glucose, fasting: indeterminate over 0 measurement(s), 1 excluded
+
+Unresolved data problems you must not reason past:
+  CONFLICTING_VALUES: fasting glucose: EMR 5.5 mmol/L against lab 7.2 mmol/L, unresolved
+
+Write one short claim per fact worth a physician's attention. Every claim cites
+at least one id.
+
+If a claim states a number, that number MUST also appear in that claim's
+`values`, with the id it came from. A claim that states a number in its text and
+declares none is rejected outright, because nothing can then be checked against
+the record. Prefer describing a direction to restating a figure.

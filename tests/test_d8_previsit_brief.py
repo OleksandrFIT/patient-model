@@ -8,17 +8,15 @@ import pytest
 from mock.patient_fixture import build_fixture
 from pai3.ai.adapter import LocalInferenceAdapter
 from pai3.ai.artifact import ArtifactReview, Engine
+from pai3.ai.generators import StubGenerator
 from pai3.ai.scope import ConsentDenied, authorize_ai_read
 from pai3.enums import Severity
 
 
-def _adapter(**over) -> LocalInferenceAdapter:
-    kwargs = {
-        "model_id": "llama-3.3-70b-instruct",
-        "engine": Engine.OLLAMA,
-        "engine_version": "0.5.1",
-    }
-    return LocalInferenceAdapter(**(kwargs | over))
+def _adapter(fabricate: bool = False) -> LocalInferenceAdapter:
+    # The stub, explicitly. A test that wrote engine=OLLAMA while nothing ran would be the
+    # same untruth as the artifact, at a smaller scale.
+    return LocalInferenceAdapter(StubGenerator(fabricate=fabricate))
 
 
 def test_the_whole_brief_assembles_with_a_narrative():
@@ -28,6 +26,9 @@ def test_the_whole_brief_assembles_with_a_narrative():
     assert brief.narrative is not None
     assert brief.narrative.review is ArtifactReview.PENDING
     assert brief.narrative.execution == "local"
+    # No inference happened, and the artifact says so rather than naming a real engine.
+    assert brief.narrative.engine is Engine.STUB
+    assert brief.narrative.model_id.startswith("stub:")
 
 
 def test_without_consent_nothing_is_read_at_all():

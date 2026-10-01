@@ -283,3 +283,53 @@ def test_a_claim_citing_a_record_with_no_quantity_is_not_checked_for_values():
     summary = _summary([AIClaim(text="Active hypothyroidism.", cites=[ref])], [ref])
     verdict, _ = run_guardrails(summary, {cond.id: cond}, [])
     assert verdict is Verdict.PASS
+
+
+def test_a_claim_stating_a_number_without_declaring_it_is_a_hard_failure():
+    # Found by running a real local model, not by reasoning. qwen2.5:7b restated values in
+    # prose and left `values` empty, so checks 2 and 3 had nothing to compare and the
+    # artifact passed carrying unverified numbers. Check 6 closes that.
+    lab = _lab(2.1)
+    summary = _summary(
+        [AIClaim(text="TSH measured 3.8 mIU/L and 5.6 mIU/L.", cites=[_ref(lab)])],
+        [_ref(lab)],
+    )
+    verdict, failures = run_guardrails(summary, {lab.id: lab}, [])
+    assert verdict is Verdict.HARD_FAIL
+    assert any(f.check == "numbers_in_text_are_declared" for f in failures)
+
+
+def test_declaring_the_number_satisfies_check_six():
+    lab = _lab(2.1)
+    summary = _summary(
+        [AIClaim(text="TSH measured 2.1 mIU/L.", cites=[_ref(lab)],
+                 values=[ClaimValue(value=2.1, unit="mIU/L", cites=_ref(lab))])],
+        [_ref(lab)],
+    )
+    verdict, _ = run_guardrails(summary, {lab.id: lab}, [])
+    assert verdict is Verdict.PASS
+
+
+def test_an_integer_in_prose_is_not_treated_as_a_measurement():
+    # The pattern matches decimals only. "type 2 diabetes" and "one measurement" must not
+    # trip it, and the cost of that narrowness is named: an integer measurement in prose
+    # still slips through.
+    lab = _lab(2.1)
+    summary = _summary(
+        [AIClaim(text="Known type 2 diabetes, stable over 3 visits.", cites=[_ref(lab)])],
+        [_ref(lab)],
+    )
+    verdict, _ = run_guardrails(summary, {lab.id: lab}, [])
+    assert verdict is Verdict.PASS
+
+
+def test_a_claim_describing_a_conflict_without_a_number_passes():
+    # What the model should write about a record whose value slot is empty.
+    lab = _lab(None)
+    summary = _summary(
+        [AIClaim(text="There is an unresolved conflict for fasting glucose.",
+                 cites=[_ref(lab)])],
+        [_ref(lab)],
+    )
+    verdict, _ = run_guardrails(summary, {lab.id: lab}, [])
+    assert verdict is Verdict.PASS

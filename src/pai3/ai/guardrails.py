@@ -10,6 +10,7 @@ in, that is itself a failure rather than a skipped check: a checker that cannot 
 it is checking must not report a pass.
 """
 
+import re
 from enum import Enum
 
 from pai3.ai.artifact import AISummary, GuardrailFailure
@@ -24,8 +25,18 @@ _HARD_CHECKS = frozenset(
         "no_claim_on_empty_slot",
         "no_non_droppable_omitted",
         "record_available_for_checking",
+        "numbers_in_text_are_declared",
     }
 )
+
+_DECIMAL = re.compile(r"\d+[.,]\d+")
+"""A decimal is a measurement; an integer may be "type 2 diabetes" or "one measurement".
+
+Narrow on purpose. Check 6 exists because a real local model restated values in prose and
+left `values` empty, so checks 2 and 3 had nothing to compare and passed an artifact carrying
+unverified numbers. A looser pattern would flag "type 2" and make the check unusable; this one
+accepts a known limit instead — an integer measurement stated in prose still slips through.
+"""
 
 
 class Verdict(Enum):
@@ -99,6 +110,26 @@ def run_guardrails(
                         ),
                     )
                 )
+
+    # 6 — a claim that states a number must declare it, or checks 2 and 3 are vacuous.
+    for claim in summary.claims:
+        in_text = set(_DECIMAL.findall(claim.text))
+        if not in_text:
+            continue
+        declared = {f"{v.value}" for v in claim.values} | {
+            f"{v.value:g}" for v in claim.values
+        }
+        undeclared = {n for n in in_text if n.replace(",", ".") not in declared}
+        if undeclared and not claim.values:
+            failures.append(
+                GuardrailFailure(
+                    check="numbers_in_text_are_declared",
+                    detail=(
+                        f"claim states {sorted(undeclared)} in prose and declares no values, "
+                        "so nothing can be compared against the record"
+                    ),
+                )
+            )
 
     # 4 — open blocking flags were carried to the output.
     surfaced = {flag.flag_id for flag in summary.unresolved}

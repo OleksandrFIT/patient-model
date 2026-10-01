@@ -5,29 +5,19 @@ No public path takes either as an argument, which is what makes those invariants
 the type alone does not. The same discipline as `fields_read` (§6.3) and `TextOrigin`
 (§10.1): three invariants on a wrapper rather than on callers remembering.
 
-`generate` stands in for a local model so the pipeline is deterministic under test.
-Replacing it with an ollama call changes this one method and no invariant; `fabricate`
-exists so D8 can demonstrate a guardrail rejection.
+Where the claims come from is a `Generator` (see `generators.py`): either a deterministic
+stand-in that reports `engine=stub`, or a real local model. The adapter does not know which,
+and records whichever actually answered. The prompt is built by the generator and handed
+back, so the digest is of the exact string that was sent.
 """
 
 import hashlib
-import json
 from datetime import datetime
 
-from pai3.ai.artifact import (
-    AIClaim,
-    AISummary,
-    ArtifactReview,
-    ClaimValue,
-    Engine,
-)
+from pai3.ai.artifact import AISummary, ArtifactReview
+from pai3.ai.generators import GenerationContext, Generator
 from pai3.ai.guardrails import Verdict, run_guardrails
-from pai3.ai.projection import (
-    AIPatientView,
-    BudgetExceeded,
-    project_patient,
-    project_records,
-)
+from pai3.ai.projection import BudgetExceeded, project_patient, project_records
 from pai3.ai.scope import AIReadScope
 from pai3.entities.infrastructure import AuditAction, AuditEvent
 from pai3.entities.results import LabResult
@@ -59,21 +49,13 @@ def _trends_for(labs: list[LabResult], unresolved: list[FlagSummary]) -> list[La
 
 
 class LocalInferenceAdapter:
-    def __init__(
-        self,
-        model_id: str,
-        engine: Engine,
-        engine_version: str,
-        model_digest: str | None = None,
-        fabricate: bool = False,
-    ) -> None:
-        self.model_id = model_id
-        self.engine = engine
-        self.engine_version = engine_version
-        self.model_digest = model_digest
-        self.fabricate = fabricate
+    def __init__(self, generator: Generator) -> None:
+        self.generator = generator
         self.audit_events: list[AuditEvent] = []
         self.last_artifact: AISummary | None = None
+        self.last_prompt: str | None = None
+        """Held for inspection after a run, never persisted: the prompt contains PHI and
+        storing it would duplicate canonical data outside canonical governance (§10.2)."""
 
     # ---------------------------------------------------------------- audit
 
@@ -110,53 +92,6 @@ class LocalInferenceAdapter:
                 )
             )
             _ = entity_type
-
-    # ------------------------------------------------------------- generate
-
-    def generate(
-        self, view: AIPatientView, labs: list[LabResult], trends: list[LabTrend]
-    ) -> list[AIClaim]:
-        """Stand-in for a local model, emitting structured claims (§10.5).
-
-        Claims are the output shape because over free prose none of the five checks works.
-        `fabricate` cites a value the record does not hold, so the rejection path is
-        demonstrable.
-
-        `labs` and `trends` are already restricted to what the projection admitted, so
-        every id cited here is in `inputs`.
-        """
-        _ = view
-        claims: list[AIClaim] = []
-        for lab in labs:
-            if lab.quantity is None:
-                continue
-            ref = CanonicalRef(
-                entity_type="LabResult", entity_id=lab.id, version=lab.version
-            )
-            reported = lab.quantity.value + (1.0 if self.fabricate else 0.0)
-            claims.append(
-                AIClaim(
-                    text=(
-                        f"{lab.biomarker.raw_text} measured {reported} "
-                        f"{lab.quantity.unit or 'unknown unit'}."
-                    ),
-                    cites=[ref],
-                    values=[ClaimValue(value=reported, unit=lab.quantity.unit, cites=ref)],
-                )
-            )
-        for trend in trends:
-            if not trend.numeric_basis:
-                continue
-            claims.append(
-                AIClaim(
-                    text=f"{trend.analyte.raw_text} trend is {trend.direction.value}.",
-                    cites=[
-                        CanonicalRef(entity_type="LabResult", entity_id=rid, version=1)
-                        for rid in trend.numeric_basis
-                    ],
-                )
-            )
-        return claims
 
     # ---------------------------------------------------------------- brief
 
@@ -226,17 +161,14 @@ class LocalInferenceAdapter:
         # budget omitted, which guardrail 1 would then reject as a fabricated citation.
         included_ids = {ref.entity_id for ref in projection.included}
         labs_in_context = [lab for lab in fx.labs if lab.id in included_ids]
-        narrative_trends = _trends_for(labs_in_context, unresolved)
-        claims = self.generate(view, labs_in_context, narrative_trends)
+        generated = self.generator.generate(GenerationContext(
+            view=view,
+            labs=labs_in_context,
+            trends=_trends_for(labs_in_context, unresolved),
+            unresolved=unresolved,
+        ))
 
-        prompt = json.dumps(
-            {
-                "view": view.model_dump(),
-                "inputs": [r.model_dump() for r in projection.included],
-            },
-            sort_keys=True,
-            default=str,
-        )
+        self.last_prompt = generated.prompt
         artifact = AISummary(
             id=new_id("aia"),
             patient_id=fx.patient.id,
@@ -244,14 +176,17 @@ class LocalInferenceAdapter:
             created_at=moment,
             inputs=projection.included,
             omitted=projection.omitted,
-            prompt_digest="sha256:" + hashlib.sha256(prompt.encode()).hexdigest(),
-            model_id=self.model_id,
-            model_digest=self.model_digest,
-            engine=self.engine,
-            engine_version=self.engine_version,
+            prompt_digest=(
+                "sha256:" + hashlib.sha256(generated.prompt.encode()).hexdigest()
+            ),
+            model_id=self.generator.model_id,
+            model_digest=self.generator.model_digest,
+            engine=self.generator.engine,
+            engine_version=self.generator.engine_version,
             consent_ref=scope.consent_id,
-            claims=claims,
+            claims=generated.claims,
             unresolved=unresolved,
+            generation_notes=generated.notes,
         )
 
         verdict, failures = run_guardrails(artifact, {r.id: r for r in records}, unresolved)

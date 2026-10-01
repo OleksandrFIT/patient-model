@@ -116,6 +116,42 @@ which is a better outcome than inventing a use.
 - **Clinical judgement, always.** The guardrails verify grounding, not judgement. A claim can
   cite the right record, carry the right number, and still be a poor inference.
 
+## Where two invariants met and produced a state nobody designed
+
+The strongest evidence in this submission is not a feature. It is a state the model entered on
+real data that no one had anticipated, and the fact that it entered it rather than resolving
+the question quietly.
+
+The optional normalisation build reconciles three sources for one patient. The EMR says
+metformin is active. The intake form says the patient stopped taking it. The trust order
+settles that without ambiguity: for whether a drug is still being taken, the patient is the
+authority and the EMR records only what was intended. So the patient wins and the status
+becomes `stopped`.
+
+Except §9.8 requires a stop date for a stopped medication — that invariant is what makes
+"discontinued shown as active" a record that cannot be constructed rather than a defect to be
+flagged. And the patient cannot name the month: *"around January, not sure of the date"*.
+
+Neither invariant gives way. The trust rule's answer is unrepresentable, and the model will not
+hold a value nobody vouched for. So canonical keeps the EMR's `active`, and a **blocking** flag
+records that the patient reports otherwise and that no autonomous use may rest on the status
+until the month is established.
+
+Three outcomes were possible and two of them were wrong. Flipping the status would have
+recorded a stop with no date, which §9.8 exists to forbid. Dropping the patient's statement
+would have lost the most clinically important thing either source said. What happened instead
+is the third: the dispute became visible and stayed that way.
+
+`ConflictOutcome.WINNER_UNREPRESENTABLE` exists in the code because the data produced it. It
+was not in the design, not in the implementation plan, and not anticipated when §9.8 was
+written — the invariant was argued for on the grounds that it removes a defect class, and this
+is a second consequence of it that only appeared under real conflicting input.
+
+That is the case for designing with invariants rather than with checks. A check would have
+asked "is this medication shown as active when it was stopped?" and answered no, because the
+status had been flipped. The invariant could not be satisfied, and so it surfaced a question
+instead of producing an answer.
+
 ## What could go wrong
 
 | Risk | What the model does | What it does not do |

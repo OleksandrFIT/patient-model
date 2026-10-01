@@ -19,10 +19,20 @@ from pai3.values.flags import FlagSummary
 
 
 class Engine(StrEnum):
+    """Which local runtime produced the artifact.
+
+    STUB exists so that a run where **no inference happened** can never be mistaken for one
+    where it did. A deployed system never emits it. Without it, a deterministic stand-in
+    would write `engine=ollama` and a real model name onto an artifact nobody generated —
+    which, in a model whose whole subject is provenance, is the one artifact that must not
+    be unverifiable.
+    """
+
     OLLAMA = "ollama"
     LLAMA_CPP = "llama_cpp"
     VLLM = "vllm"
     TRANSFORMERS = "transformers"
+    STUB = "stub"
 
 
 class ArtifactReview(StrEnum):
@@ -97,6 +107,15 @@ class AIArtifact(BaseModel):
     reviewed_by: str | None = None
     reviewed_at: AwareDatetime | None = None
     guardrail_failures: list[GuardrailFailure] = Field(default_factory=list)
+    generation_notes: list[str] = Field(
+        default_factory=list,
+        description=(
+            "What could not be read out of the model's reply. Kept apart from"
+            " guardrail_failures: one says the output was checked and found wanting, the"
+            " other says part of it was never legible. An empty guardrail_failures remains"
+            " the passing state (§10.5)."
+        ),
+    )
 
 
 class AISummary(AIArtifact):
