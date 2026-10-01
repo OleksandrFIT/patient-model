@@ -3,25 +3,24 @@
 ## What a canonical patient model is
 
 Your patient data lives in several places at once — your EMR, lab portals, PDFs from outside
-specialists, intake forms, spreadsheets, and messages. Each holds a version of the same
-patient, and none of them agrees entirely with the others.
+specialists, intake forms, spreadsheets, messages. Each holds a version of the same patient,
+and none agrees entirely with the others.
 
 A canonical model is the single agreed description of a patient that sits above all of them.
 Not a copy of your EMR and not a replacement for it: a definition of what a condition, a
 medication, a lab result and an allergy *are* in your practice, so that one patient assembled
 from four sources comes out as one record rather than four overlapping ones.
 
-The important part is what it refuses to do. It will not quietly pick a winner when two
-sources disagree. If your EMR says a glucose of 5.5 and the lab report says 7.2, the
-canonical record holds **neither** value and shows the physician both, labelled as
-unresolved. A system that guesses is more dangerous than one that admits it does not know,
-because the guess is invisible.
+The important part is what it refuses to do. It will not quietly pick a winner when sources
+disagree. If your EMR says a glucose of 5.5 and the lab says 7.2, the record holds **neither**
+and shows the physician both, labelled unresolved. A system that guesses is more dangerous
+than one admitting it does not know, because the guess is invisible.
 
 ## Why the data foundation matters
 
-Every downstream thing you want — summaries, trends, follow-up lists, risk review — is built
-on the same substrate. If that substrate treats a discontinued medication as active, every
-tool built on it does too, and each one looks confident.
+Everything you want downstream — summaries, trends, follow-up lists, risk review — is built on
+the same substrate. If that substrate treats a discontinued medication as active, every tool
+on top of it does too, and each looks confident.
 
 Most of the risk is not dramatic failure. It is a condition resolved in 2019 that still reads
 as current. A supplement mentioned once by phone that nobody wrote down. Two lab results in
@@ -30,9 +29,8 @@ each changes what a physician does.
 
 ## Why source traceability is required
 
-Every value in the record names where it came from and who stood behind it: which document,
-which page, which field, and whether a person, a source system, or an extraction put it
-there.
+Every value names where it came from and who stood behind it: which document, which page,
+which field, and whether a person, a source system or an extraction put it there.
 
 A physician who distrusts a value sees its origin in one step instead of hunting for the fax.
 A disagreement between two sources is settled by looking at both, rather than by deciding
