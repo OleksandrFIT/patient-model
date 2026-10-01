@@ -314,7 +314,7 @@ story. Write events cannot.
 **What this promises, precisely.** With `trace_id` alone: which records were in
 context for a given generation. With `fields_read` populated: which fields. The
 second is best-effort by construction, and `None` says so rather than implying a
-precision that is not there. Sequencing is in §11, step 4.
+precision that is not there. Sequencing is in §11, step 5.
 
 ### 6.4 `Condition` merges medical history and current diagnoses
 
@@ -566,6 +566,10 @@ does not carry provenance the way this model needs, and its
 - **A canonical carrier for `patient_submitted`** — §10.1 wraps four narrative
   fields, and patient-authored free text such as `Goal.description` is not among
   them.
+- **Detecting omission by a generation.** §10.5 verifies grounding, so it catches a
+  fabricated number and cannot catch a missing one: a brief that omits a critical
+  allergy passes every check. There is nothing to diff against a summary that was
+  never written.
 - **General access control.** §10.3 gates the AI read path only. Staff access,
   role permissions and break-glass are Phase 1 boundaries, resting on
   authentication and the audit trail of §6.3.
@@ -908,7 +912,7 @@ is the limit of what this model claims.
 Enforcement is the projection layer of §6.3 — the only place where canonical text
 becomes model context — which must emit every span together with its origin. This
 section and §6.3 share one chokepoint; no second mechanism is introduced.
-Sequencing is §11, step 4.
+Sequencing is §11, step 5.
 
 ### 10.2 `AIArtifact`: what is recorded about a generation
 
@@ -929,7 +933,8 @@ awaiting a human.
 | `engine_version` | `str` | |
 | `execution` | `Literal["local"]` | One legal value — see below |
 | `consent_ref` | `ULID` | The `Consent` record that authorised this generation (§6.11) |
-| `review` | `pending \| accepted \| rejected \| superseded`, with `reviewed_by`, `reviewed_at` | |
+| `review` | `pending \| accepted \| rejected \| rejected_by_guardrail \| superseded`, with `reviewed_by`, `reviewed_at` | `rejected_by_guardrail` is set by §10.5, not by a person |
+| `guardrail_failures` | `list[GuardrailFailure]` | Empty is the passing state — §10.5 |
 
 **`execution` has one legal value, not two.** `Literal["local", "cloud"]` would let
 someone write `"cloud"` and nothing would fail. With a single value a cloud
@@ -1006,13 +1011,13 @@ same principle as `execution` in §10.2.
 read paths as a separate cost. Carried on `AIReadScope` it is threaded by the
 parameter being added anyway, and the two costs collapse into one.
 
-**This gate does not degrade.** Every other item in §11 step 4 fails honestly when
+**This gate does not degrade.** Every other item in §11 step 5 fails honestly when
 time runs short: `fields_read` stays `None`, which is a legal value meaning "the
 whole record", and ids keep their prefixes without the registry. **An unimplemented
 consent gate is not a `None`. It is an open door.** It cannot be dropped the way
 the others can.
 
-That is not a deferral risk, and the reason is worth stating: before step 4 there is
+That is not a deferral risk, and the reason is worth stating: before step 5 there is
 no projection layer, so there is no AI read path to guard. The door and its lock are
 installed in the same step.
 
@@ -1097,6 +1102,78 @@ example record and D8's workflow are to present these as two objects with two
 shapes; a sentence saying that the narrative omits identity is a weaker claim than
 a type that cannot carry one.
 
+### 10.5 Output guardrails: what is checked before a generation becomes an artifact
+
+§9.6 states what an agent may not do and §6.17 requires it to cite, but nothing
+checked that either held. These checks run in the adapter of §10.2 — the only thing
+that constructs an `AIArtifact`.
+
+**All of it depends on the output being structured.** Over free prose none of the
+four checks below works. One can regex for numbers, but an extractor that misses
+one produces a false pass, which is worse than no check at all — the same reason
+`fields_read` is not permitted to lie (§6.3).
+
+So an `AISummary` is not a string:
+
+```
+AIClaim:
+    text:   str                    # one assertion, in words
+    cites:  list[CanonicalRef]     # required, non-empty
+    values: list[ClaimValue]       # the numbers appearing in text, structurally
+
+AISummary:
+    claims:     list[AIClaim]
+    unresolved: list[FlagSummary]  # required — §9.4 extended to the output side
+```
+
+Feasible with constrained decoding: GBNF grammars in llama.cpp, `format=json` in
+ollama. The cost is that the narrative reads as a list rather than as text, which is
+acceptable because §10.4 already separated the objects — the physician reads the
+deterministic `PreVisitBrief`, which renders the claims in order, and the model's
+job there is synthesis rather than prose.
+
+**Rejected: free prose with post-hoc number extraction**, for the reason above.
+
+**The four checks.**
+
+| Check | Mechanism |
+|---|---|
+| 1. Every `cites` entry appears in `inputs` | Set difference. A citation to a record the model never read is fabricated |
+| 2. Every `ClaimValue` matches the canonical record it cites | Direct comparison |
+| 3. No claim asserts a value for a record whose value slot is empty | `quantity is None` makes any asserted value a violation. This is §9.6 as code |
+| 4. Open blocking flags on records in `inputs` appear in `unresolved` | Set difference |
+
+Checks 1 and 3 are the valuable pair: together they are what catches "the model
+produced a number that is not in the data".
+
+**What happens on failure.**
+
+| Class | Example | Consequence |
+|---|---|---|
+| Hard | a citation absent from `inputs`; a claim asserting a value where the slot is empty | The artifact is created with `review = rejected_by_guardrail` and reaches no renderer a physician sees |
+| Soft | an unresolved flag not carried forward; a claim without a citation that asserts nothing numeric | `review = pending` with the failures attached, so the human reviewer sees them |
+
+A hard failure is **not discarded quietly**, for the reason given in §9.3: a
+generation that vanished without trace is a generation nobody can investigate, and a
+run of guardrail failures is precisely the signal worth having — a drifting model, a
+regressed prompt. Discarding destroys the evidence.
+
+**No `guardrails_passed: bool`.** An empty `guardrail_failures` *is* the passing
+state. A boolean implying verification is the same trap as a `sanitized` flag in
+§10.1.
+
+**What this does not do.**
+
+It does not check clinical correctness. A claim can cite the right record, carry the
+right number, and still be a poor clinical inference. These checks verify
+**grounding, not judgement**, and the only check on judgement is human review —
+which is the whole argument of §6.1.
+
+The guardrails are also asymmetric: **they catch fabrication and not omission.** A
+brief that failed to mention a critical allergy passes all four checks. Omission is
+undetectable by construction, because there is nothing to diff a summary against
+that was never written. §7 records this.
+
 ---
 
 ## 11. Build order
@@ -1109,7 +1186,10 @@ Dangerous entities first.
 2. **Encounter, Supplement, VitalSign, ClinicalNote, TreatmentPlan,
    DiagnosticReport, Consent, Provider**
 3. The thin five: **Coverage, Procedure, Goal, SocialFactor, Task**
-4. `EntityKind` registry, uniqueness assertions, id resolution (§8.4);
+4. AI layer schema: **`AIArtifact`, `AISummary`, `ExtractionCandidate`** and the
+   claim types of §10.2 and §10.5. D7 requires the AI-generated summary object, so
+   this precedes the deferrable work rather than sharing a step with it
+5. `EntityKind` registry, uniqueness assertions, id resolution (§8.4);
    `trace_id` plumbing through the read-model builders and the projection layer
    that populates `fields_read` (§6.3), labels every emitted text span with its
    `TextOrigin` (§10.1), emits `AIPatientView` rather than `Patient` (§10.4), and
@@ -1118,5 +1198,6 @@ Dangerous entities first.
    if time runs short: ids keep their prefixes without the registry, and
    `fields_read` stays `None`, a legal value meaning "the whole record". The
    consent gate does not degrade — see §10.3. The `AuditEvent` schema itself is
-   built in step 1
-5. Documentation
+   built in step 1. The guardrail checks of §10.5 belong here too, with the adapter
+   that runs them
+6. Documentation
