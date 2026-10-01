@@ -53,7 +53,7 @@ Three tiers. The class an entity inherits from states what kind of data it is.
 | Field | Type | Req | Notes |
 |---|---|---|---|
 | `id` | prefixed ULID | ✅ | `cond_01J8…` — see §8 |
-| `provenance` | `Provenance` | ✅ | Embedded, 1:1 |
+| `provenance` | `Provenance` | ✅ | Embedded, 1:1. Shape in §6.19 |
 | `field_provenance` | `dict[str, Provenance]` | ⬜ | Per-entity whitelist only — §6.2 |
 | `record_status` | `active \| superseded \| entered_in_error` | ✅ | No `deleted` value |
 | `version` | `int` | ✅ | Monotonic per record |
@@ -350,7 +350,8 @@ Shape: `targets: list[(entity_type, entity_id, field_path)]`,
 the only carrier of *why* a value is absent, and consumers branch on it:
 `CONFLICTING_VALUES`, `MISSING_UNIT`, `MISSING_REFERENCE_RANGE`,
 `UNIT_MISMATCH`, `INTERPRETATION_DISAGREES_WITH_RANGE`, `EXTRACTION_FAILED`,
-`DISCONTINUED_SHOWN_ACTIVE`, `DUPLICATE_CANDIDATE`, `UNCODED_CONCEPT`.
+`DISCONTINUED_SHOWN_ACTIVE`, `DUPLICATE_CANDIDATE`, `UNCODED_CONCEPT`,
+`PARENT_RETRACTED` (§6.19).
 
 `candidates` is what makes a conflict actionable: it lets the UI say "glucose —
 conflict between EMR 5.5 and lab 7.2, unresolved" rather than merely reporting
@@ -546,6 +547,83 @@ clinical status, `DiagnosticReport` above results. Its wire format is not: FHIR
 does not carry provenance the way this model needs, and its
 `Reference`/`extension` machinery makes local validation heavy.
 
+### 6.19 Lineage: a fact from a document, and a fact from another fact
+
+AI extracts a fact, a human accepts it into canonical, and the next run reads that
+fact and infers a further one. Unless the two generations are distinguishable, an
+extraction error quietly grows derivatives while the original source is lost.
+
+`source_refs` cannot express this on its own, because it terminates in a
+`SourceDocument` (§6.17): "this fact came from that canonical record" has nothing to
+say it with. A second-generation fact would either inherit its parent's
+`source_refs`, becoming indistinguishable from a first-generation fact with the
+intervening inference erased, or carry nothing at all.
+
+**`Provenance` in full.** It is the most widely embedded value object in the model,
+so its shape is set out here rather than left to be assembled from mentions
+elsewhere:
+
+```
+Provenance:
+    origin:                ProvenanceOrigin
+    asserted_by:           Actor
+    asserted_at:           datetime
+    imported_at:           datetime | None
+    source_refs:           list[ULID]          # → SourceReference → SourceDocument
+    derived_from:          list[CanonicalRef]  # (entity_type, id, version)
+    depth:                 int                 # 0 = straight from a document
+    extraction_confidence: float | None
+```
+
+`ProvenanceOrigin`, with each value meaning one thing:
+
+| Value | Meaning |
+|---|---|
+| `human` | A person asserted it |
+| `source_system` | A structured export from an upstream system |
+| `ai_extraction` | AI proposed the structure **from a document**; a human accepted it |
+| `ai_inference` | AI proposed it **from other canonical records**; a human accepted it |
+| `system_derived` | Created by the pipeline itself — `SourceReference`, `DataQualityFlag` — asserting nothing clinical |
+
+`system_derived` is deliberately narrow. One catch-all `derived` would carry both
+"the pipeline made this bookkeeping record" and "AI reasoned from other facts",
+which are not the same claim at all, and the second is the one that compounds.
+
+**Invariants.** `ai_extraction` requires a non-empty `source_refs`; `ai_inference`
+requires a non-empty `derived_from`; `depth` is `0` exactly when `derived_from` is
+empty, and otherwise `1 + max(parent depth)`.
+
+**`depth` is stored, and that does not contradict §6.13.** §6.13 refuses to store a
+derived value because it goes stale. `depth` cannot: it is computed once at creation
+from parents named **by version**, and a named version never changes. The gain is
+real — "everything deeper than one, pending review" becomes a single filter instead
+of a recursive walk.
+
+**`ai_inference` is capped at `depth <= 1`.** AI may reason from documents and from
+first-generation facts, never from its own inferences. This is the only real defence
+against compounding: without a ceiling the chain grows and `PARENT_RETRACTED` merely
+reports it afterwards. It is a Phase 1 policy, and a validator enforces it rather
+than a caller being trusted to.
+
+**No back-pointer from canonical to the artifact.** `provenance.artifact_ref` is the
+obvious field, and it would break §1 outright — canonical never references the AI
+layer, as §6.14 repeats. So the link runs the other way: `AIArtifact` carries
+`produced` (§10.2), and "which artifact produced this fact" is a query against the
+AI layer rather than a field on the record. The same reasoning as §6.1, where derived
+proved more reliable than stored.
+
+The cost of that choice, stated plainly: lineage back to a proposing artifact lasts
+exactly as long as the artifacts do. Pruning the AI layer destroys the ability to
+explain facts already accepted into canonical, which makes artifact retention a
+governance question rather than an operational one. §7 records it.
+
+**Retraction cascades.** When a record becomes `entered_in_error`, every record
+naming it in `derived_from` receives a flag with `code = PARENT_RETRACTED` and
+severity `blocking` (§9.1). The derived fact is not necessarily wrong, but its basis
+is gone, so no autonomous conclusion may rest on it until a human has looked.
+
+Without the cascade `derived_from` is documentation. With it the chain is actionable.
+
 ---
 
 ## 7. Deliberately out of scope
@@ -567,6 +645,10 @@ does not carry provenance the way this model needs, and its
 - **A canonical carrier for `patient_submitted`** — §10.1 wraps four narrative
   fields, and patient-authored free text such as `Goal.description` is not among
   them.
+- **A retention policy for AI artifacts.** §6.19 puts the lineage from an accepted
+  fact back to the generation that proposed it in `AIArtifact.produced`, so pruning
+  the AI layer destroys the ability to explain facts already in canonical. Phase 1
+  names this as a governance decision rather than setting the policy.
 - **Detecting omission by a generation.** §10.5 verifies grounding, so it catches a
   fabricated number and cannot catch a missing one: a brief that omits a critical
   allergy passes every check. There is nothing to diff against a summary that was
@@ -934,6 +1016,7 @@ awaiting a human.
 | `engine_version` | `str` | |
 | `execution` | `Literal["local"]` | One legal value — see below |
 | `consent_ref` | `ULID` | The `Consent` record that authorised this generation (§6.11) |
+| `produced` | `list[CanonicalRef]` | What was accepted into canonical from this artifact. The link runs this way because canonical never references the AI layer — §6.19 |
 | `review` | `pending \| accepted \| rejected \| rejected_by_guardrail \| superseded`, with `reviewed_by`, `reviewed_at` | `rejected_by_guardrail` is set by §10.5, not by a person |
 | `guardrail_failures` | `list[GuardrailFailure]` | Empty is the passing state — §10.5 |
 
@@ -1193,7 +1276,8 @@ and nothing else may join them.
 
 1. Base models (`CanonicalRecord`, `PatientScoped`, `ClinicalRecord`), the value
    objects, `new_id`, then **Patient, Condition, Medication, LabResult,
-   AllergyIntolerance, SourceReference, AuditEvent, DataQualityFlag**
+   AllergyIntolerance, SourceReference, AuditEvent, DataQualityFlag**, with the
+   provenance invariants and the retraction cascade of §6.19
 2. **Encounter, Supplement, VitalSign, ClinicalNote, TreatmentPlan,
    DiagnosticReport, Consent, Provider**
 3. The thin five: **Coverage, Procedure, Goal, SocialFactor, Task**
