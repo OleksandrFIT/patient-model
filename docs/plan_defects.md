@@ -208,6 +208,32 @@ but a well-formed data record whose every part was plausible and whose sum was u
 Fixed by adding `Engine.STUB`, so a run with no inference says so in the artifact rather than in
 a footnote a reviewer may not reach.
 
+## 17 and 18. Found by re-running the dimension audit properly
+
+The brief's 25 required dimensions were audited once and the audit was worthless: it compared a
+mapping written by hand against the same mapping, and guessed the example record's JSON keys from
+class names with a string heuristic that got four of them wrong. Both mistakes are the same
+mistake — checking a claim against another copy of the claim.
+
+Re-run against the code and against the example record, it found two things.
+
+**17. Five entities existed in the code and were absent from the example record.** Coverage, Goal,
+Procedure, SocialFactor and Task — the thin five. D2 claims dimensions 5, 17, 18, 19 and 22 live
+in them, and a reviewer opening `d3_example_patient.json` to verify any of those claims would not
+have found an instance. Covered in code, tested, and undemonstrated. The fixture now carries all
+five, written into the thyroid story rather than beside it: a task to ask which month she stopped
+the metformin, a goal of staying under 88 mcg, the ultrasound, her smoking and sleep.
+
+**18. The design document named a field the code does not have.** `TreatmentPlan.plan_items`
+appears in §4 and §5 and in two D2 rows; the field is `items`. It has read that way since the
+design phase and survived the whole build, because nothing resolved a documented identifier
+against the model. A reviewer grepping for `plan_items` finds four mentions and no code. Docs
+corrected to follow the code, which has the better name — `plan.plan_items` is redundant.
+
+Both now gate the submission: `scripts_audit_dimensions.py` exits non-zero on a dimension with no
+row, an identifier that does not resolve, or an entity D2 names and the example record does not
+contain.
+
 ## The pattern, which is the point
 
 Defect density tracked **novelty, not care**:
@@ -221,6 +247,7 @@ Defect density tracked **novelty, not care**:
 | 5 — gate, projection, guardrails, adapter, D8 | 5 | **6** |
 | optional — normalisation (written after the plan) | — | **4** |
 | real inference, and auditing what the stub looked like | — | **2** |
+| re-running the dimension audit against code and example | — | **2** |
 
 Phase 1 is where the plan designed something for the first time. Phases 2 and 3 applied
 patterns Phase 1 had already settled, and produced nothing worse than an import-order nit.

@@ -11,7 +11,14 @@ python3.12 -m venv .venv && .venv/bin/pip install -e ".[dev]"
 .venv/bin/python scripts_build_d3.py   # regenerate the example patient record
 .venv/bin/python scripts_normalise.py  # run the optional normalisation build
 .venv/bin/python scripts_run_ollama.py # D8 against a real local model
+.venv/bin/python scripts_audit_dimensions.py   # every required dimension, checked
 ```
+
+`scripts_audit_dimensions.py` is the one to run before trusting anything else here. It checks the
+brief's 25 required dimensions against D2's map, every identifier D2 names against the code, and
+every entity D2 names against the example record — and exits non-zero on any gap. It found five
+entities that existed in code and were missing from the example, and one field the design document
+named that the code does not have.
 
 The design document, `docs/model_design.md`, is the specification. Where it and this README
 differ, the design document is correct.

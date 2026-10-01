@@ -9,12 +9,15 @@ candidates.
 from dataclasses import dataclass, field
 from datetime import UTC, date, datetime, timedelta
 
-from pai3.entities.administrative import Consent
+from pai3.entities.administrative import Consent, Coverage
 from pai3.entities.clinical import (
     AllergyIntolerance,
     Condition,
     Criticality,
     Encounter,
+    Goal,
+    Procedure,
+    SocialFactor,
     Symptom,
     SymptomReporter,
     SymptomSeverity,
@@ -31,6 +34,7 @@ from pai3.entities.therapy import (
     SupplementStatus,
     TreatmentPlan,
 )
+from pai3.entities.workflow import Task, TaskOrigin, TaskStatus
 from pai3.enums import (
     ClinicalStatus,
     ConsentScope,
@@ -75,6 +79,7 @@ class Fixture:
     patient: Patient
     provider: Provider
     consents: list[Consent]
+    coverages: list[Coverage]
     encounters: list[Encounter]
     conditions: list[Condition]
     symptoms: list[Symptom]
@@ -86,6 +91,10 @@ class Fixture:
     vitals: list[VitalSign]
     notes: list[ClinicalNote]
     plans: list[TreatmentPlan]
+    goals: list[Goal]
+    procedures: list[Procedure]
+    social_factors: list[SocialFactor]
+    tasks: list[Task]
     flags: list[DataQualityFlag] = field(default_factory=list)
     source_refs: list[SourceReference] = field(default_factory=list)
 
@@ -368,6 +377,66 @@ def build_fixture(
     # Deliberately not attached to the panel: it came from a different lab, which is why its
     # reference range is missing and its report is someone else's.
 
+    coverages = [
+        Coverage(
+            id=new_id("cov"), **_base(), patient_id=patient_id,
+            payer="Meridian Health", member_id="MH-88213",
+            effective_from=date(2026, 1, 1),
+        )
+    ]
+
+    goals = [
+        Goal(
+            id=new_id("goal"), **_base(), patient_id=patient_id,
+            description="Keep TSH inside range without going above 88 mcg",
+            target_date=date(2026, 9, 1),
+        )
+    ]
+
+    procedures = [
+        Procedure(
+            id=new_id("proc"), **_base(), patient_id=patient_id, encounter_id=encounter_id,
+            code=CodeableConcept(
+                raw_text="thyroid ultrasound", system="ICD-10-PCS", code="BB44ZZZ"
+            ),
+            performed_on=date(2026, 3, 11),
+            performer_id=provider.id,
+            outcome="no nodules; gland mildly heterogeneous",
+        )
+    ]
+
+    social_factors = [
+        SocialFactor(
+            id=new_id("soc"), **_base(), patient_id=patient_id, encounter_id=encounter_id,
+            factor=CodeableConcept(
+                raw_text="smoking status", system="LOINC", code="72166-2"
+            ),
+            value="never smoked", asserted_on=date(2026, 3, 11),
+        ),
+        SocialFactor(
+            id=new_id("soc"), **_base(), patient_id=patient_id,
+            factor=CodeableConcept(raw_text="sleep duration", system="LOINC", code="93832-4"),
+            value="6 hours on a weeknight, by her own account",
+            asserted_on=date(2026, 3, 11),
+        ),
+    ]
+
+    tasks = [
+        Task(
+            id=new_id("task"), **_base(), patient_id=patient_id, encounter_id=encounter_id,
+            description="Repeat TSH and free T4 in six weeks",
+            origin=TaskOrigin.HUMAN, status=TaskStatus.OPEN,
+            assignee_id=provider.id, due_on=date(2026, 4, 23),
+            source_ref=plans[0].id,
+        ),
+        Task(
+            id=new_id("task"), **_base(), patient_id=patient_id,
+            description="Ask the patient which month she stopped the metformin",
+            origin=TaskOrigin.AI_SUGGESTED,
+            source_ref=notes[1].id,
+        ),
+    ]
+
     flags: list[DataQualityFlag] = []
     source_refs: list[SourceReference] = []
 
@@ -413,8 +482,10 @@ def build_fixture(
 
     return Fixture(
         now=NOW, patient=patient, provider=provider, consents=consents,
-        encounters=encounters, conditions=conditions, symptoms=symptoms,
-        medications=medications,
-        supplements=supplements, allergies=allergies, labs=labs, reports=reports,
-        vitals=vitals, notes=notes, plans=plans, flags=flags, source_refs=source_refs,
+        coverages=coverages, encounters=encounters, conditions=conditions,
+        symptoms=symptoms, medications=medications, supplements=supplements,
+        allergies=allergies, labs=labs, reports=reports, vitals=vitals, notes=notes,
+        plans=plans, goals=goals, procedures=procedures,
+        social_factors=social_factors, tasks=tasks,
+        flags=flags, source_refs=source_refs,
     )

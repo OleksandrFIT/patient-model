@@ -82,6 +82,7 @@ def main() -> None:
             "patient": fx.patient.model_dump(mode="json"),
             "provider": fx.provider.model_dump(mode="json"),
             "consents": [c.model_dump(mode="json") for c in fx.consents],
+            "coverage": [c.model_dump(mode="json") for c in fx.coverages],
             "encounters": [e.model_dump(mode="json") for e in fx.encounters],
             "conditions": [c.model_dump(mode="json") for c in fx.conditions],
             "symptoms": [s.model_dump(mode="json") for s in fx.symptoms],
@@ -93,6 +94,10 @@ def main() -> None:
             "vitals": [v.model_dump(mode="json") for v in fx.vitals],
             "clinical_notes": [n.model_dump(mode="json") for n in fx.notes],
             "treatment_plans": [p.model_dump(mode="json") for p in fx.plans],
+            "goals": [g.model_dump(mode="json") for g in fx.goals],
+            "procedures": [p.model_dump(mode="json") for p in fx.procedures],
+            "social_factors": [s.model_dump(mode="json") for s in fx.social_factors],
+            "tasks": [t.model_dump(mode="json") for t in fx.tasks],
             "source_references": [s.model_dump(mode="json") for s in fx.source_refs],
             "data_quality_flags": [
                 f.model_dump(mode="json") for f in (*fx.flags, *derived_flags)
@@ -106,6 +111,7 @@ def main() -> None:
                     symptoms=fx.symptoms,
                     medications=fx.medications, supplements=fx.supplements,
                     labs=fx.labs, reports=fx.reports, notes=fx.notes,
+                    procedures=fx.procedures, social_factors=fx.social_factors,
                 )
             ],
             "lab_trends": [t.model_dump(mode="json") for t in brief.trends],

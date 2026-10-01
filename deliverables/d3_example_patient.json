@@ -183,6 +183,41 @@
         "document_ref": null
       }
     ],
+    "coverage": [
+      {
+        "id": "cov_0001",
+        "provenance": {
+          "origin": "human",
+          "asserted_by": {
+            "kind": "human",
+            "ref": "prov_0001",
+            "label": "Dr A. Reyes"
+          },
+          "asserted_at": "2026-03-12T09:00:00Z",
+          "imported_at": null,
+          "source_refs": [],
+          "derived_from": [],
+          "depth": 0,
+          "extraction_confidence": null
+        },
+        "field_provenance": {},
+        "record_status": "active",
+        "version": 1,
+        "superseded_by": null,
+        "created_at": "2026-03-12T09:00:00Z",
+        "updated_at": "2026-03-12T09:00:00Z",
+        "updated_by": {
+          "kind": "human",
+          "ref": "prov_0001",
+          "label": "Dr A. Reyes"
+        },
+        "patient_id": "pat_0001",
+        "payer": "Meridian Health",
+        "member_id": "MH-88213",
+        "effective_from": "2026-01-01",
+        "effective_until": null
+      }
+    ],
     "encounters": [
       {
         "id": "enc_0001",
@@ -1139,6 +1174,233 @@
         "authored_by": "prov_0002"
       }
     ],
+    "goals": [
+      {
+        "id": "goal_0001",
+        "provenance": {
+          "origin": "human",
+          "asserted_by": {
+            "kind": "human",
+            "ref": "prov_0001",
+            "label": "Dr A. Reyes"
+          },
+          "asserted_at": "2026-03-12T09:00:00Z",
+          "imported_at": null,
+          "source_refs": [],
+          "derived_from": [],
+          "depth": 0,
+          "extraction_confidence": null
+        },
+        "field_provenance": {},
+        "record_status": "active",
+        "version": 1,
+        "superseded_by": null,
+        "created_at": "2026-03-12T09:00:00Z",
+        "updated_at": "2026-03-12T09:00:00Z",
+        "updated_by": {
+          "kind": "human",
+          "ref": "prov_0001",
+          "label": "Dr A. Reyes"
+        },
+        "patient_id": "pat_0001",
+        "description": "Keep TSH inside range without going above 88 mcg",
+        "target_date": "2026-09-01",
+        "status": "active"
+      }
+    ],
+    "procedures": [
+      {
+        "id": "proc_0001",
+        "provenance": {
+          "origin": "human",
+          "asserted_by": {
+            "kind": "human",
+            "ref": "prov_0001",
+            "label": "Dr A. Reyes"
+          },
+          "asserted_at": "2026-03-12T09:00:00Z",
+          "imported_at": null,
+          "source_refs": [],
+          "derived_from": [],
+          "depth": 0,
+          "extraction_confidence": null
+        },
+        "field_provenance": {},
+        "record_status": "active",
+        "version": 1,
+        "superseded_by": null,
+        "created_at": "2026-03-12T09:00:00Z",
+        "updated_at": "2026-03-12T09:00:00Z",
+        "updated_by": {
+          "kind": "human",
+          "ref": "prov_0001",
+          "label": "Dr A. Reyes"
+        },
+        "patient_id": "pat_0001",
+        "encounter_id": "enc_0001",
+        "code": {
+          "raw_text": "thyroid ultrasound",
+          "system": "ICD-10-PCS",
+          "code": "BB44ZZZ",
+          "display": null
+        },
+        "performed_on": "2026-03-11",
+        "performer_id": "prov_0002",
+        "outcome": "no nodules; gland mildly heterogeneous"
+      }
+    ],
+    "social_factors": [
+      {
+        "id": "soc_0001",
+        "provenance": {
+          "origin": "human",
+          "asserted_by": {
+            "kind": "human",
+            "ref": "prov_0001",
+            "label": "Dr A. Reyes"
+          },
+          "asserted_at": "2026-03-12T09:00:00Z",
+          "imported_at": null,
+          "source_refs": [],
+          "derived_from": [],
+          "depth": 0,
+          "extraction_confidence": null
+        },
+        "field_provenance": {},
+        "record_status": "active",
+        "version": 1,
+        "superseded_by": null,
+        "created_at": "2026-03-12T09:00:00Z",
+        "updated_at": "2026-03-12T09:00:00Z",
+        "updated_by": {
+          "kind": "human",
+          "ref": "prov_0001",
+          "label": "Dr A. Reyes"
+        },
+        "patient_id": "pat_0001",
+        "encounter_id": "enc_0001",
+        "factor": {
+          "raw_text": "smoking status",
+          "system": "LOINC",
+          "code": "72166-2",
+          "display": null
+        },
+        "value": "never smoked",
+        "asserted_on": "2026-03-11"
+      },
+      {
+        "id": "soc_0002",
+        "provenance": {
+          "origin": "human",
+          "asserted_by": {
+            "kind": "human",
+            "ref": "prov_0001",
+            "label": "Dr A. Reyes"
+          },
+          "asserted_at": "2026-03-12T09:00:00Z",
+          "imported_at": null,
+          "source_refs": [],
+          "derived_from": [],
+          "depth": 0,
+          "extraction_confidence": null
+        },
+        "field_provenance": {},
+        "record_status": "active",
+        "version": 1,
+        "superseded_by": null,
+        "created_at": "2026-03-12T09:00:00Z",
+        "updated_at": "2026-03-12T09:00:00Z",
+        "updated_by": {
+          "kind": "human",
+          "ref": "prov_0001",
+          "label": "Dr A. Reyes"
+        },
+        "patient_id": "pat_0001",
+        "encounter_id": null,
+        "factor": {
+          "raw_text": "sleep duration",
+          "system": "LOINC",
+          "code": "93832-4",
+          "display": null
+        },
+        "value": "6 hours on a weeknight, by her own account",
+        "asserted_on": "2026-03-11"
+      }
+    ],
+    "tasks": [
+      {
+        "id": "task_0001",
+        "provenance": {
+          "origin": "human",
+          "asserted_by": {
+            "kind": "human",
+            "ref": "prov_0001",
+            "label": "Dr A. Reyes"
+          },
+          "asserted_at": "2026-03-12T09:00:00Z",
+          "imported_at": null,
+          "source_refs": [],
+          "derived_from": [],
+          "depth": 0,
+          "extraction_confidence": null
+        },
+        "field_provenance": {},
+        "record_status": "active",
+        "version": 1,
+        "superseded_by": null,
+        "created_at": "2026-03-12T09:00:00Z",
+        "updated_at": "2026-03-12T09:00:00Z",
+        "updated_by": {
+          "kind": "human",
+          "ref": "prov_0001",
+          "label": "Dr A. Reyes"
+        },
+        "patient_id": "pat_0001",
+        "encounter_id": "enc_0001",
+        "description": "Repeat TSH and free T4 in six weeks",
+        "origin": "human",
+        "status": "open",
+        "assignee_id": "prov_0002",
+        "due_on": "2026-04-23",
+        "source_ref": "plan_0001"
+      },
+      {
+        "id": "task_0002",
+        "provenance": {
+          "origin": "human",
+          "asserted_by": {
+            "kind": "human",
+            "ref": "prov_0001",
+            "label": "Dr A. Reyes"
+          },
+          "asserted_at": "2026-03-12T09:00:00Z",
+          "imported_at": null,
+          "source_refs": [],
+          "derived_from": [],
+          "depth": 0,
+          "extraction_confidence": null
+        },
+        "field_provenance": {},
+        "record_status": "active",
+        "version": 1,
+        "superseded_by": null,
+        "created_at": "2026-03-12T09:00:00Z",
+        "updated_at": "2026-03-12T09:00:00Z",
+        "updated_by": {
+          "kind": "human",
+          "ref": "prov_0001",
+          "label": "Dr A. Reyes"
+        },
+        "patient_id": "pat_0001",
+        "encounter_id": null,
+        "description": "Ask the patient which month she stopped the metformin",
+        "origin": "ai_suggested",
+        "status": "proposed",
+        "assignee_id": null,
+        "due_on": null,
+        "source_ref": "note_0002"
+      }
+    ],
     "source_references": [
       {
         "id": "sref_0001",
@@ -1400,6 +1662,27 @@
         "label": "telephone",
         "source_type": "ClinicalNote",
         "source_id": "note_0002"
+      },
+      {
+        "at": "2026-03-11T00:00:00Z",
+        "kind": "procedure",
+        "label": "thyroid ultrasound",
+        "source_type": "Procedure",
+        "source_id": "proc_0001"
+      },
+      {
+        "at": "2026-03-11T00:00:00Z",
+        "kind": "social_factor_asserted",
+        "label": "smoking status: never smoked",
+        "source_type": "SocialFactor",
+        "source_id": "soc_0001"
+      },
+      {
+        "at": "2026-03-11T00:00:00Z",
+        "kind": "social_factor_asserted",
+        "label": "sleep duration: 6 hours on a weeknight, by her own account",
+        "source_type": "SocialFactor",
+        "source_id": "soc_0002"
       },
       {
         "at": "2026-03-11T07:00:00Z",
@@ -1776,6 +2059,27 @@
           "label": "telephone",
           "source_type": "ClinicalNote",
           "source_id": "note_0002"
+        },
+        {
+          "at": "2026-03-11T00:00:00Z",
+          "kind": "procedure",
+          "label": "thyroid ultrasound",
+          "source_type": "Procedure",
+          "source_id": "proc_0001"
+        },
+        {
+          "at": "2026-03-11T00:00:00Z",
+          "kind": "social_factor_asserted",
+          "label": "smoking status: never smoked",
+          "source_type": "SocialFactor",
+          "source_id": "soc_0001"
+        },
+        {
+          "at": "2026-03-11T00:00:00Z",
+          "kind": "social_factor_asserted",
+          "label": "sleep duration: 6 hours on a weeknight, by her own account",
+          "source_type": "SocialFactor",
+          "source_id": "soc_0002"
         },
         {
           "at": "2026-03-11T07:00:00Z",

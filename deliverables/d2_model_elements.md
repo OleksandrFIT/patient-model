@@ -20,7 +20,7 @@ in §6.20 rather than presented as a refinement.
 | 2 | Contact information | `Patient.contacts`, `Patient.addresses` (embedded — §5) |
 | 3 | Consent and authorization | `Consent`, enforced as a capability (§10.3) |
 | 4 | Care team and provider relationships | `Provider` + `Patient.care_team` |
-| 5 | Insurance or payment context | `Coverage` (thin; outside AI read scope) |
+| 5 | Insurance or payment context, if relevant | `Coverage` (thin; outside AI read scope) |
 | 6 | Medical history | `Condition` with `clinical_status` resolved — **one entity with 7** (§6.4) |
 | 7 | Current conditions and diagnoses | `Condition` with `clinical_status` active |
 | 8 | **Symptoms and patient concerns** | **`Symptom`, with `patient_concern` in the patient's own words (§6.20)** |
@@ -31,16 +31,16 @@ in §6.20 rather than presented as a refinement.
 | 13 | Vitals and measurements | `VitalSign` with `measurement_context` (§6.6) |
 | 14 | Imaging and diagnostic reports | `DiagnosticReport` — narrative, no discrete values |
 | 15 | Clinical notes | `ClinicalNote`, body marked with its perimeter origin (§10.1) |
-| 16 | Treatment plans | `TreatmentPlan` with embedded `plan_items` |
+| 16 | Treatment plans | `TreatmentPlan` with embedded `items` |
 | 17 | Procedures and interventions | `Procedure` |
 | 18 | Patient goals and preferences | `Goal` (patient-owned) + `Patient.preferences` |
 | 19 | Lifestyle and social factors | `SocialFactor`, dated so staleness is visible (§6.16) |
 | 20 | Timeline of clinical events | `TimelineEvent` — **derived, never stored** (§6.13) |
 | 21 | Documents and source references | `SourceDocument` (source layer) + `SourceReference` |
-| 22 | Tasks, follow-ups, workflow state | `Task`, AI may only propose |
+| 22 | Tasks, follow-ups, and workflow state | `Task`, AI may only propose |
 | 23 | Data provenance and audit trail | `Provenance` (a value) + `AuditEvent` (a record) — §6.3 |
 | 24 | Data quality flags | `DataQualityFlag`, an entity not a list (§6.5) |
-| 25 | AI summaries and human review status | `AISummary` + `review`; status is **derived** in canonical (§6.1) |
+| 25 | AI-generated summaries and human review status | `AISummary` + `review`; status is **derived** in canonical (§6.1) |
 
 Two of these are answered by a decision rather than by an entity, and both are defended rather
 than assumed: 6 and 7 are one `Condition` because they differ by a single field, and 25's review
@@ -74,7 +74,7 @@ status is derived from open flags because a stored one goes stale.
 | **VitalSign** | Kind, measured at, quantity, `measurement_context`, body position, cuff size | `measurement_context` is required so trend analysis can exclude patient-reported points | In-clinic devices, wearables, patient portal | Trends, brief | Home weight and clinic weight averaged together is a trend that means nothing. A missing cuff size is an **acceptable** missing value, not a defect — the severity difference from labs is why the two stay separate entities (§6.6) |
 | **Procedure** | Code, performed date, performer, outcome | Dated interventions on the timeline | EMR procedure log, operative notes, outside records | Read; timeline | Thin. A missing date means it cannot be placed, and it contributes nothing rather than appearing at an invented moment |
 | **ClinicalNote** | `note_type`, author, `body` as `ClinicalText`, addenda, signature | Narrative, with the perimeter origin travelling **with** the text rather than beside it (§10.1) | EMR notes, dictation, scanned letters | Read, labelled; extraction source | A fact mentioned in prose does **not** live here — it becomes a `Condition` with `ai_extraction` provenance pointing at the span, entering canonical only when a human accepts it. `note_type` has no `patient_message` value: a note is a record of the practice, not a container for external text |
-| **TreatmentPlan** | Title, embedded `plan_items[]`, author | Items have no lifecycle of their own and are revised as part of the plan | Visit notes, care-plan modules | Read; follow-up extraction | A plan whose items point at no record cannot be reconciled against what was actually prescribed |
+| **TreatmentPlan** | Title, embedded `items[]` of `PlanItem`, author | Items have no lifecycle of their own and are revised as part of the plan | Visit notes, care-plan modules | Read; follow-up extraction | A plan whose items point at no record cannot be reconciled against what was actually prescribed |
 | **Goal** | Description, target date, status | Patient-owned and outlives any single plan, which is why it did not fold into `TreatmentPlan` | Intake, portal, visit conversation | Read | `PatientScoped`, not clinical: a goal can exist before any plan and before any visit |
 | **SocialFactor** | Factor, value, `asserted_on` | A record with an assertion date, not a mutable block on `Patient` (§6.16) | Intake forms, visit notes, questionnaires | Read; risk context | **Staleness is the whole risk**: "smoker" recorded in 2019 and never revisited. A mutable block has no history and cannot show when the claim was last true |
 | **Task** | Description, `origin`, status, assignee, due date, source | Follow-up and workflow state | Staff workflow, extracted follow-ups | **May propose**, with `status=proposed` | An AI-extracted task opened and assigned by the pipeline is an instruction nobody authorised. Assignment is the human approval step |

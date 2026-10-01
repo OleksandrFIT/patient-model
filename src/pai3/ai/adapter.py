@@ -147,6 +147,8 @@ class LocalInferenceAdapter:
                 labs=fx.labs,
                 reports=fx.reports,
                 notes=fx.notes,
+                procedures=fx.procedures,
+                social_factors=fx.social_factors,
             ),
         }
 

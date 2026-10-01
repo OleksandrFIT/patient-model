@@ -168,7 +168,7 @@ rather than smoothed over — see §6.20.
 | `VitalSign` | Clinical | `quantity`, `measurement_context` | `clinical \| patient_reported \| device` — §6.6 |
 | `Procedure` | Clinical | code, performed date, performer | Thin |
 | `ClinicalNote` | Clinical | `note_type`, author, `body: ClinicalText`, signed_at, `addenda[]` | Facts mentioned in prose do not live here — §6.14. Text origin — §10.1 |
-| `TreatmentPlan` | Clinical | `plan_items[]` | Items embedded: no independent lifecycle, revised as part of the plan. Each item may reference a Condition or Medication by id |
+| `TreatmentPlan` | Clinical | `items[]` of `PlanItem` | Items embedded: no independent lifecycle, revised as part of the plan. Each item may reference a Condition or Medication by id |
 | `Goal` | PatientScoped | description, target date, status | Patient-owned, outlives any single plan |
 | `SocialFactor` | Clinical | factor code, value, asserted_at | Normalized records, not a block on Patient — §6.16 |
 | `Task` | Clinical | status, assignee, due, origin | AI-extracted tasks land `proposed`, never `open` and assigned |
@@ -187,7 +187,7 @@ is it ever queried without its owner?** If yes to either, normalize.
 |---|---|
 | `Provenance` | 1:1 with its record, meaningless without it |
 | Contacts, addresses, names | Read with the patient every time, never queried alone |
-| `plan_items` in `TreatmentPlan` | Revised as part of the plan, no independent lifecycle |
+| `items` in `TreatmentPlan` | Revised as part of the plan, no independent lifecycle |
 | `reactions` in `AllergyIntolerance` | Describe one allergy, not reusable |
 | `ClinicalText` | Travels with the text so the origin marker cannot be left behind — §10.1 |
 
