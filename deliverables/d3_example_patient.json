@@ -1,5 +1,5 @@
 {
-  "_note": "Entirely fictional. Generated from mock/patient_fixture.py by scripts_build_d3.py so it cannot drift from the Pydantic models.",
+  "_note": "Entirely fictional. Generated from mock/patient_fixture.py by scripts_build_d3.py, which also makes identifiers deterministic so the file is reproducible. Production uses ULIDs.",
   "_sections": {
     "canonical": "accepted clinical fact; every value names who vouched for it",
     "derived": "read-models, never stored (model_design.md §6.13, §9.4)",
@@ -7,12 +7,12 @@
   },
   "canonical": {
     "patient": {
-      "id": "pat_01M3VFSH711TZP22DMBSM9TJHB",
+      "id": "pat_0001",
       "provenance": {
         "origin": "human",
         "asserted_by": {
           "kind": "human",
-          "ref": "prov_01M3VFSH6JCRY6EWDR5FVVN4WK",
+          "ref": "prov_0001",
           "label": "Dr A. Reyes"
         },
         "asserted_at": "2026-03-12T09:00:00Z",
@@ -30,7 +30,7 @@
       "updated_at": "2026-03-12T09:00:00Z",
       "updated_by": {
         "kind": "human",
-        "ref": "prov_01M3VFSH6JCRY6EWDR5FVVN4WK",
+        "ref": "prov_0001",
         "label": "Dr A. Reyes"
       },
       "identifiers": [
@@ -66,7 +66,7 @@
       },
       "care_team": [
         {
-          "provider_id": "prov_01M3VFSH711TZP22DMBSM9TJHA",
+          "provider_id": "prov_0002",
           "role": "internist",
           "since": "2021-04-01",
           "is_primary": true
@@ -74,12 +74,12 @@
       ]
     },
     "provider": {
-      "id": "prov_01M3VFSH711TZP22DMBSM9TJHA",
+      "id": "prov_0002",
       "provenance": {
         "origin": "human",
         "asserted_by": {
           "kind": "human",
-          "ref": "prov_01M3VFSH6JCRY6EWDR5FVVN4WK",
+          "ref": "prov_0001",
           "label": "Dr A. Reyes"
         },
         "asserted_at": "2026-03-12T09:00:00Z",
@@ -97,7 +97,7 @@
       "updated_at": "2026-03-12T09:00:00Z",
       "updated_by": {
         "kind": "human",
-        "ref": "prov_01M3VFSH6JCRY6EWDR5FVVN4WK",
+        "ref": "prov_0001",
         "label": "Dr A. Reyes"
       },
       "name": {
@@ -113,12 +113,12 @@
     },
     "consents": [
       {
-        "id": "cons_01M3VFSH711TZP22DMBSM9TJHD",
+        "id": "cons_0001",
         "provenance": {
           "origin": "human",
           "asserted_by": {
             "kind": "human",
-            "ref": "prov_01M3VFSH6JCRY6EWDR5FVVN4WK",
+            "ref": "prov_0001",
             "label": "Dr A. Reyes"
           },
           "asserted_at": "2026-03-12T09:00:00Z",
@@ -136,10 +136,10 @@
         "updated_at": "2026-03-12T09:00:00Z",
         "updated_by": {
           "kind": "human",
-          "ref": "prov_01M3VFSH6JCRY6EWDR5FVVN4WK",
+          "ref": "prov_0001",
           "label": "Dr A. Reyes"
         },
-        "patient_id": "pat_01M3VFSH711TZP22DMBSM9TJHB",
+        "patient_id": "pat_0001",
         "scope": "treatment",
         "effective_from": "2025-02-05T09:00:00Z",
         "effective_until": null,
@@ -148,12 +148,12 @@
         "document_ref": null
       },
       {
-        "id": "cons_01M3VFSH711TZP22DMBSM9TJHE",
+        "id": "cons_0002",
         "provenance": {
           "origin": "human",
           "asserted_by": {
             "kind": "human",
-            "ref": "prov_01M3VFSH6JCRY6EWDR5FVVN4WK",
+            "ref": "prov_0001",
             "label": "Dr A. Reyes"
           },
           "asserted_at": "2026-03-12T09:00:00Z",
@@ -171,10 +171,10 @@
         "updated_at": "2026-03-12T09:00:00Z",
         "updated_by": {
           "kind": "human",
-          "ref": "prov_01M3VFSH6JCRY6EWDR5FVVN4WK",
+          "ref": "prov_0001",
           "label": "Dr A. Reyes"
         },
-        "patient_id": "pat_01M3VFSH711TZP22DMBSM9TJHB",
+        "patient_id": "pat_0001",
         "scope": "ai_processing",
         "effective_from": "2025-11-12T09:00:00Z",
         "effective_until": null,
@@ -185,12 +185,12 @@
     ],
     "encounters": [
       {
-        "id": "enc_01M3VFSH711TZP22DMBSM9TJHC",
+        "id": "enc_0001",
         "provenance": {
           "origin": "human",
           "asserted_by": {
             "kind": "human",
-            "ref": "prov_01M3VFSH6JCRY6EWDR5FVVN4WK",
+            "ref": "prov_0001",
             "label": "Dr A. Reyes"
           },
           "asserted_at": "2026-03-12T09:00:00Z",
@@ -208,15 +208,15 @@
         "updated_at": "2026-03-12T09:00:00Z",
         "updated_by": {
           "kind": "human",
-          "ref": "prov_01M3VFSH6JCRY6EWDR5FVVN4WK",
+          "ref": "prov_0001",
           "label": "Dr A. Reyes"
         },
-        "patient_id": "pat_01M3VFSH711TZP22DMBSM9TJHB",
+        "patient_id": "pat_0001",
         "encounter_type": "office visit",
         "started_at": "2026-03-11T07:00:00Z",
         "ended_at": "2026-03-11T08:00:00Z",
         "participant_ids": [
-          "prov_01M3VFSH711TZP22DMBSM9TJHA"
+          "prov_0002"
         ],
         "reason": {
           "raw_text": "thyroid follow-up",
@@ -228,12 +228,12 @@
     ],
     "conditions": [
       {
-        "id": "cond_01M3VFSH711TZP22DMBSM9TJHF",
+        "id": "cond_0001",
         "provenance": {
           "origin": "human",
           "asserted_by": {
             "kind": "human",
-            "ref": "prov_01M3VFSH6JCRY6EWDR5FVVN4WK",
+            "ref": "prov_0001",
             "label": "Dr A. Reyes"
           },
           "asserted_at": "2026-03-12T09:00:00Z",
@@ -251,10 +251,10 @@
         "updated_at": "2026-03-12T09:00:00Z",
         "updated_by": {
           "kind": "human",
-          "ref": "prov_01M3VFSH6JCRY6EWDR5FVVN4WK",
+          "ref": "prov_0001",
           "label": "Dr A. Reyes"
         },
-        "patient_id": "pat_01M3VFSH711TZP22DMBSM9TJHB",
+        "patient_id": "pat_0001",
         "encounter_id": null,
         "code": {
           "raw_text": "hypothyroidism",
@@ -269,12 +269,12 @@
         "recorded_by": null
       },
       {
-        "id": "cond_01M3VFSH711TZP22DMBSM9TJHG",
+        "id": "cond_0002",
         "provenance": {
           "origin": "human",
           "asserted_by": {
             "kind": "human",
-            "ref": "prov_01M3VFSH6JCRY6EWDR5FVVN4WK",
+            "ref": "prov_0001",
             "label": "Dr A. Reyes"
           },
           "asserted_at": "2026-03-12T09:00:00Z",
@@ -292,10 +292,10 @@
         "updated_at": "2026-03-12T09:00:00Z",
         "updated_by": {
           "kind": "human",
-          "ref": "prov_01M3VFSH6JCRY6EWDR5FVVN4WK",
+          "ref": "prov_0001",
           "label": "Dr A. Reyes"
         },
-        "patient_id": "pat_01M3VFSH711TZP22DMBSM9TJHB",
+        "patient_id": "pat_0001",
         "encounter_id": null,
         "code": {
           "raw_text": "iron deficiency anaemia",
@@ -312,12 +312,12 @@
     ],
     "medications": [
       {
-        "id": "med_01M3VFSH711TZP22DMBSM9TJHH",
+        "id": "med_0001",
         "provenance": {
           "origin": "human",
           "asserted_by": {
             "kind": "human",
-            "ref": "prov_01M3VFSH6JCRY6EWDR5FVVN4WK",
+            "ref": "prov_0001",
             "label": "Dr A. Reyes"
           },
           "asserted_at": "2026-03-12T09:00:00Z",
@@ -335,10 +335,10 @@
         "updated_at": "2026-03-12T09:00:00Z",
         "updated_by": {
           "kind": "human",
-          "ref": "prov_01M3VFSH6JCRY6EWDR5FVVN4WK",
+          "ref": "prov_0001",
           "label": "Dr A. Reyes"
         },
-        "patient_id": "pat_01M3VFSH711TZP22DMBSM9TJHB",
+        "patient_id": "pat_0001",
         "encounter_id": null,
         "drug": {
           "raw_text": "levothyroxine",
@@ -356,18 +356,18 @@
         "status": "active",
         "started_on": "2021-06-01",
         "stopped_on": null,
-        "prescriber_id": "prov_01M3VFSH6JCRY6EWDR5FVVN4WK",
+        "prescriber_id": "prov_0001",
         "indication": null
       }
     ],
     "supplements": [
       {
-        "id": "supp_01M3VFSH711TZP22DMBSM9TJHN",
+        "id": "supp_0001",
         "provenance": {
           "origin": "human",
           "asserted_by": {
             "kind": "human",
-            "ref": "prov_01M3VFSH6JCRY6EWDR5FVVN4WK",
+            "ref": "prov_0001",
             "label": "Dr A. Reyes"
           },
           "asserted_at": "2026-03-12T09:00:00Z",
@@ -385,10 +385,10 @@
         "updated_at": "2026-03-12T09:00:00Z",
         "updated_by": {
           "kind": "human",
-          "ref": "prov_01M3VFSH6JCRY6EWDR5FVVN4WK",
+          "ref": "prov_0001",
           "label": "Dr A. Reyes"
         },
-        "patient_id": "pat_01M3VFSH711TZP22DMBSM9TJHB",
+        "patient_id": "pat_0001",
         "encounter_id": null,
         "substance": {
           "raw_text": "vitamin D3",
@@ -409,12 +409,12 @@
         "reported_reason": "low vitamin D on a prior panel"
       },
       {
-        "id": "supp_01M3VFSH711TZP22DMBSM9TJHP",
+        "id": "supp_0002",
         "provenance": {
           "origin": "human",
           "asserted_by": {
             "kind": "human",
-            "ref": "prov_01M3VFSH6JCRY6EWDR5FVVN4WK",
+            "ref": "prov_0001",
             "label": "Dr A. Reyes"
           },
           "asserted_at": "2026-03-12T09:00:00Z",
@@ -432,10 +432,10 @@
         "updated_at": "2026-03-12T09:00:00Z",
         "updated_by": {
           "kind": "human",
-          "ref": "prov_01M3VFSH6JCRY6EWDR5FVVN4WK",
+          "ref": "prov_0001",
           "label": "Dr A. Reyes"
         },
-        "patient_id": "pat_01M3VFSH711TZP22DMBSM9TJHB",
+        "patient_id": "pat_0001",
         "encounter_id": null,
         "substance": {
           "raw_text": "biotin",
@@ -458,12 +458,12 @@
     ],
     "allergies": [
       {
-        "id": "alg_01M3VFSH711TZP22DMBSM9TJHJ",
+        "id": "alg_0001",
         "provenance": {
           "origin": "human",
           "asserted_by": {
             "kind": "human",
-            "ref": "prov_01M3VFSH6JCRY6EWDR5FVVN4WK",
+            "ref": "prov_0001",
             "label": "Dr A. Reyes"
           },
           "asserted_at": "2026-03-12T09:00:00Z",
@@ -481,10 +481,10 @@
         "updated_at": "2026-03-12T09:00:00Z",
         "updated_by": {
           "kind": "human",
-          "ref": "prov_01M3VFSH6JCRY6EWDR5FVVN4WK",
+          "ref": "prov_0001",
           "label": "Dr A. Reyes"
         },
-        "patient_id": "pat_01M3VFSH711TZP22DMBSM9TJHB",
+        "patient_id": "pat_0001",
         "encounter_id": null,
         "substance": {
           "raw_text": "penicillin",
@@ -500,7 +500,7 @@
     ],
     "lab_results": [
       {
-        "id": "lab_01M3VFSH711TZP22DMBSM9TJHK",
+        "id": "lab_0001",
         "provenance": {
           "origin": "human",
           "asserted_by": {
@@ -526,7 +526,7 @@
           "ref": "lab-portal",
           "label": "lab-portal"
         },
-        "patient_id": "pat_01M3VFSH711TZP22DMBSM9TJHB",
+        "patient_id": "pat_0001",
         "encounter_id": null,
         "biomarker": {
           "raw_text": "TSH",
@@ -554,7 +554,7 @@
         "report_id": null
       },
       {
-        "id": "lab_01M3VFSH711TZP22DMBSM9TJHM",
+        "id": "lab_0002",
         "provenance": {
           "origin": "human",
           "asserted_by": {
@@ -580,7 +580,7 @@
           "ref": "lab-portal",
           "label": "lab-portal"
         },
-        "patient_id": "pat_01M3VFSH711TZP22DMBSM9TJHB",
+        "patient_id": "pat_0001",
         "encounter_id": null,
         "biomarker": {
           "raw_text": "TSH",
@@ -610,10 +610,10 @@
         "specimen": null,
         "performing_lab": "Meridian Labs",
         "ordering_provider_id": null,
-        "report_id": null
+        "report_id": "dxr_0001"
       },
       {
-        "id": "lab_01M3VFSH711TZP22DMBSM9TJHX",
+        "id": "lab_0003",
         "provenance": {
           "origin": "human",
           "asserted_by": {
@@ -639,7 +639,7 @@
           "ref": "lab-portal",
           "label": "lab-portal"
         },
-        "patient_id": "pat_01M3VFSH711TZP22DMBSM9TJHB",
+        "patient_id": "pat_0001",
         "encounter_id": null,
         "biomarker": {
           "raw_text": "free T4",
@@ -663,7 +663,7 @@
         "report_id": null
       },
       {
-        "id": "lab_01M3VFSH711TZP22DMBSM9TJJ2",
+        "id": "lab_0004",
         "provenance": {
           "origin": "human",
           "asserted_by": {
@@ -689,7 +689,7 @@
           "ref": "lab-portal",
           "label": "lab-portal"
         },
-        "patient_id": "pat_01M3VFSH711TZP22DMBSM9TJHB",
+        "patient_id": "pat_0001",
         "encounter_id": null,
         "biomarker": {
           "raw_text": "glucose, fasting",
@@ -712,14 +712,59 @@
         "report_id": null
       }
     ],
+    "diagnostic_reports": [
+      {
+        "id": "dxr_0001",
+        "provenance": {
+          "origin": "human",
+          "asserted_by": {
+            "kind": "system",
+            "ref": "lab-portal",
+            "label": "lab-portal"
+          },
+          "asserted_at": "2026-03-12T09:00:00Z",
+          "imported_at": null,
+          "source_refs": [],
+          "derived_from": [],
+          "depth": 0,
+          "extraction_confidence": null
+        },
+        "field_provenance": {},
+        "record_status": "active",
+        "version": 1,
+        "superseded_by": null,
+        "created_at": "2026-03-12T09:00:00Z",
+        "updated_at": "2026-03-12T09:00:00Z",
+        "updated_by": {
+          "kind": "system",
+          "ref": "lab-portal",
+          "label": "lab-portal"
+        },
+        "patient_id": "pat_0001",
+        "encounter_id": null,
+        "report_type": {
+          "raw_text": "thyroid panel",
+          "system": "LOINC",
+          "code": "24348-5",
+          "display": null
+        },
+        "issued_at": "2026-02-27T09:00:00Z",
+        "result_ids": [
+          "lab_0002"
+        ],
+        "findings": null,
+        "impression": null,
+        "performing_lab": "Meridian Labs"
+      }
+    ],
     "vitals": [
       {
-        "id": "vit_01M3VFSH711TZP22DMBSM9TJHQ",
+        "id": "vit_0001",
         "provenance": {
           "origin": "human",
           "asserted_by": {
             "kind": "human",
-            "ref": "prov_01M3VFSH6JCRY6EWDR5FVVN4WK",
+            "ref": "prov_0001",
             "label": "Dr A. Reyes"
           },
           "asserted_at": "2026-03-12T09:00:00Z",
@@ -737,11 +782,11 @@
         "updated_at": "2026-03-12T09:00:00Z",
         "updated_by": {
           "kind": "human",
-          "ref": "prov_01M3VFSH6JCRY6EWDR5FVVN4WK",
+          "ref": "prov_0001",
           "label": "Dr A. Reyes"
         },
-        "patient_id": "pat_01M3VFSH711TZP22DMBSM9TJHB",
-        "encounter_id": "enc_01M3VFSH711TZP22DMBSM9TJHC",
+        "patient_id": "pat_0001",
+        "encounter_id": "enc_0001",
         "kind": {
           "raw_text": "body weight",
           "system": "LOINC",
@@ -760,12 +805,12 @@
         "cuff_size": null
       },
       {
-        "id": "vit_01M3VFSH711TZP22DMBSM9TJHR",
+        "id": "vit_0002",
         "provenance": {
           "origin": "human",
           "asserted_by": {
             "kind": "human",
-            "ref": "prov_01M3VFSH6JCRY6EWDR5FVVN4WK",
+            "ref": "prov_0001",
             "label": "Dr A. Reyes"
           },
           "asserted_at": "2026-03-12T09:00:00Z",
@@ -783,10 +828,10 @@
         "updated_at": "2026-03-12T09:00:00Z",
         "updated_by": {
           "kind": "human",
-          "ref": "prov_01M3VFSH6JCRY6EWDR5FVVN4WK",
+          "ref": "prov_0001",
           "label": "Dr A. Reyes"
         },
-        "patient_id": "pat_01M3VFSH711TZP22DMBSM9TJHB",
+        "patient_id": "pat_0001",
         "encounter_id": null,
         "kind": {
           "raw_text": "body weight",
@@ -806,12 +851,12 @@
         "cuff_size": null
       },
       {
-        "id": "vit_01M3VFSH711TZP22DMBSM9TJHS",
+        "id": "vit_0003",
         "provenance": {
           "origin": "human",
           "asserted_by": {
             "kind": "human",
-            "ref": "prov_01M3VFSH6JCRY6EWDR5FVVN4WK",
+            "ref": "prov_0001",
             "label": "Dr A. Reyes"
           },
           "asserted_at": "2026-03-12T09:00:00Z",
@@ -829,11 +874,11 @@
         "updated_at": "2026-03-12T09:00:00Z",
         "updated_by": {
           "kind": "human",
-          "ref": "prov_01M3VFSH6JCRY6EWDR5FVVN4WK",
+          "ref": "prov_0001",
           "label": "Dr A. Reyes"
         },
-        "patient_id": "pat_01M3VFSH711TZP22DMBSM9TJHB",
-        "encounter_id": "enc_01M3VFSH711TZP22DMBSM9TJHC",
+        "patient_id": "pat_0001",
+        "encounter_id": "enc_0001",
         "kind": {
           "raw_text": "systolic blood pressure",
           "system": "LOINC",
@@ -854,12 +899,12 @@
     ],
     "clinical_notes": [
       {
-        "id": "note_01M3VFSH711TZP22DMBSM9TJHT",
+        "id": "note_0001",
         "provenance": {
           "origin": "human",
           "asserted_by": {
             "kind": "human",
-            "ref": "prov_01M3VFSH6JCRY6EWDR5FVVN4WK",
+            "ref": "prov_0001",
             "label": "Dr A. Reyes"
           },
           "asserted_at": "2026-03-12T09:00:00Z",
@@ -877,20 +922,20 @@
         "updated_at": "2026-03-12T09:00:00Z",
         "updated_by": {
           "kind": "human",
-          "ref": "prov_01M3VFSH6JCRY6EWDR5FVVN4WK",
+          "ref": "prov_0001",
           "label": "Dr A. Reyes"
         },
-        "patient_id": "pat_01M3VFSH711TZP22DMBSM9TJHB",
-        "encounter_id": "enc_01M3VFSH711TZP22DMBSM9TJHC",
+        "patient_id": "pat_0001",
+        "encounter_id": "enc_0001",
         "note_type": "progress",
         "authored_at": "2026-03-11T08:00:00Z",
-        "author_id": "prov_01M3VFSH711TZP22DMBSM9TJHA",
+        "author_id": "prov_0002",
         "body": {
           "value": "TSH 5.6 on the 26 Feb panel, up from 3.8 in September. Reports fatigue and cold intolerance. Discussed raising levothyroxine to 88 mcg and repeating TSH in six weeks. Notes she started biotin in the autumn.",
           "origin": "practice_authored",
           "captured_by": {
             "kind": "human",
-            "ref": "prov_01M3VFSH6JCRY6EWDR5FVVN4WK",
+            "ref": "prov_0001",
             "label": "Dr A. Reyes"
           }
         },
@@ -898,12 +943,12 @@
         "signed_at": "2026-03-11T09:00:00Z"
       },
       {
-        "id": "note_01M3VFSH711TZP22DMBSM9TJHV",
+        "id": "note_0002",
         "provenance": {
           "origin": "human",
           "asserted_by": {
             "kind": "human",
-            "ref": "prov_01M3VFSH6JCRY6EWDR5FVVN4WK",
+            "ref": "prov_0001",
             "label": "Dr A. Reyes"
           },
           "asserted_at": "2026-03-12T09:00:00Z",
@@ -921,20 +966,20 @@
         "updated_at": "2026-03-12T09:00:00Z",
         "updated_by": {
           "kind": "human",
-          "ref": "prov_01M3VFSH6JCRY6EWDR5FVVN4WK",
+          "ref": "prov_0001",
           "label": "Dr A. Reyes"
         },
-        "patient_id": "pat_01M3VFSH711TZP22DMBSM9TJHB",
+        "patient_id": "pat_0001",
         "encounter_id": null,
         "note_type": "telephone",
         "authored_at": "2026-03-07T09:00:00Z",
-        "author_id": "prov_01M3VFSH711TZP22DMBSM9TJHA",
+        "author_id": "prov_0002",
         "body": {
           "value": "Patient portal message, pasted: \"I have been taking the biotin supplement since autumn, could that affect the thyroid blood test?\"",
           "origin": "transcribed_external",
           "captured_by": {
             "kind": "human",
-            "ref": "prov_01M3VFSH6JCRY6EWDR5FVVN4WK",
+            "ref": "prov_0001",
             "label": "Dr A. Reyes"
           }
         },
@@ -944,12 +989,12 @@
     ],
     "treatment_plans": [
       {
-        "id": "plan_01M3VFSH711TZP22DMBSM9TJHW",
+        "id": "plan_0001",
         "provenance": {
           "origin": "human",
           "asserted_by": {
             "kind": "human",
-            "ref": "prov_01M3VFSH6JCRY6EWDR5FVVN4WK",
+            "ref": "prov_0001",
             "label": "Dr A. Reyes"
           },
           "asserted_at": "2026-03-12T09:00:00Z",
@@ -967,42 +1012,42 @@
         "updated_at": "2026-03-12T09:00:00Z",
         "updated_by": {
           "kind": "human",
-          "ref": "prov_01M3VFSH6JCRY6EWDR5FVVN4WK",
+          "ref": "prov_0001",
           "label": "Dr A. Reyes"
         },
-        "patient_id": "pat_01M3VFSH711TZP22DMBSM9TJHB",
-        "encounter_id": "enc_01M3VFSH711TZP22DMBSM9TJHC",
+        "patient_id": "pat_0001",
+        "encounter_id": "enc_0001",
         "title": "Thyroid optimisation, Q2 2026",
         "items": [
           {
             "description": "Increase levothyroxine to 88 mcg daily",
             "targets": [
-              "med_01M3VFSH711TZP22DMBSM9TJHH",
-              "cond_01M3VFSH711TZP22DMBSM9TJHF"
+              "med_0001",
+              "cond_0001"
             ],
             "due": "2026-03-20"
           },
           {
             "description": "Repeat TSH and free T4 in six weeks",
             "targets": [
-              "cond_01M3VFSH711TZP22DMBSM9TJHF"
+              "cond_0001"
             ],
             "due": "2026-04-23"
           },
           {
             "description": "Pause biotin for three days before the next draw",
             "targets": [
-              "supp_01M3VFSH711TZP22DMBSM9TJHP"
+              "supp_0002"
             ],
             "due": null
           }
         ],
-        "authored_by": "prov_01M3VFSH711TZP22DMBSM9TJHA"
+        "authored_by": "prov_0002"
       }
     ],
     "source_references": [
       {
-        "id": "sref_01M3VFSH711TZP22DMBSM9TJHY",
+        "id": "sref_0001",
         "provenance": {
           "origin": "human",
           "asserted_by": {
@@ -1028,8 +1073,8 @@
           "ref": "lab-portal",
           "label": "lab-portal"
         },
-        "patient_id": "pat_01M3VFSH711TZP22DMBSM9TJHB",
-        "document_id": "doc_01M3VFSH711TZP22DMBSM9TJHZ",
+        "patient_id": "pat_0001",
+        "document_id": "doc_0001",
         "page": null,
         "field_path": "labs[3].value",
         "span_start": null,
@@ -1037,7 +1082,7 @@
         "quote": "Glucose 5.5 mmol/L"
       },
       {
-        "id": "sref_01M3VFSH711TZP22DMBSM9TJJ0",
+        "id": "sref_0002",
         "provenance": {
           "origin": "human",
           "asserted_by": {
@@ -1063,8 +1108,8 @@
           "ref": "lab-portal",
           "label": "lab-portal"
         },
-        "patient_id": "pat_01M3VFSH711TZP22DMBSM9TJHB",
-        "document_id": "doc_01M3VFSH711TZP22DMBSM9TJJ1",
+        "patient_id": "pat_0001",
+        "document_id": "doc_0002",
         "page": 2,
         "field_path": "results[1].value",
         "span_start": null,
@@ -1074,7 +1119,7 @@
     ],
     "data_quality_flags": [
       {
-        "id": "flag_01M3VFSH711TZP22DMBSM9TJJ3",
+        "id": "flag_0001",
         "provenance": {
           "origin": "human",
           "asserted_by": {
@@ -1100,7 +1145,7 @@
           "ref": "normaliser",
           "label": "normaliser"
         },
-        "patient_id": "pat_01M3VFSH711TZP22DMBSM9TJHB",
+        "patient_id": "pat_0001",
         "code": "CONFLICTING_VALUES",
         "severity": "blocking",
         "message": "fasting glucose: EMR 5.5 mmol/L against lab 7.2 mmol/L, unresolved",
@@ -1108,23 +1153,23 @@
         "targets": [
           {
             "entity_type": "LabResult",
-            "entity_id": "lab_01M3VFSH711TZP22DMBSM9TJJ2",
+            "entity_id": "lab_0004",
             "field_path": "quantity"
           }
         ],
         "candidates": [
-          "sref_01M3VFSH711TZP22DMBSM9TJHY",
-          "sref_01M3VFSH711TZP22DMBSM9TJJ0"
+          "sref_0001",
+          "sref_0002"
         ],
         "source_locator": []
       },
       {
-        "id": "flag_01M3VFSH72915QVGWGJ120S80Z",
+        "id": "flag_0002",
         "provenance": {
           "origin": "system_derived",
           "asserted_by": {
             "kind": "human",
-            "ref": "prov_01M3VFSH711TZP22DMBSM9TJHA",
+            "ref": "prov_0002",
             "label": "Dr A. Reyes"
           },
           "asserted_at": "2026-03-12T09:00:00Z",
@@ -1142,10 +1187,10 @@
         "updated_at": "2026-03-12T09:00:00Z",
         "updated_by": {
           "kind": "human",
-          "ref": "prov_01M3VFSH711TZP22DMBSM9TJHA",
+          "ref": "prov_0002",
           "label": "Dr A. Reyes"
         },
-        "patient_id": "pat_01M3VFSH711TZP22DMBSM9TJHB",
+        "patient_id": "pat_0001",
         "code": "MISSING_REFERENCE_RANGE",
         "severity": "warning",
         "message": "free T4: no reference range from the performing lab",
@@ -1153,7 +1198,7 @@
         "targets": [
           {
             "entity_type": "LabResult",
-            "entity_id": "lab_01M3VFSH711TZP22DMBSM9TJHX",
+            "entity_id": "lab_0003",
             "field_path": "reference_range"
           }
         ],
@@ -1169,91 +1214,98 @@
         "kind": "condition_onset",
         "label": "iron deficiency anaemia",
         "source_type": "Condition",
-        "source_id": "cond_01M3VFSH711TZP22DMBSM9TJHG"
+        "source_id": "cond_0002"
       },
       {
         "at": "2019-11-20T00:00:00Z",
         "kind": "condition_resolved",
         "label": "iron deficiency anaemia",
         "source_type": "Condition",
-        "source_id": "cond_01M3VFSH711TZP22DMBSM9TJHG"
+        "source_id": "cond_0002"
       },
       {
         "at": "2021-05-14T00:00:00Z",
         "kind": "condition_onset",
         "label": "hypothyroidism",
         "source_type": "Condition",
-        "source_id": "cond_01M3VFSH711TZP22DMBSM9TJHF"
+        "source_id": "cond_0001"
       },
       {
         "at": "2021-06-01T00:00:00Z",
         "kind": "medication_started",
         "label": "levothyroxine",
         "source_type": "Medication",
-        "source_id": "med_01M3VFSH711TZP22DMBSM9TJHH"
+        "source_id": "med_0001"
       },
       {
         "at": "2024-11-01T00:00:00Z",
         "kind": "supplement_started",
         "label": "vitamin D3",
         "source_type": "Supplement",
-        "source_id": "supp_01M3VFSH711TZP22DMBSM9TJHN"
+        "source_id": "supp_0001"
       },
       {
         "at": "2025-09-01T00:00:00Z",
         "kind": "supplement_started",
         "label": "biotin",
         "source_type": "Supplement",
-        "source_id": "supp_01M3VFSH711TZP22DMBSM9TJHP"
+        "source_id": "supp_0002"
       },
       {
         "at": "2025-09-13T09:00:00Z",
         "kind": "lab_collected",
         "label": "TSH",
         "source_type": "LabResult",
-        "source_id": "lab_01M3VFSH711TZP22DMBSM9TJHK"
+        "source_id": "lab_0001"
       },
       {
         "at": "2026-02-26T09:00:00Z",
         "kind": "lab_collected",
         "label": "TSH",
         "source_type": "LabResult",
-        "source_id": "lab_01M3VFSH711TZP22DMBSM9TJHM"
+        "source_id": "lab_0002"
       },
       {
         "at": "2026-02-26T09:00:00Z",
         "kind": "lab_collected",
         "label": "free T4",
         "source_type": "LabResult",
-        "source_id": "lab_01M3VFSH711TZP22DMBSM9TJHX"
+        "source_id": "lab_0003"
       },
       {
         "at": "2026-02-26T09:00:00Z",
         "kind": "lab_collected",
         "label": "glucose, fasting",
         "source_type": "LabResult",
-        "source_id": "lab_01M3VFSH711TZP22DMBSM9TJJ2"
+        "source_id": "lab_0004"
+      },
+      {
+        "at": "2026-02-27T09:00:00Z",
+        "kind": "report_issued",
+        "label": "thyroid panel",
+        "source_type": "DiagnosticReport",
+        "source_id": "dxr_0001"
       },
       {
         "at": "2026-03-07T09:00:00Z",
         "kind": "note_authored",
         "label": "telephone",
         "source_type": "ClinicalNote",
-        "source_id": "note_01M3VFSH711TZP22DMBSM9TJHV"
+        "source_id": "note_0002"
       },
       {
         "at": "2026-03-11T07:00:00Z",
         "kind": "encounter",
         "label": "office visit",
         "source_type": "Encounter",
-        "source_id": "enc_01M3VFSH711TZP22DMBSM9TJHC"
+        "source_id": "enc_0001"
       },
       {
         "at": "2026-03-11T08:00:00Z",
         "kind": "note_authored",
         "label": "progress",
         "source_type": "ClinicalNote",
-        "source_id": "note_01M3VFSH711TZP22DMBSM9TJHT"
+        "source_id": "note_0001"
       }
     ],
     "lab_trends": [
@@ -1266,7 +1318,7 @@
         },
         "series": [
           {
-            "result_id": "lab_01M3VFSH711TZP22DMBSM9TJHK",
+            "result_id": "lab_0001",
             "at": "2025-09-13T09:00:00Z",
             "quantity": {
               "value": 3.8,
@@ -1276,7 +1328,7 @@
             }
           },
           {
-            "result_id": "lab_01M3VFSH711TZP22DMBSM9TJHM",
+            "result_id": "lab_0002",
             "at": "2026-02-26T09:00:00Z",
             "quantity": {
               "value": 5.6,
@@ -1287,14 +1339,14 @@
           }
         ],
         "numeric_basis": [
-          "lab_01M3VFSH711TZP22DMBSM9TJHK",
-          "lab_01M3VFSH711TZP22DMBSM9TJHM"
+          "lab_0001",
+          "lab_0002"
         ],
         "excluded": [],
         "direction": "rising",
         "unresolved": [
           {
-            "flag_id": "flag_01M3VFSH711TZP22DMBSM9TJJ3",
+            "flag_id": "flag_0001",
             "code": "CONFLICTING_VALUES",
             "severity": "blocking",
             "message": "fasting glucose: EMR 5.5 mmol/L against lab 7.2 mmol/L, unresolved"
@@ -1310,7 +1362,7 @@
         },
         "series": [
           {
-            "result_id": "lab_01M3VFSH711TZP22DMBSM9TJHX",
+            "result_id": "lab_0003",
             "at": "2026-02-26T09:00:00Z",
             "quantity": {
               "value": 11.2,
@@ -1321,13 +1373,13 @@
           }
         ],
         "numeric_basis": [
-          "lab_01M3VFSH711TZP22DMBSM9TJHX"
+          "lab_0003"
         ],
         "excluded": [],
         "direction": "indeterminate",
         "unresolved": [
           {
-            "flag_id": "flag_01M3VFSH711TZP22DMBSM9TJJ3",
+            "flag_id": "flag_0001",
             "code": "CONFLICTING_VALUES",
             "severity": "blocking",
             "message": "fasting glucose: EMR 5.5 mmol/L against lab 7.2 mmol/L, unresolved"
@@ -1343,7 +1395,7 @@
         },
         "series": [
           {
-            "result_id": "lab_01M3VFSH711TZP22DMBSM9TJJ2",
+            "result_id": "lab_0004",
             "at": "2026-02-26T09:00:00Z",
             "quantity": null
           }
@@ -1351,7 +1403,7 @@
         "numeric_basis": [],
         "excluded": [
           {
-            "result_id": "lab_01M3VFSH711TZP22DMBSM9TJJ2",
+            "result_id": "lab_0004",
             "at": "2026-02-26T09:00:00Z",
             "quantity": null,
             "reason": "no_value"
@@ -1360,7 +1412,7 @@
         "direction": "indeterminate",
         "unresolved": [
           {
-            "flag_id": "flag_01M3VFSH711TZP22DMBSM9TJJ3",
+            "flag_id": "flag_0001",
             "code": "CONFLICTING_VALUES",
             "severity": "blocking",
             "message": "fasting glucose: EMR 5.5 mmol/L against lab 7.2 mmol/L, unresolved"
@@ -1370,7 +1422,7 @@
     ],
     "pre_visit_brief": {
       "header": {
-        "patient_id": "pat_01M3VFSH711TZP22DMBSM9TJHB",
+        "patient_id": "pat_0001",
         "display_name": "Dana Okafor",
         "primary_mrn": "MRN-4471",
         "birth_date": "1979-04-02"
@@ -1378,7 +1430,7 @@
       "generated_at": "2026-03-12T09:00:00Z",
       "unresolved": [
         {
-          "flag_id": "flag_01M3VFSH711TZP22DMBSM9TJJ3",
+          "flag_id": "flag_0001",
           "code": "CONFLICTING_VALUES",
           "severity": "blocking",
           "message": "fasting glucose: EMR 5.5 mmol/L against lab 7.2 mmol/L, unresolved"
@@ -1412,7 +1464,7 @@
           },
           "series": [
             {
-              "result_id": "lab_01M3VFSH711TZP22DMBSM9TJHK",
+              "result_id": "lab_0001",
               "at": "2025-09-13T09:00:00Z",
               "quantity": {
                 "value": 3.8,
@@ -1422,7 +1474,7 @@
               }
             },
             {
-              "result_id": "lab_01M3VFSH711TZP22DMBSM9TJHM",
+              "result_id": "lab_0002",
               "at": "2026-02-26T09:00:00Z",
               "quantity": {
                 "value": 5.6,
@@ -1433,14 +1485,14 @@
             }
           ],
           "numeric_basis": [
-            "lab_01M3VFSH711TZP22DMBSM9TJHK",
-            "lab_01M3VFSH711TZP22DMBSM9TJHM"
+            "lab_0001",
+            "lab_0002"
           ],
           "excluded": [],
           "direction": "rising",
           "unresolved": [
             {
-              "flag_id": "flag_01M3VFSH711TZP22DMBSM9TJJ3",
+              "flag_id": "flag_0001",
               "code": "CONFLICTING_VALUES",
               "severity": "blocking",
               "message": "fasting glucose: EMR 5.5 mmol/L against lab 7.2 mmol/L, unresolved"
@@ -1456,7 +1508,7 @@
           },
           "series": [
             {
-              "result_id": "lab_01M3VFSH711TZP22DMBSM9TJHX",
+              "result_id": "lab_0003",
               "at": "2026-02-26T09:00:00Z",
               "quantity": {
                 "value": 11.2,
@@ -1467,13 +1519,13 @@
             }
           ],
           "numeric_basis": [
-            "lab_01M3VFSH711TZP22DMBSM9TJHX"
+            "lab_0003"
           ],
           "excluded": [],
           "direction": "indeterminate",
           "unresolved": [
             {
-              "flag_id": "flag_01M3VFSH711TZP22DMBSM9TJJ3",
+              "flag_id": "flag_0001",
               "code": "CONFLICTING_VALUES",
               "severity": "blocking",
               "message": "fasting glucose: EMR 5.5 mmol/L against lab 7.2 mmol/L, unresolved"
@@ -1489,7 +1541,7 @@
           },
           "series": [
             {
-              "result_id": "lab_01M3VFSH711TZP22DMBSM9TJJ2",
+              "result_id": "lab_0004",
               "at": "2026-02-26T09:00:00Z",
               "quantity": null
             }
@@ -1497,7 +1549,7 @@
           "numeric_basis": [],
           "excluded": [
             {
-              "result_id": "lab_01M3VFSH711TZP22DMBSM9TJJ2",
+              "result_id": "lab_0004",
               "at": "2026-02-26T09:00:00Z",
               "quantity": null,
               "reason": "no_value"
@@ -1506,7 +1558,7 @@
           "direction": "indeterminate",
           "unresolved": [
             {
-              "flag_id": "flag_01M3VFSH711TZP22DMBSM9TJJ3",
+              "flag_id": "flag_0001",
               "code": "CONFLICTING_VALUES",
               "severity": "blocking",
               "message": "fasting glucose: EMR 5.5 mmol/L against lab 7.2 mmol/L, unresolved"
@@ -1520,91 +1572,98 @@
           "kind": "condition_onset",
           "label": "iron deficiency anaemia",
           "source_type": "Condition",
-          "source_id": "cond_01M3VFSH711TZP22DMBSM9TJHG"
+          "source_id": "cond_0002"
         },
         {
           "at": "2019-11-20T00:00:00Z",
           "kind": "condition_resolved",
           "label": "iron deficiency anaemia",
           "source_type": "Condition",
-          "source_id": "cond_01M3VFSH711TZP22DMBSM9TJHG"
+          "source_id": "cond_0002"
         },
         {
           "at": "2021-05-14T00:00:00Z",
           "kind": "condition_onset",
           "label": "hypothyroidism",
           "source_type": "Condition",
-          "source_id": "cond_01M3VFSH711TZP22DMBSM9TJHF"
+          "source_id": "cond_0001"
         },
         {
           "at": "2021-06-01T00:00:00Z",
           "kind": "medication_started",
           "label": "levothyroxine",
           "source_type": "Medication",
-          "source_id": "med_01M3VFSH711TZP22DMBSM9TJHH"
+          "source_id": "med_0001"
         },
         {
           "at": "2024-11-01T00:00:00Z",
           "kind": "supplement_started",
           "label": "vitamin D3",
           "source_type": "Supplement",
-          "source_id": "supp_01M3VFSH711TZP22DMBSM9TJHN"
+          "source_id": "supp_0001"
         },
         {
           "at": "2025-09-01T00:00:00Z",
           "kind": "supplement_started",
           "label": "biotin",
           "source_type": "Supplement",
-          "source_id": "supp_01M3VFSH711TZP22DMBSM9TJHP"
+          "source_id": "supp_0002"
         },
         {
           "at": "2025-09-13T09:00:00Z",
           "kind": "lab_collected",
           "label": "TSH",
           "source_type": "LabResult",
-          "source_id": "lab_01M3VFSH711TZP22DMBSM9TJHK"
+          "source_id": "lab_0001"
         },
         {
           "at": "2026-02-26T09:00:00Z",
           "kind": "lab_collected",
           "label": "TSH",
           "source_type": "LabResult",
-          "source_id": "lab_01M3VFSH711TZP22DMBSM9TJHM"
+          "source_id": "lab_0002"
         },
         {
           "at": "2026-02-26T09:00:00Z",
           "kind": "lab_collected",
           "label": "free T4",
           "source_type": "LabResult",
-          "source_id": "lab_01M3VFSH711TZP22DMBSM9TJHX"
+          "source_id": "lab_0003"
         },
         {
           "at": "2026-02-26T09:00:00Z",
           "kind": "lab_collected",
           "label": "glucose, fasting",
           "source_type": "LabResult",
-          "source_id": "lab_01M3VFSH711TZP22DMBSM9TJJ2"
+          "source_id": "lab_0004"
+        },
+        {
+          "at": "2026-02-27T09:00:00Z",
+          "kind": "report_issued",
+          "label": "thyroid panel",
+          "source_type": "DiagnosticReport",
+          "source_id": "dxr_0001"
         },
         {
           "at": "2026-03-07T09:00:00Z",
           "kind": "note_authored",
           "label": "telephone",
           "source_type": "ClinicalNote",
-          "source_id": "note_01M3VFSH711TZP22DMBSM9TJHV"
+          "source_id": "note_0002"
         },
         {
           "at": "2026-03-11T07:00:00Z",
           "kind": "encounter",
           "label": "office visit",
           "source_type": "Encounter",
-          "source_id": "enc_01M3VFSH711TZP22DMBSM9TJHC"
+          "source_id": "enc_0001"
         },
         {
           "at": "2026-03-11T08:00:00Z",
           "kind": "note_authored",
           "label": "progress",
           "source_type": "ClinicalNote",
-          "source_id": "note_01M3VFSH711TZP22DMBSM9TJHT"
+          "source_id": "note_0001"
         }
       ],
       "narrative_withheld_reason": null
@@ -1612,96 +1671,96 @@
   },
   "ai_layer": {
     "summary": {
-      "id": "aia_01M3VFSH72915QVGWGJ120S80Y",
-      "patient_id": "pat_01M3VFSH711TZP22DMBSM9TJHB",
-      "trace_id": "trc_01M3VFSH711TZP22DMBSM9TJJ4",
+      "id": "aia_0001",
+      "patient_id": "pat_0001",
+      "trace_id": "trc_0001",
       "created_at": "2026-03-12T09:00:00Z",
       "inputs": [
         {
           "entity_type": "Condition",
-          "entity_id": "cond_01M3VFSH711TZP22DMBSM9TJHF",
+          "entity_id": "cond_0001",
           "version": 1
         },
         {
           "entity_type": "Medication",
-          "entity_id": "med_01M3VFSH711TZP22DMBSM9TJHH",
+          "entity_id": "med_0001",
           "version": 1
         },
         {
           "entity_type": "AllergyIntolerance",
-          "entity_id": "alg_01M3VFSH711TZP22DMBSM9TJHJ",
+          "entity_id": "alg_0001",
           "version": 1
         },
         {
           "entity_type": "Condition",
-          "entity_id": "cond_01M3VFSH711TZP22DMBSM9TJHG",
+          "entity_id": "cond_0002",
           "version": 1
         },
         {
           "entity_type": "Supplement",
-          "entity_id": "supp_01M3VFSH711TZP22DMBSM9TJHN",
+          "entity_id": "supp_0001",
           "version": 1
         },
         {
           "entity_type": "Supplement",
-          "entity_id": "supp_01M3VFSH711TZP22DMBSM9TJHP",
+          "entity_id": "supp_0002",
           "version": 1
         },
         {
           "entity_type": "LabResult",
-          "entity_id": "lab_01M3VFSH711TZP22DMBSM9TJHK",
+          "entity_id": "lab_0001",
           "version": 1
         },
         {
           "entity_type": "LabResult",
-          "entity_id": "lab_01M3VFSH711TZP22DMBSM9TJHM",
+          "entity_id": "lab_0002",
           "version": 1
         },
         {
           "entity_type": "LabResult",
-          "entity_id": "lab_01M3VFSH711TZP22DMBSM9TJHX",
+          "entity_id": "lab_0003",
           "version": 1
         },
         {
           "entity_type": "LabResult",
-          "entity_id": "lab_01M3VFSH711TZP22DMBSM9TJJ2",
+          "entity_id": "lab_0004",
           "version": 1
         },
         {
           "entity_type": "VitalSign",
-          "entity_id": "vit_01M3VFSH711TZP22DMBSM9TJHQ",
+          "entity_id": "vit_0001",
           "version": 1
         },
         {
           "entity_type": "VitalSign",
-          "entity_id": "vit_01M3VFSH711TZP22DMBSM9TJHR",
+          "entity_id": "vit_0002",
           "version": 1
         },
         {
           "entity_type": "VitalSign",
-          "entity_id": "vit_01M3VFSH711TZP22DMBSM9TJHS",
+          "entity_id": "vit_0003",
           "version": 1
         },
         {
           "entity_type": "ClinicalNote",
-          "entity_id": "note_01M3VFSH711TZP22DMBSM9TJHT",
+          "entity_id": "note_0001",
           "version": 1
         },
         {
           "entity_type": "ClinicalNote",
-          "entity_id": "note_01M3VFSH711TZP22DMBSM9TJHV",
+          "entity_id": "note_0002",
           "version": 1
         }
       ],
       "omitted": [],
       "produced": [],
-      "prompt_digest": "sha256:04d28e75bb884e276022e8b9d6f14eb4a3dfbb192baab742ae7e33cbd9121f0b",
+      "prompt_digest": "sha256:890a87f3f0b53a3eface2ca121fb9719d1ab379cc9d99136963da8689141ab9a",
       "model_id": "llama-3.3-70b-instruct",
       "model_digest": "sha256:8f4a1c…(illustrative)",
       "engine": "ollama",
       "engine_version": "0.5.1",
       "execution": "local",
-      "consent_ref": "cons_01M3VFSH711TZP22DMBSM9TJHE",
+      "consent_ref": "cons_0002",
       "review": "pending",
       "reviewed_by": null,
       "reviewed_at": null,
@@ -1712,7 +1771,7 @@
           "cites": [
             {
               "entity_type": "LabResult",
-              "entity_id": "lab_01M3VFSH711TZP22DMBSM9TJHK",
+              "entity_id": "lab_0001",
               "version": 1
             }
           ],
@@ -1722,7 +1781,7 @@
               "unit": "mIU/L",
               "cites": {
                 "entity_type": "LabResult",
-                "entity_id": "lab_01M3VFSH711TZP22DMBSM9TJHK",
+                "entity_id": "lab_0001",
                 "version": 1
               }
             }
@@ -1733,7 +1792,7 @@
           "cites": [
             {
               "entity_type": "LabResult",
-              "entity_id": "lab_01M3VFSH711TZP22DMBSM9TJHM",
+              "entity_id": "lab_0002",
               "version": 1
             }
           ],
@@ -1743,7 +1802,7 @@
               "unit": "mIU/L",
               "cites": {
                 "entity_type": "LabResult",
-                "entity_id": "lab_01M3VFSH711TZP22DMBSM9TJHM",
+                "entity_id": "lab_0002",
                 "version": 1
               }
             }
@@ -1754,7 +1813,7 @@
           "cites": [
             {
               "entity_type": "LabResult",
-              "entity_id": "lab_01M3VFSH711TZP22DMBSM9TJHX",
+              "entity_id": "lab_0003",
               "version": 1
             }
           ],
@@ -1764,7 +1823,7 @@
               "unit": "pmol/L",
               "cites": {
                 "entity_type": "LabResult",
-                "entity_id": "lab_01M3VFSH711TZP22DMBSM9TJHX",
+                "entity_id": "lab_0003",
                 "version": 1
               }
             }
@@ -1775,12 +1834,12 @@
           "cites": [
             {
               "entity_type": "LabResult",
-              "entity_id": "lab_01M3VFSH711TZP22DMBSM9TJHK",
+              "entity_id": "lab_0001",
               "version": 1
             },
             {
               "entity_type": "LabResult",
-              "entity_id": "lab_01M3VFSH711TZP22DMBSM9TJHM",
+              "entity_id": "lab_0002",
               "version": 1
             }
           ],
@@ -1791,7 +1850,7 @@
           "cites": [
             {
               "entity_type": "LabResult",
-              "entity_id": "lab_01M3VFSH711TZP22DMBSM9TJHX",
+              "entity_id": "lab_0003",
               "version": 1
             }
           ],
@@ -1800,7 +1859,7 @@
       ],
       "unresolved": [
         {
-          "flag_id": "flag_01M3VFSH711TZP22DMBSM9TJJ3",
+          "flag_id": "flag_0001",
           "code": "CONFLICTING_VALUES",
           "severity": "blocking",
           "message": "fasting glucose: EMR 5.5 mmol/L against lab 7.2 mmol/L, unresolved"
@@ -1811,7 +1870,7 @@
   },
   "audit": [
     {
-      "id": "aud_01M3VFSH72915QVGWGJ120S80Q",
+      "id": "aud_0001",
       "provenance": {
         "origin": "system_derived",
         "asserted_by": {
@@ -1837,17 +1896,17 @@
         "ref": "previsit-brief",
         "label": "previsit-brief"
       },
-      "patient_id": "pat_01M3VFSH711TZP22DMBSM9TJHB",
+      "patient_id": "pat_0001",
       "action": "read",
-      "trace_id": "trc_01M3VFSH711TZP22DMBSM9TJJ4",
+      "trace_id": "trc_0001",
       "actor": {
         "kind": "agent",
         "ref": "previsit-brief",
         "label": "previsit-brief"
       },
       "targets": [
-        "cond_01M3VFSH711TZP22DMBSM9TJHF",
-        "cond_01M3VFSH711TZP22DMBSM9TJHG"
+        "cond_0001",
+        "cond_0002"
       ],
       "fields_read": null,
       "field_delta": {},
@@ -1856,18 +1915,18 @@
       "inputs": [
         {
           "entity_type": "Condition",
-          "entity_id": "cond_01M3VFSH711TZP22DMBSM9TJHF",
+          "entity_id": "cond_0001",
           "version": 1
         },
         {
           "entity_type": "Condition",
-          "entity_id": "cond_01M3VFSH711TZP22DMBSM9TJHG",
+          "entity_id": "cond_0002",
           "version": 1
         }
       ]
     },
     {
-      "id": "aud_01M3VFSH72915QVGWGJ120S80R",
+      "id": "aud_0002",
       "provenance": {
         "origin": "system_derived",
         "asserted_by": {
@@ -1893,16 +1952,16 @@
         "ref": "previsit-brief",
         "label": "previsit-brief"
       },
-      "patient_id": "pat_01M3VFSH711TZP22DMBSM9TJHB",
+      "patient_id": "pat_0001",
       "action": "read",
-      "trace_id": "trc_01M3VFSH711TZP22DMBSM9TJJ4",
+      "trace_id": "trc_0001",
       "actor": {
         "kind": "agent",
         "ref": "previsit-brief",
         "label": "previsit-brief"
       },
       "targets": [
-        "med_01M3VFSH711TZP22DMBSM9TJHH"
+        "med_0001"
       ],
       "fields_read": null,
       "field_delta": {},
@@ -1911,13 +1970,13 @@
       "inputs": [
         {
           "entity_type": "Medication",
-          "entity_id": "med_01M3VFSH711TZP22DMBSM9TJHH",
+          "entity_id": "med_0001",
           "version": 1
         }
       ]
     },
     {
-      "id": "aud_01M3VFSH72915QVGWGJ120S80S",
+      "id": "aud_0003",
       "provenance": {
         "origin": "system_derived",
         "asserted_by": {
@@ -1943,16 +2002,16 @@
         "ref": "previsit-brief",
         "label": "previsit-brief"
       },
-      "patient_id": "pat_01M3VFSH711TZP22DMBSM9TJHB",
+      "patient_id": "pat_0001",
       "action": "read",
-      "trace_id": "trc_01M3VFSH711TZP22DMBSM9TJJ4",
+      "trace_id": "trc_0001",
       "actor": {
         "kind": "agent",
         "ref": "previsit-brief",
         "label": "previsit-brief"
       },
       "targets": [
-        "alg_01M3VFSH711TZP22DMBSM9TJHJ"
+        "alg_0001"
       ],
       "fields_read": null,
       "field_delta": {},
@@ -1961,13 +2020,13 @@
       "inputs": [
         {
           "entity_type": "AllergyIntolerance",
-          "entity_id": "alg_01M3VFSH711TZP22DMBSM9TJHJ",
+          "entity_id": "alg_0001",
           "version": 1
         }
       ]
     },
     {
-      "id": "aud_01M3VFSH72915QVGWGJ120S80T",
+      "id": "aud_0004",
       "provenance": {
         "origin": "system_derived",
         "asserted_by": {
@@ -1993,17 +2052,17 @@
         "ref": "previsit-brief",
         "label": "previsit-brief"
       },
-      "patient_id": "pat_01M3VFSH711TZP22DMBSM9TJHB",
+      "patient_id": "pat_0001",
       "action": "read",
-      "trace_id": "trc_01M3VFSH711TZP22DMBSM9TJJ4",
+      "trace_id": "trc_0001",
       "actor": {
         "kind": "agent",
         "ref": "previsit-brief",
         "label": "previsit-brief"
       },
       "targets": [
-        "supp_01M3VFSH711TZP22DMBSM9TJHN",
-        "supp_01M3VFSH711TZP22DMBSM9TJHP"
+        "supp_0001",
+        "supp_0002"
       ],
       "fields_read": null,
       "field_delta": {},
@@ -2012,18 +2071,18 @@
       "inputs": [
         {
           "entity_type": "Supplement",
-          "entity_id": "supp_01M3VFSH711TZP22DMBSM9TJHN",
+          "entity_id": "supp_0001",
           "version": 1
         },
         {
           "entity_type": "Supplement",
-          "entity_id": "supp_01M3VFSH711TZP22DMBSM9TJHP",
+          "entity_id": "supp_0002",
           "version": 1
         }
       ]
     },
     {
-      "id": "aud_01M3VFSH72915QVGWGJ120S80V",
+      "id": "aud_0005",
       "provenance": {
         "origin": "system_derived",
         "asserted_by": {
@@ -2049,19 +2108,19 @@
         "ref": "previsit-brief",
         "label": "previsit-brief"
       },
-      "patient_id": "pat_01M3VFSH711TZP22DMBSM9TJHB",
+      "patient_id": "pat_0001",
       "action": "read",
-      "trace_id": "trc_01M3VFSH711TZP22DMBSM9TJJ4",
+      "trace_id": "trc_0001",
       "actor": {
         "kind": "agent",
         "ref": "previsit-brief",
         "label": "previsit-brief"
       },
       "targets": [
-        "lab_01M3VFSH711TZP22DMBSM9TJHK",
-        "lab_01M3VFSH711TZP22DMBSM9TJHM",
-        "lab_01M3VFSH711TZP22DMBSM9TJHX",
-        "lab_01M3VFSH711TZP22DMBSM9TJJ2"
+        "lab_0001",
+        "lab_0002",
+        "lab_0003",
+        "lab_0004"
       ],
       "fields_read": null,
       "field_delta": {},
@@ -2070,28 +2129,28 @@
       "inputs": [
         {
           "entity_type": "LabResult",
-          "entity_id": "lab_01M3VFSH711TZP22DMBSM9TJHK",
+          "entity_id": "lab_0001",
           "version": 1
         },
         {
           "entity_type": "LabResult",
-          "entity_id": "lab_01M3VFSH711TZP22DMBSM9TJHM",
+          "entity_id": "lab_0002",
           "version": 1
         },
         {
           "entity_type": "LabResult",
-          "entity_id": "lab_01M3VFSH711TZP22DMBSM9TJHX",
+          "entity_id": "lab_0003",
           "version": 1
         },
         {
           "entity_type": "LabResult",
-          "entity_id": "lab_01M3VFSH711TZP22DMBSM9TJJ2",
+          "entity_id": "lab_0004",
           "version": 1
         }
       ]
     },
     {
-      "id": "aud_01M3VFSH72915QVGWGJ120S80W",
+      "id": "aud_0006",
       "provenance": {
         "origin": "system_derived",
         "asserted_by": {
@@ -2117,18 +2176,18 @@
         "ref": "previsit-brief",
         "label": "previsit-brief"
       },
-      "patient_id": "pat_01M3VFSH711TZP22DMBSM9TJHB",
+      "patient_id": "pat_0001",
       "action": "read",
-      "trace_id": "trc_01M3VFSH711TZP22DMBSM9TJJ4",
+      "trace_id": "trc_0001",
       "actor": {
         "kind": "agent",
         "ref": "previsit-brief",
         "label": "previsit-brief"
       },
       "targets": [
-        "vit_01M3VFSH711TZP22DMBSM9TJHQ",
-        "vit_01M3VFSH711TZP22DMBSM9TJHR",
-        "vit_01M3VFSH711TZP22DMBSM9TJHS"
+        "vit_0001",
+        "vit_0002",
+        "vit_0003"
       ],
       "fields_read": null,
       "field_delta": {},
@@ -2137,23 +2196,23 @@
       "inputs": [
         {
           "entity_type": "VitalSign",
-          "entity_id": "vit_01M3VFSH711TZP22DMBSM9TJHQ",
+          "entity_id": "vit_0001",
           "version": 1
         },
         {
           "entity_type": "VitalSign",
-          "entity_id": "vit_01M3VFSH711TZP22DMBSM9TJHR",
+          "entity_id": "vit_0002",
           "version": 1
         },
         {
           "entity_type": "VitalSign",
-          "entity_id": "vit_01M3VFSH711TZP22DMBSM9TJHS",
+          "entity_id": "vit_0003",
           "version": 1
         }
       ]
     },
     {
-      "id": "aud_01M3VFSH72915QVGWGJ120S80X",
+      "id": "aud_0007",
       "provenance": {
         "origin": "system_derived",
         "asserted_by": {
@@ -2179,17 +2238,17 @@
         "ref": "previsit-brief",
         "label": "previsit-brief"
       },
-      "patient_id": "pat_01M3VFSH711TZP22DMBSM9TJHB",
+      "patient_id": "pat_0001",
       "action": "read",
-      "trace_id": "trc_01M3VFSH711TZP22DMBSM9TJJ4",
+      "trace_id": "trc_0001",
       "actor": {
         "kind": "agent",
         "ref": "previsit-brief",
         "label": "previsit-brief"
       },
       "targets": [
-        "note_01M3VFSH711TZP22DMBSM9TJHT",
-        "note_01M3VFSH711TZP22DMBSM9TJHV"
+        "note_0001",
+        "note_0002"
       ],
       "fields_read": null,
       "field_delta": {},
@@ -2198,12 +2257,12 @@
       "inputs": [
         {
           "entity_type": "ClinicalNote",
-          "entity_id": "note_01M3VFSH711TZP22DMBSM9TJHT",
+          "entity_id": "note_0001",
           "version": 1
         },
         {
           "entity_type": "ClinicalNote",
-          "entity_id": "note_01M3VFSH711TZP22DMBSM9TJHV",
+          "entity_id": "note_0002",
           "version": 1
         }
       ]

@@ -14,7 +14,7 @@ from pai3.entities.clinical import AllergyIntolerance, Condition, Criticality, E
 from pai3.entities.infrastructure import DataQualityFlag, FlagTarget, SourceReference
 from pai3.entities.narrative import ClinicalNote, NoteType
 from pai3.entities.people import CareTeamMembership, Patient, Provider
-from pai3.entities.results import LabResult, VitalSign
+from pai3.entities.results import DiagnosticReport, LabResult, VitalSign
 from pai3.entities.therapy import (
     Medication,
     MedicationStatus,
@@ -72,6 +72,7 @@ class Fixture:
     supplements: list[Supplement]
     allergies: list[AllergyIntolerance]
     labs: list[LabResult]
+    reports: list[DiagnosticReport]
     vitals: list[VitalSign]
     notes: list[ClinicalNote]
     plans: list[TreatmentPlan]
@@ -176,6 +177,7 @@ def build_fixture(
         )
     ]
 
+    report_id = new_id("dxr")
     tsh = CodeableConcept(raw_text="TSH", system="LOINC", code="3016-3")
     labs = [
         LabResult(
@@ -192,6 +194,7 @@ def build_fixture(
             reference_range=ReferenceRange(low=0.4, high=4.0),
             reported_interpretation=CodeableConcept(raw_text="H"),
             performing_lab="Meridian Labs",
+            report_id=report_id,
         ),
     ]
 
@@ -297,6 +300,20 @@ def build_fixture(
         )
     ]
 
+    # The panel the recent thyroid analytes belong to. Without it they are orphan rows and
+    # there is nothing to cite when the physician says "the panel from 26 February" (§6.8).
+    reports = [
+        DiagnosticReport(
+            id=report_id, **_base(LAB_SYS), patient_id=patient_id,
+            report_type=CodeableConcept(
+                raw_text="thyroid panel", system="LOINC", code="24348-5"
+            ),
+            issued_at=NOW - timedelta(days=13),
+            result_ids=[labs[1].id],
+            performing_lab="Meridian Labs",
+        )
+    ]
+
     # An outside lab that reported no reference range. Realistic, and it exercises a
     # second severity class: layer 2 raises MISSING_REFERENCE_RANGE as a WARNING, the
     # record stays visible, and nothing blocks (§9.1).
@@ -309,6 +326,8 @@ def build_fixture(
             performing_lab="Northgate Reference Lab",
         )
     )
+    # Deliberately not attached to the panel: it came from a different lab, which is why its
+    # reference range is missing and its report is someone else's.
 
     flags: list[DataQualityFlag] = []
     source_refs: list[SourceReference] = []
@@ -356,6 +375,6 @@ def build_fixture(
     return Fixture(
         now=NOW, patient=patient, provider=provider, consents=consents,
         encounters=encounters, conditions=conditions, medications=medications,
-        supplements=supplements, allergies=allergies, labs=labs, vitals=vitals,
-        notes=notes, plans=plans, flags=flags, source_refs=source_refs,
+        supplements=supplements, allergies=allergies, labs=labs, reports=reports,
+        vitals=vitals, notes=notes, plans=plans, flags=flags, source_refs=source_refs,
     )

@@ -204,6 +204,7 @@ class LocalInferenceAdapter:
                 medications=fx.medications,
                 supplements=fx.supplements,
                 labs=fx.labs,
+                reports=fx.reports,
                 notes=fx.notes,
             ),
         }

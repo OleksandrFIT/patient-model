@@ -1,13 +1,38 @@
 """Generate deliverables/d3_example_patient.json from the fixture.
 
-Generated rather than hand-written, so the example record cannot drift away from the
-models it claims to be an instance of. Regenerate with:
+Generated rather than hand-written, so the example record cannot drift away from the models
+it claims to instantiate. Regenerate with:
 
     .venv/bin/python scripts_build_d3.py
+
+and `git diff` should be empty. That is what proves the file is generated: if it were
+hand-maintained, regenerating would overwrite the edits.
+
+Identifiers are made deterministic for this artifact — `lab_0002` rather than a 26-character
+ULID. Two reasons: the output is then byte-identical across runs, and a reviewer tracing
+`report_id` to `result_ids` can actually read it. The prefix still says what kind of record it
+is (model_design.md §8). Production uses real ULIDs; only this script substitutes a counter,
+and it does so *before* any model is imported, so `prompt_digest` remains a genuine hash of
+the prompt that was really assembled from these ids rather than a placeholder.
 """
 
+import itertools
 import json
 from pathlib import Path
+
+import pai3.ids
+
+_COUNTERS: dict[str, itertools.count] = {}
+
+
+def _deterministic_new_id(prefix: str) -> str:
+    if not prefix or "_" in prefix:
+        raise ValueError(f"invalid prefix: {prefix!r}")
+    counter = _COUNTERS.setdefault(prefix, itertools.count(1))
+    return f"{prefix}_{next(counter):04d}"
+
+
+pai3.ids.new_id = _deterministic_new_id  # must precede the imports below
 
 from mock.patient_fixture import build_fixture
 from pai3.ai.adapter import LocalInferenceAdapter
@@ -43,7 +68,8 @@ def main() -> None:
     record = {
         "_note": (
             "Entirely fictional. Generated from mock/patient_fixture.py by "
-            "scripts_build_d3.py so it cannot drift from the Pydantic models."
+            "scripts_build_d3.py, which also makes identifiers deterministic so the file "
+            "is reproducible. Production uses ULIDs."
         ),
         "_sections": {
             "canonical": "accepted clinical fact; every value names who vouched for it",
@@ -60,6 +86,7 @@ def main() -> None:
             "supplements": [s.model_dump(mode="json") for s in fx.supplements],
             "allergies": [a.model_dump(mode="json") for a in fx.allergies],
             "lab_results": [lab.model_dump(mode="json") for lab in fx.labs],
+            "diagnostic_reports": [r.model_dump(mode="json") for r in fx.reports],
             "vitals": [v.model_dump(mode="json") for v in fx.vitals],
             "clinical_notes": [n.model_dump(mode="json") for n in fx.notes],
             "treatment_plans": [p.model_dump(mode="json") for p in fx.plans],
@@ -74,19 +101,17 @@ def main() -> None:
                 for e in build_timeline(
                     encounters=fx.encounters, conditions=fx.conditions,
                     medications=fx.medications, supplements=fx.supplements,
-                    labs=fx.labs, notes=fx.notes,
+                    labs=fx.labs, reports=fx.reports, notes=fx.notes,
                 )
             ],
             "lab_trends": [t.model_dump(mode="json") for t in brief.trends],
             "pre_visit_brief": brief.model_dump(mode="json", exclude={"narrative"}),
         },
         "ai_layer": {
-            "summary": brief.narrative.model_dump(mode="json")
-            if brief.narrative
-            else None,
-            "human_review_status": brief.narrative.review.value
-            if brief.narrative
-            else "no narrative produced",
+            "summary": brief.narrative.model_dump(mode="json") if brief.narrative else None,
+            "human_review_status": (
+                brief.narrative.review.value if brief.narrative else "no narrative produced"
+            ),
         },
         "audit": [e.model_dump(mode="json") for e in adapter.audit_events],
     }
