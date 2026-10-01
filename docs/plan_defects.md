@@ -8,7 +8,8 @@ honest record of where it was wrong, what each error would have cost, and how it
 Entries are added as they are found rather than reconstructed afterwards — a defect log
 assembled from memory at the end shows.
 
-Phases 1–4 complete at the time of writing; Phase 5 pending.
+All five phases complete. Step 7 of the plan — assembling the deliverable
+documents — remains.
 
 ---
 
@@ -20,10 +21,18 @@ Phases 1–4 complete at the time of writing; Phase 5 pending.
 | 2 | 11 | Comparison before the `None` guard, twice | `TypeError` on the commonest range shape | **The plan's own tests** |
 | 3 | 15 | Bare class attribute on a Pydantic model | Module fails to import at all, ×5 entities | Checking the assumption first |
 | 4 | 24 | Naive `datetime` where the model uses `AwareDatetime` | An unorderable review timestamp, silently | Consistency check against `base.py` |
+| 5 | 26 | `budget=0` returns an empty projection instead of refusing | A generation with no inputs; guardrail 1 passes vacuously | Edge sweep |
+| 6 | 27 | Check 5 matched entity **type**, contradicting the projection's droppability | Hard rejection of a brief that correctly omitted a resolved condition | Feeding it a real `ProjectionResult` |
+| 7 | 27 | Checks 2–3 ran only on `LabResult` | A fabricated `VitalSign` value passed | Reading the check against §10.5's wording |
+| 8 | 27 | Checks 2–3 skipped silently when the record was not supplied | A checker that cannot see the record reports a pass | Same |
+| 9 | 28 | Series unit conflated "not yet established" with "established as `None`" | A unit-less value averaged in with mmol/L, unnamed | Probe with a unit-less lab |
+| 10 | 29 | Narrative trends built from every lab, not the projection | Claims citing omitted labs; guardrail 1 rejects the whole narrative | Simulating intermediate budgets |
 
-Two of the four would have been caught by running the code. One was caught by the tests the
-plan itself specified. One — defect 1 — would never have failed anything, which is why it
-is in this list at all.
+Of the ten, **three** would have been caught by running the plan's own tests. The other
+seven passed its suite: four were found by checking an assumption before writing, and three
+by feeding a component real output from the component upstream of it rather than hand-built
+input. That second instrument found the three worst — defects 6, 9 and 10, each of which
+makes two parts of the system disagree while both pass their own tests.
 
 ---
 
@@ -145,15 +154,29 @@ Defect density tracked **novelty, not care**:
 | 2 — remaining full-depth entities | 4 | 0 |
 | 3 — the thin five | 1 | 0 |
 | 4 — AI layer schema | 1 | 1 |
+| 5 — gate, projection, guardrails, adapter, D8 | 5 | **6** |
 
 Phase 1 is where the plan designed something for the first time. Phases 2 and 3 applied
 patterns Phase 1 had already settled, and produced nothing worse than an import-order nit.
 
-The practical consequence was a prediction made before Phase 5 rather than after it: Phase 5
-contains more original logic than the other four together — a capability token, a projection
-layer with a budget, five guardrail checks over set arithmetic, an adapter — so two to three
-defects were expected there, most likely in `project_records` and in the guardrails. Whether
-that prediction held is recorded below once Phase 5 is complete.
+**The prediction, and how it did.** Before starting Phase 5 the forecast on record was two to
+three defects, "most likely in `project_records` and in the guardrails". The direction was
+right — Phase 5 produced more defects than the other four phases combined, and three of the
+six were indeed in the guardrails with one in `project_records`. The count was wrong by a
+factor of two.
 
-Phase 5 is also the only place where a missing piece does not degrade honestly: an
-unimplemented consent gate is an open door, not a `None`.
+Where the forecast was wrong is more useful than where it was right. It assumed defects would
+sit *inside* components, and the three worst sat *between* them: the guardrails and the
+projection held separate definitions of droppability (6); the adapter built the narrative's
+trends from a different lab set than the one it projected (10); the trend's unit logic
+disagreed with what §9.2 lets into canonical (9). Each of those passed every unit test on both
+sides of the seam, because a unit test constructs its own input and so never sees what the
+neighbouring component actually emits.
+
+The instrument that found them was the same one each time: run the component on real output
+from the component upstream of it. That is also what the cross-entity smoke test did at the
+Phase 2/3 boundary, seven tasks before the plan's first integration — and the lesson is that it
+should have come earlier still, and been repeated at each seam rather than once.
+
+Phase 5 was also the only place where a missing piece does not degrade honestly: an
+unimplemented consent gate is an open door, not a `None`. Nothing in it was deferred.
