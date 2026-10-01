@@ -1371,9 +1371,28 @@ job there is synthesis rather than prose.
 | 3. No claim asserts a value for a record whose value slot is empty | `quantity is None` makes any asserted value a violation. This is §9.6 as code |
 | 4. Open blocking flags on records in `inputs` appear in `unresolved` | Set difference |
 | 5. No record of a non-droppable category appears in `omitted` (§10.6) | Set membership. If the allergies did not fit, the budget is wrong |
+| 6. A claim stating a number declares it in `values` | Without this, checks 2 and 3 are vacuous — see below |
 
 Checks 1 and 3 are the valuable pair: together they are what catches "the model
 produced a number that is not in the data".
+
+**Check 6 exists because the first five were not enough, and that was found by running a real
+model rather than by reasoning.** This section specified that every `ClaimValue` is compared
+against the record it cites, and left `values` optional — so a model can satisfy the schema,
+state its figures in `text`, declare nothing, and leave checks 2 and 3 with nothing to compare.
+`qwen2.5:7b` did exactly that on the first real run: *"TSH 3.8 mIU/L and 5.6 mIU/L"* in prose,
+`values: []`, verdict pass. An artifact carrying unverified numbers reached a physician.
+
+The hole was in this section, not in the code implementing it. It survived the design review,
+the implementation plan, and every test written against the five checks — because each of those
+tests supplied the values it then verified. Only a model that declined to supply them showed
+that supplying them had been assumed.
+
+Check 6 matches a **decimal**, not any digit, so "type 2 diabetes" and "over 3 visits" do not
+trip it. The cost of that narrowness is named rather than hidden: an integer measurement stated
+in prose still passes. The general lesson is the one this section opens with — over free text
+nothing is checkable — applied one level further in: **a structured field the model is allowed
+to omit is free text with extra steps.**
 
 **What happens on failure.**
 

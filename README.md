@@ -236,7 +236,7 @@ allergies**, and the generation is refused rather than truncated. The physician 
 the deterministic brief — which has no budget and holds every lab — plus a statement of why
 there is no narrative.
 
-On the way out, five checks run before a generation becomes an artifact:
+On the way out, six checks run before a generation becomes an artifact:
 
 | | Check |
 |---|---|
@@ -245,6 +245,7 @@ On the way out, five checks run before a generation becomes an artifact:
 | 3 | No claim asserts a value for a record whose value slot is empty |
 | 4 | Open blocking flags on the inputs appear in the output |
 | 5 | No non-droppable record appears in `omitted` |
+| 6 | A claim stating a number declares it in `values`, or checks 2 and 3 have nothing to compare |
 
 All of this depends on the output being structured. Over free prose none of the checks works:
 a number extractor that misses one produces a false pass, which is worse than no check. So an
@@ -253,7 +254,7 @@ a number extractor that misses one produces a false pass, which is worse than no
 Two honest limits. These verify **grounding, not judgement** — a claim can cite the right
 record, carry the right number, and still be a poor clinical inference, and the only check on
 judgement is human review. And they are **asymmetric: they catch fabrication, never
-omission.** A brief that failed to mention a critical allergy passes all five, because there
+omission.** A brief that failed to mention a critical allergy passes all six, because there
 is nothing to diff a summary against that was never written.
 
 ---

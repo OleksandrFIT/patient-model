@@ -50,7 +50,7 @@ def run_guardrails(
     records: dict[str, object],
     open_blocking_flags: list[FlagSummary],
 ) -> tuple[Verdict, list[GuardrailFailure]]:
-    """Run all five checks and classify the result.
+    """Run all six checks and classify the result.
 
     `records` maps canonical id to the record, for checks 2, 3 and 5.
     `open_blocking_flags` are the flags on the records in `inputs`, gathered by the caller.
