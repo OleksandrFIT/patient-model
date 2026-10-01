@@ -11,10 +11,11 @@ from typing import ClassVar
 from pydantic import AwareDatetime, Field, model_validator
 
 from pai3.base import ClinicalRecord
-from pai3.enums import Interpretation
+from pai3.enums import Interpretation, MeasurementContext
 from pai3.interpretation import interpret
 from pai3.values.codeable import CodeableConcept
 from pai3.values.quantity import Quantity, ReferenceRange
+from pai3.values.text import ClinicalText
 
 
 class LabResult(ClinicalRecord):
@@ -73,3 +74,48 @@ class LabResult(ClinicalRecord):
         if computed is Interpretation.INDETERMINATE:
             return None
         return (computed.value, "computed")
+
+
+class DiagnosticReport(ClinicalRecord):
+    """A panel or an imaging study as one object (§6.8).
+
+    Without it a fourteen-analyte panel is fourteen orphan rows and nothing can be cited
+    when a physician says "the CBC from 12 March". Imaging is the same entity with
+    narrative and no discrete values, so no separate imaging entity is needed.
+    """
+
+    report_type: CodeableConcept
+    issued_at: AwareDatetime
+    result_ids: list[str] = Field(default_factory=list, description="LabResult ids")
+    findings: ClinicalText | None = None
+    impression: ClinicalText | None = None
+    performing_lab: str | None = None
+
+    @model_validator(mode="after")
+    def _report_carries_something(self) -> "DiagnosticReport":
+        if not self.result_ids and self.findings is None and self.impression is None:
+            raise ValueError("a report needs result_ids or narrative findings")
+        return self
+
+
+class VitalSign(ClinicalRecord):
+    """A measurement taken in clinic, reported by the patient, or from a device.
+
+    `measurement_context` is required because trend analysis must be able to exclude
+    patient-reported points — §9.4's ExcludedPoint carries PATIENT_REPORTED for exactly
+    this. A missing cuff size is an acceptable missing value, not a defect, which is the
+    severity difference §6.6 cites for keeping vitals apart from labs.
+    """
+
+    FIELD_PROVENANCE_WHITELIST: ClassVar[frozenset[str]] = frozenset({"quantity"})
+
+    kind: CodeableConcept
+    measured_at: AwareDatetime
+    quantity: Quantity
+    measurement_context: MeasurementContext
+    body_position: str | None = None
+    cuff_size: str | None = None
+
+    @property
+    def is_clinical(self) -> bool:
+        return self.measurement_context is MeasurementContext.CLINICAL
