@@ -2813,7 +2813,7 @@ _NOT_ASSERTABLE = {VerificationStatus.REFUTED, VerificationStatus.PROVISIONAL,
 class Condition(ClinicalRecord):
     """Medical history and current diagnoses in one entity (§6.4)."""
 
-    FIELD_PROVENANCE_WHITELIST = frozenset({"clinical_status"})
+    FIELD_PROVENANCE_WHITELIST: ClassVar[frozenset[str]] = frozenset({"clinical_status"})
 
     code: CodeableConcept
     clinical_status: ClinicalStatus
@@ -3004,7 +3004,7 @@ class MedicationStatus(StrEnum):
 
 
 class Medication(ClinicalRecord):
-    FIELD_PROVENANCE_WHITELIST = frozenset({"dose", "status"})
+    FIELD_PROVENANCE_WHITELIST: ClassVar[frozenset[str]] = frozenset({"dose", "status"})
 
     drug: CodeableConcept
     dosage: Dosage
@@ -3221,7 +3221,7 @@ class LabResult(ClinicalRecord):
     `CodeableConcept`, which six other entities share (§6.9).
     """
 
-    FIELD_PROVENANCE_WHITELIST = frozenset({"quantity"})
+    FIELD_PROVENANCE_WHITELIST: ClassVar[frozenset[str]] = frozenset({"quantity"})
 
     biomarker: CodeableConcept
     collection_date: AwareDatetime
@@ -3896,7 +3896,7 @@ class Supplement(ClinicalRecord):
     would branch on a `kind` discriminator anyway if this were merged with Medication.
     """
 
-    FIELD_PROVENANCE_WHITELIST = frozenset({"dose", "status"})
+    FIELD_PROVENANCE_WHITELIST: ClassVar[frozenset[str]] = frozenset({"dose", "status"})
 
     substance: CodeableConcept
     dosage: Dosage
@@ -4088,7 +4088,7 @@ class VitalSign(ClinicalRecord):
     body_position: str | None = None
     cuff_size: str | None = None
 
-    FIELD_PROVENANCE_WHITELIST = frozenset({"quantity"})
+    FIELD_PROVENANCE_WHITELIST: ClassVar[frozenset[str]] = frozenset({"quantity"})
 
     @property
     def is_clinical(self) -> bool:

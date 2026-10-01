@@ -1,0 +1,82 @@
+"""Coded clinical statements, and the small entities that sit beside them.
+
+Encounter, Procedure, Goal and SocialFactor arrive in Phases 2 and 3; this file holds
+them all because they change together as the coding approach changes.
+"""
+
+from datetime import date
+from enum import StrEnum
+from typing import ClassVar
+
+from pydantic import BaseModel, Field, model_validator
+
+from pai3.base import ClinicalRecord
+from pai3.enums import ClinicalStatus, VerificationStatus
+from pai3.values.codeable import CodeableConcept
+
+_NOT_ASSERTABLE = {
+    VerificationStatus.REFUTED,
+    VerificationStatus.PROVISIONAL,
+    VerificationStatus.DIFFERENTIAL,
+    VerificationStatus.UNCONFIRMED,
+}
+
+
+class Condition(ClinicalRecord):
+    """Medical history and current diagnoses in one entity (§6.4)."""
+
+    FIELD_PROVENANCE_WHITELIST: ClassVar[frozenset[str]] = frozenset({"clinical_status"})
+
+    code: CodeableConcept
+    clinical_status: ClinicalStatus
+    verification_status: VerificationStatus
+    onset: date | None = None
+    abatement: date | None = None
+    recorded_by: str | None = Field(default=None, description="Provider id")
+
+    @model_validator(mode="after")
+    def _abatement_follows_onset(self) -> "Condition":
+        if self.onset and self.abatement and self.abatement < self.onset:
+            raise ValueError("abatement precedes onset")
+        return self
+
+    @property
+    def is_assertable(self) -> bool:
+        """Whether a summary may state this as fact.
+
+        Only a confirmed condition qualifies. Everything else is a hypothesis, and
+        §6.4 exists so that a hypothesis cannot be rendered as a diagnosis.
+        """
+        return self.verification_status not in _NOT_ASSERTABLE
+
+
+class Criticality(StrEnum):
+    """Potential for a life-threatening reaction — not the severity of a past one."""
+
+    LOW = "low"
+    HIGH = "high"
+    UNABLE_TO_ASSESS = "unable_to_assess"
+
+
+class Reaction(BaseModel):
+    manifestation: CodeableConcept
+    severity: str | None = None
+    occurred: date | None = None
+
+
+class AllergyIntolerance(ClinicalRecord):
+    """Never embedded on Patient.
+
+    The most safety-critical list in the model needs its own audit trail, and §10.6
+    makes it non-droppable from any projection regardless of verification status.
+    """
+
+    substance: CodeableConcept
+    criticality: Criticality
+    verification_status: VerificationStatus
+    reactions: list[Reaction] = Field(default_factory=list)
+    recorded_by: str | None = None
+
+    @property
+    def is_assertable(self) -> bool:
+        return self.verification_status not in _NOT_ASSERTABLE
