@@ -65,11 +65,16 @@ class PatientScopedRecord(Protocol):
     patient_id: str
 
 
-def _is_non_droppable(record: object) -> bool:
+def is_non_droppable(record: object) -> bool:
     """§10.6's list: allergies, current medications, active conditions.
 
     Open blocking flags are the fourth member and are carried separately, on the
     read-model's required `unresolved` field (§9.4), so they never pass through here.
+
+    Public because §10.5's fifth check must apply the *same* rule. A parallel
+    type-name list in the guardrails would contradict this one: a RESOLVED condition
+    and a STOPPED medication are legitimately droppable here, and a type-based check
+    would reject the generation that correctly omitted them.
     """
     if isinstance(record, AllergyIntolerance):
         return True
@@ -123,8 +128,8 @@ def project_records(
     for record in records:
         _check(scope, record.patient_id, now)
 
-    required = [r for r in records if _is_non_droppable(r)]
-    optional = [r for r in records if not _is_non_droppable(r)]
+    required = [r for r in records if is_non_droppable(r)]
+    optional = [r for r in records if not is_non_droppable(r)]
 
     if len(required) > budget:
         kinds = sorted({type(r).__name__ for r in required})
