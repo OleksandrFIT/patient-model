@@ -38,6 +38,19 @@ record comes into existence with `provenance.origin = ai_extraction` — crediti
 the extraction — and `provenance.asserted_by` set to the accepting human. There
 is no "pending" state inside canonical. §6.1 follows from this.
 
+**The rule is checkable, not merely stated.** It reduces to a dependency direction — no
+module of the canonical layer may import from the AI layer — so it can be verified instead
+of trusted. In the reference implementation that verification is a search returning
+nothing: `entities/`, `values/`, `base.py`, `validation.py`, `lineage.py` and
+`interpretation.py` hold zero imports from the AI package, while the AI package reaches
+canonical only for `CanonicalRef` and `FlagSummary`. `AIArtifact` is not a subclass of
+`CanonicalRecord` and carries no `provenance`, `record_status`, `version` or `updated_by`:
+it is not canon by inheritance or by field.
+
+A claim in a document can be argued with; a zero import count cannot, and it breaks loudly
+the moment someone adds the convenient back-reference — which is why §6.19 routes lineage
+through `AIArtifact.produced` instead of an `artifact_ref` on provenance.
+
 ---
 
 ## 2. Shared fields — three tiers
@@ -1274,8 +1287,9 @@ projection carries no identity.
 | `ExtractionCandidate` | Yes | Yes | This is the suggestion channel | Acceptance into canonical |
 | `Task` | Yes | No | `origin = ai_suggested`, `status = proposed` | Assignment |
 
-**The write column has exactly one non-empty row.** That is the shortest statement
-of §1.
+**The write column has exactly one non-empty row.** That is the shortest statement of §1,
+and §1 gives how that is verified rather than asserted: the canonical layer holds zero
+imports from the AI layer, which is a check a reviewer can run.
 
 **The audit log is outside AI read scope.** There is no clinical need for an agent
 to reason about who did what, and the trail of every actor who touched a chart is a
