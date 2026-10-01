@@ -156,8 +156,8 @@ Task.
 | `SocialFactor` | Clinical | factor code, value, asserted_at | Normalized records, not a block on Patient — §6.16 |
 | `Task` | Clinical | status, assignee, due, origin | AI-extracted tasks land `proposed`, never `open` and assigned |
 | `SourceReference` | PatientScoped | document ref, page, `field_path`, span, `quote` | The single citation primitive — §6.17 |
-| `DataQualityFlag` | Canonical | `code`, `severity`, `targets[]`, `candidates[]`, lifecycle | An entity, not an embedded list — §6.5 |
-| `AuditEvent` | Canonical | actor, action, `trace_id`, `targets`, `fields_read`, field delta | Append-only. Logs reads as well as writes, correlated by `trace_id` — §6.3 |
+| `DataQualityFlag` | Canonical | `code`, `severity`, `targets[]`, `candidates[]`, `source_locator[]`, lifecycle | An entity, not an embedded list — §6.5 |
+| `AuditEvent` | Canonical | actor, action, `trace_id`, `targets`, `fields_read`, `ingest`, field delta | Append-only. Logs reads as well as writes, correlated by `trace_id` — §6.3 |
 
 ---
 
@@ -299,6 +299,11 @@ record was read*. It is never an empty list standing in for "nothing". Assemblin
 context for a model is required to go through the recording path. The same
 discipline as `field_provenance.get(f) or provenance` in §6.2.
 
+**`AuditEvent` carries payloads by action.** `fields_read` is populated on reads,
+`IngestSummary` on ingest events (§9.7), the field delta on writes. That is the
+ordinary shape of an event log rather than a muddle: each field is documented by the
+action that populates it and is absent otherwise.
+
 **Why reads batch and writes do not.** One brief is forty-odd read events;
 batching by entity type collapses that to roughly eight. The asymmetry inside a
 single entity is not elegant, and it loses nothing — the question an incident
@@ -344,14 +349,15 @@ Three reasons not to embed `quality_flags: list[...]` in the base:
    the version of a clinical fact and buries the change history in review noise.
 
 Shape: `targets: list[(entity_type, entity_id, field_path)]`,
-`candidates: list[SourceReference]`, `severity`, `code`, lifecycle status.
+`candidates: list[SourceReference]`, `source_locator: list[ULID]` (§9.7),
+`severity`, `code`, lifecycle status.
 
 `code` is a **closed enum, never free text**, because under §6.9 and §9.1 it is
 the only carrier of *why* a value is absent, and consumers branch on it:
 `CONFLICTING_VALUES`, `MISSING_UNIT`, `MISSING_REFERENCE_RANGE`,
 `UNIT_MISMATCH`, `INTERPRETATION_DISAGREES_WITH_RANGE`, `EXTRACTION_FAILED`,
 `DISCONTINUED_SHOWN_ACTIVE`, `DUPLICATE_CANDIDATE`, `UNCODED_CONCEPT`,
-`PARENT_RETRACTED` (§6.19).
+`PARENT_RETRACTED` (§6.19), `RECORD_REJECTED_AT_INGEST` (§9.7).
 
 `candidates` is what makes a conflict actionable: it lets the UI say "glucose —
 conflict between EMR 5.5 and lab 7.2, unresolved" rather than merely reporting
@@ -645,6 +651,10 @@ Without the cascade `derived_from` is documentation. With it the chain is action
 - **A canonical carrier for `patient_submitted`** — §10.1 wraps four narrative
   fields, and patient-authored free text such as `Goal.description` is not among
   them.
+- **Proving completeness of a source that declares no count** — §9.7. `expected` is
+  `None` for a free-form document, so completeness cannot be proved for it. This is a
+  limit on what can be *known*, not on what is recorded: the `None` sits on the ingest
+  event and is queryable.
 - **A retention policy for AI artifacts.** §6.19 puts the lineage from an accepted
   fact back to the generation that proposed it in `AIArtifact.produced`, so pruning
   the AI layer destroys the ability to explain facts already in canonical. Phase 1
@@ -755,7 +765,7 @@ the D5 list item by item should not read it as a dropped requirement.
 The rule splits. `biomarker.raw_text` and `collection_date` are **layer 1**: a
 measurement with no analyte name is not a lab result, and one with no date
 cannot be placed on a timeline or trended, so it has no canonical meaning. Both
-are rejected at the boundary and the flag attaches to the source document.
+are rejected at the boundary and the flag attaches to the source document (§9.7).
 `quantity.value` and `quantity.unit` are **layer 2**: the record is created, the
 field is empty or partial, and a flag carries the reason.
 
@@ -898,6 +908,80 @@ what keeps the rule out of the intuition of whoever reads the code next.
 An agent **may read** a blocking-flagged record, **must cite the flag**, and may
 **neither** assert the value — there is none — **nor** infer it from
 surrounding fields.
+
+### 9.7 Partial ingestion, and making the gap visible
+
+An extraction fails halfway, a document is corrupt, one row in forty will not
+validate. Two questions follow: is the batch accepted in part or refused whole, and
+how does anyone see that something is missing.
+
+**Partial, at two levels.** Refusing a whole batch is the worse option: one row
+without a collection date would block a patient's entire lab history during a
+migration, which is the opposite of what §9.3 exists for. But partial acceptance does
+not cover everything — if the patient cannot be resolved there is nobody to attach
+anything to. So two levels, parallel to the two layers of §9.1:
+
+| Level | Example | Consequence |
+|---|---|---|
+| Record | a row with no `collection_date` | The rest of the batch lands; this row does not |
+| Batch | the patient does not resolve, the file is corrupt, the hash does not match | Nothing is accepted |
+
+**Visibility requires knowing what was expected.** "Thirty-eight labs landed" means
+nothing without "the document held forty". So the attempt itself is recorded, with
+counts. No new entity is needed: §6.3 already defines `trace_id` as a unit of work and
+names "one extraction run" among them, so a run already has an identity. The counts
+ride on `AuditEvent`:
+
+```
+IngestSummary:                     # populated on ingest events only
+    source_document_id: ULID
+    expected:           int | None
+    accepted:           int
+    rejected:           int
+```
+
+**Two events, not one:** `ingest_started` carrying `expected`, then `ingest_completed`
+carrying `accepted` and `rejected`.
+
+This settles the half-finished case at no cost. `AuditEvent` is append-only and cannot
+be updated, so a crash in the middle of a batch leaves a `started` with no
+`completed`, and the unclosed pair is itself the signal. A failure that is silent in
+the data is not possible; what is required is a query, not a further mechanism.
+
+**Where a rejected record's flag attaches.** §9.1 says the flag attaches to the source
+document, and `DataQualityFlag.targets` — `(entity_type, entity_id, field_path)` over
+canonical types — could not express that. Making `targets` polymorphic across layers
+would be wrong, since the registry of §8 covers canonical types only.
+
+So `DataQualityFlag` gains `source_locator: list[ULID]`, holding `SourceReference`
+ids. This adds no concept: a `SourceReference` already points at a document, a page, a
+`field_path` and a span. A flag either targets canonical records or names a place in a
+document. The code is `RECORD_REJECTED_AT_INGEST`.
+
+**A batch-level failure is not a flag.** `SourceReference` is `PatientScoped` and needs
+a `patient_id`, so where the patient does not resolve it cannot be created at all.
+Batch failures therefore live on the ingest event with a reason and carry no flag —
+there is no patient to flag them against. The asymmetry has a reason rather than being
+an oversight.
+
+**Unverifiable completeness is not the same as unflagged completeness.** When a
+document declares no count — a free-form PDF — `expected` is `None`, and completeness
+cannot be proved for that source. This raises no flag, because a flag on every
+ingested PDF would be noise rather than information.
+
+It is not thereby invisible. The `None` stays *on the event*, so "which documents have
+unverifiable completeness" is an ordinary query over ingest events. The distinction is
+the point: the model does not know whether that source was complete, and it says so
+where it is asked instead of asserting a count it never had. Not flagging something
+and not knowing it are different claims, and `None` is the second.
+
+**The invariant**, parallel to §9.3:
+
+> **A rejected record is never silently absent. Every rejection is reachable from the
+> run that attempted it.**
+
+The schema for all of this is built in §11 step 1. The pipeline that emits these
+events is exercised by the optional normalization build.
 
 ---
 
