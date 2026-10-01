@@ -8,8 +8,8 @@ honest record of where it was wrong, what each error would have cost, and how it
 Entries are added as they are found rather than reconstructed afterwards — a defect log
 assembled from memory at the end shows.
 
-All five phases complete. Step 7 of the plan — assembling the deliverable
-documents — remains.
+All five phases complete, plus step 7 (the deliverable documents) and the optional
+normalisation build.
 
 ---
 
@@ -144,6 +144,27 @@ so it is not rediscovered as a surprise.
 
 ---
 
+## The optional normalisation build
+
+Written after the plan, so the defects below are mine rather than the plan's. Recorded in the
+same file because D10 asks what was wrong with AI output, and this was AI output too.
+
+| # | Defect | Would have caused | Found by |
+|---|---|---|---|
+| 11 | `Conflict` candidates keyed by source class | Two values asserted by the *same* class overwrote each other — exactly the glucose case, so the conflict report would have shown one of the two readings | Inspecting the output on real data |
+| 12 | Free-text `dose_text` treated as a conflicting field | "75 mcg daily" against "levothyroxine 75mcg daily" reported as a conflict, burying the real dose disagreement two lines below | Same |
+| 13 | `verification_status` hard-coded to `CONFIRMED` | A self-reported diagnosis entering canonical as a confirmed one, defeating the field §6.4 exists for | Reviewing the builder against §6.4 |
+| 14 | A dict literal evaluating `c.winner.value` | `AttributeError` on every outcome where no source won — which is every unresolved conflict | Running it |
+
+Defect 11 is the one worth keeping. The data model for conflicts could not represent the
+central case the build exists to demonstrate, and its own tests passed because they were
+written against the same wrong shape. Only looking at the rendered output caught it — the same
+instrument that found the three worst defects in Phase 5, applied one layer further out.
+
+Defect 13 is the one that would have mattered clinically. §6.4 separates verification from
+clinical status so a suspicion cannot be rendered as a diagnosis; a normaliser that stamps
+`CONFIRMED` on everything it reads undoes that for every record it touches.
+
 ## The pattern, which is the point
 
 Defect density tracked **novelty, not care**:
@@ -155,6 +176,7 @@ Defect density tracked **novelty, not care**:
 | 3 — the thin five | 1 | 0 |
 | 4 — AI layer schema | 1 | 1 |
 | 5 — gate, projection, guardrails, adapter, D8 | 5 | **6** |
+| optional — normalisation (written after the plan) | — | **4** |
 
 Phase 1 is where the plan designed something for the first time. Phases 2 and 3 applied
 patterns Phase 1 had already settled, and produced nothing worse than an import-order nit.
