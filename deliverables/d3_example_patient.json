@@ -1735,14 +1735,7 @@
         ],
         "excluded": [],
         "direction": "rising",
-        "unresolved": [
-          {
-            "flag_id": "flag_0001",
-            "code": "CONFLICTING_VALUES",
-            "severity": "blocking",
-            "message": "fasting glucose: EMR 5.5 mmol/L against lab 7.2 mmol/L, unresolved"
-          }
-        ]
+        "unresolved": []
       },
       {
         "analyte": {
@@ -1768,14 +1761,7 @@
         ],
         "excluded": [],
         "direction": "indeterminate",
-        "unresolved": [
-          {
-            "flag_id": "flag_0001",
-            "code": "CONFLICTING_VALUES",
-            "severity": "blocking",
-            "message": "fasting glucose: EMR 5.5 mmol/L against lab 7.2 mmol/L, unresolved"
-          }
-        ]
+        "unresolved": []
       },
       {
         "analyte": {
@@ -1801,14 +1787,7 @@
           }
         ],
         "direction": "indeterminate",
-        "unresolved": [
-          {
-            "flag_id": "flag_0001",
-            "code": "CONFLICTING_VALUES",
-            "severity": "blocking",
-            "message": "fasting glucose: EMR 5.5 mmol/L against lab 7.2 mmol/L, unresolved"
-          }
-        ]
+        "unresolved": []
       }
     ],
     "pre_visit_brief": {
@@ -1885,14 +1864,7 @@
           ],
           "excluded": [],
           "direction": "rising",
-          "unresolved": [
-            {
-              "flag_id": "flag_0001",
-              "code": "CONFLICTING_VALUES",
-              "severity": "blocking",
-              "message": "fasting glucose: EMR 5.5 mmol/L against lab 7.2 mmol/L, unresolved"
-            }
-          ]
+          "unresolved": []
         },
         {
           "analyte": {
@@ -1918,14 +1890,7 @@
           ],
           "excluded": [],
           "direction": "indeterminate",
-          "unresolved": [
-            {
-              "flag_id": "flag_0001",
-              "code": "CONFLICTING_VALUES",
-              "severity": "blocking",
-              "message": "fasting glucose: EMR 5.5 mmol/L against lab 7.2 mmol/L, unresolved"
-            }
-          ]
+          "unresolved": []
         },
         {
           "analyte": {
@@ -1951,14 +1916,7 @@
             }
           ],
           "direction": "indeterminate",
-          "unresolved": [
-            {
-              "flag_id": "flag_0001",
-              "code": "CONFLICTING_VALUES",
-              "severity": "blocking",
-              "message": "fasting glucose: EMR 5.5 mmol/L against lab 7.2 mmol/L, unresolved"
-            }
-          ]
+          "unresolved": []
         }
       ],
       "timeline": [
@@ -2194,7 +2152,7 @@
       ],
       "omitted": [],
       "produced": [],
-      "prompt_digest": "sha256:9f2bc649c5e5088b20a3826284c0beacf280b7ac117a1138cd4f7d310e82ed45",
+      "prompt_digest": "sha256:6f91d26d44ccc4dbe205411061f64433fb1fc3c9f17546f7b4f877e9aa04dbb9",
       "model_id": "stub:deterministic-claim-builder",
       "model_digest": null,
       "engine": "stub",

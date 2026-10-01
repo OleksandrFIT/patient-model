@@ -54,6 +54,24 @@ def test_a_blocking_flag_reaches_both_the_brief_and_the_narrative():
     assert any(f.severity is Severity.BLOCKING for f in brief.narrative.unresolved)
 
 
+def test_a_trend_does_not_advertise_another_analytes_flag():
+    """The flag is the patient's, not the series'. `FlagSummary` carries no target, so a
+    trend handed the open flags would show the glucose conflict under TSH and mark a clean
+    rising series as blocked. It belongs at brief level, which is where it is true."""
+    fx = build_fixture(with_conflicting_glucose=True)
+    scope = authorize_ai_read(fx.patient.id, fx.consents, fx.now)
+    brief = _adapter().build_brief(fx, scope, budget=50)
+
+    assert any(f.severity is Severity.BLOCKING for f in brief.unresolved)
+    assert [t for t in brief.trends if t.unresolved] == []
+
+    tsh = next(t for t in brief.trends if "TSH" in t.analyte.raw_text)
+    assert tsh.unresolved == []
+    # The excluded point stays visible: dropping the flag must not hide the arithmetic.
+    glucose = next(t for t in brief.trends if "glucose" in t.analyte.raw_text)
+    assert glucose.excluded != []
+
+
 def test_a_fabricating_model_is_rejected_and_the_attempt_is_recorded():
     # The failing case D8 must show: the artifact exists, marked, and reaches no reader.
     fx = build_fixture()

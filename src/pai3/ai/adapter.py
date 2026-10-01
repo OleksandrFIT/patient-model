@@ -33,19 +33,25 @@ from pai3.values.provenance import Provenance
 AGENT = Actor(kind=ActorKind.AGENT, ref="previsit-brief", label="previsit-brief")
 
 
-def _trends_for(labs: list[LabResult], unresolved: list[FlagSummary]) -> list[LabTrend]:
+def _trends_for(labs: list[LabResult]) -> list[LabTrend]:
     """One trend per analyte, keyed on the coded concept where there is one.
 
     Grouped rather than assuming a single analyte, so a panel does not collapse into one
     meaningless series.
+
+    No flags are attached. `FlagSummary` carries no reference to the record it is about, so
+    a trend handed the patient's open flags cannot tell which of them concern its own
+    analyte and ends up advertising all of them: the glucose conflict appeared under TSH,
+    marking a clean rising series as blocked. The brief already carries the same flags at
+    its own level, where they are true of the patient rather than of one series, so nothing
+    is lost by dropping them here. A trend that shows another analyte's blocking flag is
+    worse than one that shows none, because `blocking` means no conclusion may be drawn.
     """
     groups: dict[str, list[LabResult]] = {}
     for lab in labs:
         key = lab.biomarker.code or lab.biomarker.raw_text
         groups.setdefault(key, []).append(lab)
-    return [
-        build_lab_trend(group[0].biomarker, group, unresolved) for group in groups.values()
-    ]
+    return [build_lab_trend(group[0].biomarker, group) for group in groups.values()]
 
 
 class LocalInferenceAdapter:
@@ -137,7 +143,7 @@ class LocalInferenceAdapter:
                 f" ({v.measurement_context.value})"
                 for v in sorted(fx.vitals, key=lambda v: v.measured_at, reverse=True)
             ],
-            "trends": _trends_for(fx.labs, unresolved),
+            "trends": _trends_for(fx.labs),
             "timeline": build_timeline(
                 encounters=fx.encounters,
                 conditions=fx.conditions,
@@ -172,7 +178,7 @@ class LocalInferenceAdapter:
         generated = self.generator.generate(GenerationContext(
             view=view,
             labs=labs_in_context,
-            trends=_trends_for(labs_in_context, unresolved),
+            trends=_trends_for(labs_in_context),
             unresolved=unresolved,
         ))
 

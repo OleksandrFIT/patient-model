@@ -20,6 +20,7 @@ from pai3.ai.generators import (
     OllamaGenerator,
     OllamaUnavailable,
     StubGenerator,
+    resolve_citation,
 )
 from pai3.ai.projection import AIPatientView
 from pai3.entities.results import LabResult
@@ -90,11 +91,18 @@ def test_the_schema_requires_text_and_citations():
     assert "values" in item["properties"]
 
 
-def test_the_prompt_names_every_record_by_id_and_marks_an_absent_value():
+def test_the_prompt_labels_records_by_index_and_never_shows_an_id():
     labs = [_lab(5.6), _lab(None, "glucose, fasting")]
-    prompt = _ctx(labs).render()
+    rendered = _ctx(labs).render()
+    prompt = rendered.text
+
+    assert "[1]" in prompt
+    assert "[2]" in prompt
+    # The reason indices exist: an id the model never sees is an id it cannot mangle.
     for lab in labs:
-        assert lab.id in prompt
+        assert lab.id not in prompt
+    # The map resolves to the real records, in the order the prompt listed them.
+    assert [rendered.by_index[k].entity_id for k in ("1", "2")] == [labs[0].id, labs[1].id]
     assert "VALUE ABSENT" in prompt
     # Assert the instruction is there, not its exact phrasing: a test pinned to wording
     # breaks when the wording is improved, which teaches nothing.
@@ -103,9 +111,26 @@ def test_the_prompt_names_every_record_by_id_and_marks_an_absent_value():
     assert "rejected" in lowered
 
 
+def test_an_index_the_prompt_never_offered_cannot_resolve():
+    """The `[9]` case. It must fail exactly as a wrong id did, or indices would trade a
+    fabrication the guardrails catch for one they do not."""
+    labs = [_lab(3.8), _lab(5.6)]
+    by_index = _ctx(labs).render().by_index
+
+    assert resolve_citation("[1]", by_index).entity_id == labs[0].id
+    assert resolve_citation("2", by_index).entity_id == labs[1].id
+    assert resolve_citation(" [2] ", by_index).entity_id == labs[1].id
+
+    known = {lab.id for lab in labs}
+    for fabricated in ("[9]", "9", "lab_01ARZ3NDEKTSV4RRFFQ69G5FAV", "TSH", "[1,2]", ""):
+        assert resolve_citation(fabricated, by_index).entity_id not in known
+
+
 def test_the_prompt_carries_no_identity():
     # §10.4 end to end: whatever reaches the model cannot contain a name or an MRN.
-    prompt = _ctx([_lab(5.6)]).render()
+    # .text, not the tuple: `"Okafor" not in RenderedPrompt(...)` compares against the
+    # tuple's elements and passes whatever the prompt says.
+    prompt = _ctx([_lab(5.6)]).render().text
     for forbidden in ("Okafor", "Dana", "MRN"):
         assert forbidden not in prompt
 
@@ -150,9 +175,9 @@ def test_a_real_model_is_told_not_to_value_an_absent_result():
     # the point of guardrail 3. This pins that the instruction reaches it.
     gen = OllamaGenerator(MODEL)
     ctx = _ctx([_lab(None, "glucose, fasting")])
-    assert "VALUE ABSENT" in ctx.render()
+    assert "VALUE ABSENT" in ctx.render().text
     generated = gen.generate(ctx)
-    assert generated.prompt == ctx.render()
+    assert generated.prompt == ctx.render().text
 
 
 @needs_ollama

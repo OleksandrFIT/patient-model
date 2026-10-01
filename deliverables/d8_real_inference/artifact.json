@@ -1,171 +1,118 @@
 {
-  "id": "aia_01M3VHZVYX8NYX6KG9JZAJS1ZE",
-  "patient_id": "pat_01M3VHZAWPJCS0169XYN65KM1K",
-  "trace_id": "trc_01M3VHZAWPJCS0169XYN65KM2D",
+  "id": "aia_01M3VQNZ8NR0TYQR85CK318KQ9",
+  "patient_id": "pat_01M3VQNKS4C4PSWYRD4VW4XXZS",
+  "trace_id": "trc_01M3VQNKS4C4PSWYRD4VW4XY0W",
   "created_at": "2026-03-12T09:00:00Z",
   "inputs": [
     {
       "entity_type": "Condition",
-      "entity_id": "cond_01M3VHZAWPJCS0169XYN65KM1Q",
+      "entity_id": "cond_01M3VQNKS4C4PSWYRD4VW4XXZX",
       "version": 1
     },
     {
       "entity_type": "Medication",
-      "entity_id": "med_01M3VHZAWPJCS0169XYN65KM1S",
+      "entity_id": "med_01M3VQNKS4C4PSWYRD4VW4XY01",
       "version": 1
     },
     {
       "entity_type": "AllergyIntolerance",
-      "entity_id": "alg_01M3VHZAWPJCS0169XYN65KM1T",
+      "entity_id": "alg_01M3VQNKS4C4PSWYRD4VW4XY02",
       "version": 1
     },
     {
       "entity_type": "Condition",
-      "entity_id": "cond_01M3VHZAWPJCS0169XYN65KM1R",
+      "entity_id": "cond_01M3VQNKS4C4PSWYRD4VW4XXZY",
+      "version": 1
+    },
+    {
+      "entity_type": "Symptom",
+      "entity_id": "sym_01M3VQNKS4C4PSWYRD4VW4XXZZ",
+      "version": 1
+    },
+    {
+      "entity_type": "Symptom",
+      "entity_id": "sym_01M3VQNKS4C4PSWYRD4VW4XY00",
       "version": 1
     },
     {
       "entity_type": "Supplement",
-      "entity_id": "supp_01M3VHZAWPJCS0169XYN65KM1Y",
+      "entity_id": "supp_01M3VQNKS4C4PSWYRD4VW4XY06",
       "version": 1
     },
     {
       "entity_type": "Supplement",
-      "entity_id": "supp_01M3VHZAWPJCS0169XYN65KM1Z",
+      "entity_id": "supp_01M3VQNKS4C4PSWYRD4VW4XY07",
       "version": 1
     },
     {
       "entity_type": "LabResult",
-      "entity_id": "lab_01M3VHZAWPJCS0169XYN65KM1W",
+      "entity_id": "lab_01M3VQNKS4C4PSWYRD4VW4XY04",
       "version": 1
     },
     {
       "entity_type": "LabResult",
-      "entity_id": "lab_01M3VHZAWPJCS0169XYN65KM1X",
+      "entity_id": "lab_01M3VQNKS4C4PSWYRD4VW4XY05",
       "version": 1
     },
     {
       "entity_type": "LabResult",
-      "entity_id": "lab_01M3VHZAWPJCS0169XYN65KM26",
+      "entity_id": "lab_01M3VQNKS4C4PSWYRD4VW4XY0E",
       "version": 1
     },
     {
       "entity_type": "LabResult",
-      "entity_id": "lab_01M3VHZAWPJCS0169XYN65KM2B",
+      "entity_id": "lab_01M3VQNKS4C4PSWYRD4VW4XY0T",
       "version": 1
     },
     {
       "entity_type": "VitalSign",
-      "entity_id": "vit_01M3VHZAWPJCS0169XYN65KM20",
+      "entity_id": "vit_01M3VQNKS4C4PSWYRD4VW4XY08",
       "version": 1
     },
     {
       "entity_type": "VitalSign",
-      "entity_id": "vit_01M3VHZAWPJCS0169XYN65KM21",
+      "entity_id": "vit_01M3VQNKS4C4PSWYRD4VW4XY09",
       "version": 1
     },
     {
       "entity_type": "VitalSign",
-      "entity_id": "vit_01M3VHZAWPJCS0169XYN65KM22",
+      "entity_id": "vit_01M3VQNKS4C4PSWYRD4VW4XY0A",
       "version": 1
     },
     {
       "entity_type": "ClinicalNote",
-      "entity_id": "note_01M3VHZAWPJCS0169XYN65KM23",
+      "entity_id": "note_01M3VQNKS4C4PSWYRD4VW4XY0B",
       "version": 1
     },
     {
       "entity_type": "ClinicalNote",
-      "entity_id": "note_01M3VHZAWPJCS0169XYN65KM24",
+      "entity_id": "note_01M3VQNKS4C4PSWYRD4VW4XY0C",
       "version": 1
     }
   ],
   "omitted": [],
   "produced": [],
-  "prompt_digest": "sha256:b88901b39a6aa5281d93bc14534ca4c70df2863bacbdb22e5c6e2907085e1f0b",
+  "prompt_digest": "sha256:6f91d26d44ccc4dbe205411061f64433fb1fc3c9f17546f7b4f877e9aa04dbb9",
   "model_id": "qwen2.5:7b",
   "model_digest": null,
   "engine": "ollama",
   "engine_version": "0.34.4",
   "execution": "local",
-  "consent_ref": "cons_01M3VHZAWPJCS0169XYN65KM1P",
-  "review": "pending",
+  "consent_ref": "cons_01M3VQNKS4C4PSWYRD4VW4XXZW",
+  "review": "rejected_by_guardrail",
   "reviewed_by": null,
   "reviewed_at": null,
-  "guardrail_failures": [],
-  "generation_notes": [],
-  "claims": [
+  "guardrail_failures": [
     {
-      "text": "The TSH level is rising, indicating a possible thyroid dysfunction.",
-      "cites": [
-        {
-          "entity_type": "LabResult",
-          "entity_id": "lab_01M3VHZAWPJCS0169XYN65KM1W",
-          "version": 1
-        },
-        {
-          "entity_type": "LabResult",
-          "entity_id": "lab_01M3VHZAWPJCS0169XYN65KM1X",
-          "version": 1
-        }
-      ],
-      "values": [
-        {
-          "value": 3.8,
-          "unit": null,
-          "cites": {
-            "entity_type": "LabResult",
-            "entity_id": "lab_01M3VHZAWPJCS0169XYN65KM1W",
-            "version": 1
-          }
-        },
-        {
-          "value": 5.6,
-          "unit": null,
-          "cites": {
-            "entity_type": "LabResult",
-            "entity_id": "lab_01M3VHZAWPJCS0169XYN65KM1X",
-            "version": 1
-          }
-        }
-      ]
-    },
-    {
-      "text": "The free T4 level is within the reference range, but its trend is indeterminate.",
-      "cites": [
-        {
-          "entity_type": "LabResult",
-          "entity_id": "lab_01M3VHZAWPJCS0169XYN65KM26",
-          "version": 1
-        }
-      ],
-      "values": [
-        {
-          "value": 11.2,
-          "unit": null,
-          "cites": {
-            "entity_type": "LabResult",
-            "entity_id": "lab_01M3VHZAWPJCS0169XYN65KM26",
-            "version": 1
-          }
-        }
-      ]
-    },
-    {
-      "text": "There is an unresolved conflict regarding the fasting glucose level.",
-      "cites": [
-        {
-          "entity_type": "LabResult",
-          "entity_id": "lab_01M3VHZAWPJCS0169XYN65KM2B",
-          "version": 1
-        }
-      ],
-      "values": []
+      "check": "numbers_in_text_are_declared",
+      "detail": "claim states ['5.5', '7.2'] in prose and declares no values, so nothing can be compared against the record"
     }
   ],
+  "generation_notes": [],
+  "claims": [],
   "unresolved": [
     {
-      "flag_id": "flag_01M3VHZAWPJCS0169XYN65KM2C",
+      "flag_id": "flag_01M3VQNKS4C4PSWYRD4VW4XY0V",
       "code": "CONFLICTING_VALUES",
       "severity": "blocking",
       "message": "fasting glucose: EMR 5.5 mmol/L against lab 7.2 mmol/L, unresolved"

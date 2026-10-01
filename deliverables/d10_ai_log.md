@@ -17,7 +17,7 @@ AI produced three things, in order, each reviewed before the next began:
 |---|---|---|
 | The design specification | `docs/model_design.md` | 1,595 lines |
 | The implementation plan | `docs/implementation_plan.md` | 29 tasks, 153 TDD steps |
-| The implementation | `src/`, `tests/`, `mock/` | 4,550 + 4,364 lines, 319 tests |
+| The implementation | `src/`, `tests/`, `mock/` | 4,599 + 4,407 lines, 321 tests |
 
 AI was **not** used to decide the stack, the workflow for D8, or whether to do the optional
 normalisation build. Those were set before any prompting, and are recorded in `CLAUDE.md`.
@@ -42,6 +42,7 @@ written. Nothing was implemented from a plan that had not been read.
 | 8 | Claude Opus | *(paste)* | The optional normalisation build: three conflicting sources into canonical | Produced a state nobody designed — see `WINNER_UNREPRESENTABLE` in D8 | Four defects of its own, including a conflict model that could not represent the central case it existed for | Accepted, corrected, logged |
 | 9 | Claude Opus | *(paste)* | Wiring a real local model, and auditing what the stub looked like | Found that the stub reported `engine=ollama` with a real model name and a genuine prompt digest, for a prompt never sent | **The design's five output checks had a hole a real model walked straight through** | Accepted; `Engine.STUB` added, check 6 added |
 | 10 | Claude Opus | *(paste)* | Re-running the 25-dimension audit against the code and the example record | Two gaps that four earlier passes over the same table had not shown | The first audit had been circular — it compared a hand-written mapping to itself | Accepted; audit rewritten as `scripts_audit_dimensions.py`, which now gates the submission |
+| 11 | Claude Opus | *(paste)* | Prompt indices in place of ULIDs, and the trend-flag fix | Removed the cause of a fabricated citation instead of relying on the catch; replies also became deterministic | A test that could no longer fail was introduced in the same change, and the switch exposed a prompt that hands the model unciteable numbers | Accepted; map kept local to one call, guardrails untouched |
 
 ---
 
@@ -50,7 +51,7 @@ written. Nothing was implemented from a plan that had not been read.
 The full record is `docs/plan_defects.md`. The summary, with the numbers rather than an
 impression.
 
-### Eighteen defects in AI-written code, and how each surfaced
+### Twenty defects in AI-written code, and how each surfaced
 
 | How found | Count | Example |
 |---|---|---|
@@ -59,6 +60,8 @@ impression.
 | The plan's own tests | 2 | `TypeError` on any half-open reference range — the commonest shape, since hs-CRP has no lower bound |
 | Resolving a documented identifier against the code, and a documented entity against the example record | 2 | `TreatmentPlan.plan_items` appears in the design document and in D2; the field is `items`, and had read that way since the design phase |
 | An exhaustive sweep of one function's inputs | 1 | A budget of zero returned an empty projection instead of refusing |
+| **Rendering the output for the reader it is for** | **1** | Every lab trend advertised the glucose conflict, so a clean rising TSH was marked unusable |
+| A type change that broke two sibling tests and silently satisfied a third | 1 | The one test behind "no identity reaches the model" had become unable to fail |
 | **Running a real local model** | **1** | **The design's output checks had a hole. See below** |
 | **Being asked whether the artifact was real** | **1** | **The stub reported a real engine and model for a run that never happened** |
 
@@ -128,6 +131,81 @@ not installed. Every field was individually defensible and the artifact as a who
 claim, in the one submission where that matters most. `Engine.STUB` now exists so the artifact
 says what it is.
 
+### The fabrication a reviewer could not have seen
+
+The guardrail hole above was found because a number appeared in prose. A reader can see a
+number. This one is the opposite case, and it is the stronger example.
+
+Four runs of the same prompt, same model, temperature zero, nothing changed between them:
+
+| Run | `review` | claims | narrative | guardrail |
+|---|---|---|---|---|
+| 1 | `pending` | 2 | delivered | — |
+| 2 | **`rejected_by_guardrail`** | 0, cleared | **withheld** | `cites_in_inputs`, `record_available_for_checking` |
+| 3 | `pending` | 3 | delivered | — |
+| 4 | `pending` | 2 | delivered | — |
+
+Three runs produced a brief. One fabricated a citation. That spread, on one unchanged prompt,
+is the argument for having guardrails at all: there is no prompt to write and no temperature to
+set that makes the check unnecessary, because the same input does not produce the same output.
+
+In run 2 the model cited `lab_01M3VPPWQX677QFJMES2FGFSBQ1` and attached the value 11.2 to it —
+free T4's figure, bound to a record that does not exist. The real ids in that run shared the
+timestamp prefix `lab_01M3VPPWQX6…` and diverged only in the tail. Nothing about it looks wrong.
+It is 26 characters of base32 in a field full of 26-character base32 strings, and a reviewer
+checking it by eye would have to compare the tail of one ULID against four others.
+
+That is what makes it worse than a number in prose. The prose case is caught by a careful
+reader and the check is a second line of defence. Here the check is the **only** line of
+defence: `cites_in_inputs` rejected the citation, `record_available_for_checking` rejected the
+value bound to it, the claims were cleared and the narrative never reached the physician.
+
+**What changed.** The prompt no longer shows ids. Each result is labelled `[1]`, `[2]`, `[3]`,
+the adapter keeps the index-to-id map for the length of one call, expands the indices when the
+reply comes back, and discards the map. The artifact still carries real ids, `inputs` is
+unchanged, and the guardrails are untouched. An index the prompt never offered — `[9]` where
+three results were listed — resolves to nothing and fails as the same hard rejection, which is
+pinned by a test. A digit is short enough to copy correctly and short enough for a reviewer to
+check against the prompt, so the cause is removed rather than merely caught.
+
+The table above stays as a historical record, of the system as it was when it was found. It is
+not evidence about the current prompt and should not be read as any. And the guardrail stays,
+for a reason that the fix itself does not address: it removes **this** class of fabrication, not
+fabrication. The next class has not been seen yet, which is exactly what was true of this one
+before run 2.
+
+### What the indices changed, measured
+
+Eight runs after the switch, same prompt, same model:
+
+| Runs | `review` | guardrail |
+|---|---|---|
+| 8 of 8 | `rejected_by_guardrail` | `numbers_in_text_are_declared` |
+
+No fabricated citation in any of them, and the replies became identical to each other rather
+than merely similar — a model no longer spending its output on a 26-character string stopped
+varying. Both are what the change was for.
+
+The rejections are a separate problem the change exposed rather than caused, and it is worth
+naming because it is in the **prompt**, not in the model. Inspected before the adapter clears
+them, the first two claims are correct, cite resolved real ids and declare their values. The
+third restates the two glucose figures from this line of the prompt:
+
+```
+Unresolved data problems you must not reason past:
+  CONFLICTING_VALUES: fasting glucose: EMR 5.5 mmol/L against lab 7.2 mmol/L, unresolved
+```
+
+Those two numbers belong to no citable record, by design: the conflict is unresolved, so
+canonical holds no glucose value at all (§9.3). So a claim mentioning them numerically cannot
+declare them against anything — check 2 would find no value to match and check 3 forbids
+claiming a value for an empty slot — and stating them without declaring them fails check 6.
+There is no legal way to put those figures in a claim, and the prompt prints them anyway.
+
+The guardrails are behaving correctly: nobody vouched for either figure, and the one record
+involved is deliberately empty. The defect is that the context hands the model a number it is
+then forbidden to use, which is a trap rather than an instruction.
+
 ### Where the AI output was systematically weakest
 
 **Seams, not components.** Defect density tracked novelty: 3 in the foundations phase, 0 and 0
@@ -188,9 +266,10 @@ accept/reject decisions possible.
 ### The honest bottom line
 
 The design is defensible and the implementation works. Neither would be trustworthy as submitted
-if it had been accepted as produced: eighteen defects, five of which only a cross-component check
+if it had been accepted as produced: twenty defects, five of which only a cross-component check
 could find, one that only a real model could find, two that only resolving a document against the
-code could find, five overstated claims, and one artifact that was itself a false claim.
+code could find, one that only reading the rendered output could find, five overstated claims, and
+one artifact that was itself a false claim.
 
 The value came from the review discipline, not from the generation, and the table above ranks
 that discipline. Reading the code found the most defects. Crossing a seam found the worst of the
@@ -198,7 +277,7 @@ implementation ones. Running the real thing found the one that was wrong in the 
 category where neither the author nor the tests could have known what they had assumed.
 
 And one was found by none of those. A reviewer asked a question the work had not asked itself.
-Of the seven instruments, that is the only one a submission cannot supply on its own — and it
+Of the nine instruments, that is the only one a submission cannot supply on its own — and it
 has now fired twice, the second time on this document's own sibling, where the claim had gone
 stale rather than been invented. Both times the correction was mechanised afterwards, into
 `Engine.STUB` and into `scripts_audit_figures.py`, which is the right response and still leaves

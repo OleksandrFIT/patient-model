@@ -234,6 +234,60 @@ Both now gate the submission: `scripts_audit_dimensions.py` exits non-zero on a 
 row, an identifier that does not resolve, or an entity D2 names and the example record does not
 contain.
 
+## 19. A trend advertised another analyte's blocking flag
+
+Found by rendering the brief the way a physician reads it, rather than by asserting on its
+fields. `_trends_for` handed every trend the patient's whole list of open blocking flags, so
+the glucose conflict appeared under TSH and under free T4 as well:
+
+```
+• TSH              rising          [3.8 mIU/L, 5.6 mIU/L]
+  ↳ флаг [blocking] CONFLICTING_VALUES     <- about glucose
+```
+
+TSH is clean, rising, and the most actionable line in the brief. `blocking` means no
+read-model and no agent may draw a conclusion from the record (§9.1), so the brief was
+telling a physician that its best signal was unusable, on the strength of a problem with a
+different analyte.
+
+The cause is structural rather than a slip in that line. `FlagSummary` carries `flag_id`,
+`code`, `severity` and `message` and **no reference to the record it is about**, so a trend
+handed the flags cannot tell which concern its own series. The full `DataQualityFlag` has the
+target; the projection into read models dropped it.
+
+Two fixes were priced. Adding a target to `FlagSummary` would let trends filter, but widens a
+value object that was kept narrow on purpose in order to repair a rendering decision. Not
+passing flags to trends at all removes the false attribution and the duplication in one move,
+because the brief already carries the same flags at its own level, where they are true of the
+patient rather than of one series. The second was taken: a trend showing another analyte's
+blocking flag is worse than a trend showing none.
+
+Nothing had pinned either behaviour, so the suite passed before and after. It is pinned now,
+and the test fails if the flags are passed back in.
+
+## 20. A test that could no longer fail
+
+Introduced and caught inside the prompt-index change. `GenerationContext.render()` went from
+returning `str` to returning a `RenderedPrompt` named tuple, and this test kept passing:
+
+```python
+prompt = _ctx([_lab(5.6)]).render()
+for forbidden in ("Okafor", "Dana", "MRN"):
+    assert forbidden not in prompt
+```
+
+`"Okafor" not in RenderedPrompt(...)` compares the string against the tuple's *elements* — a
+string and a dict — finds it equal to neither, and passes whatever the prompt actually says.
+The one test standing behind §10.4, that no identity reaches the model, had become unable to
+fail.
+
+It surfaced because two sibling tests broke on the same change and this one did not, which is
+the signal worth generalising: a type change that breaks some assertions and silently satisfies
+others has probably turned the quiet ones into tautologies. The same shape as defect 1, a
+validator that can never run, in a test rather than in a validator — and the same shape as the
+guardrail hole in defect 15, where every test of check 2 supplied the values it then verified.
+Fixed by asserting against `.text`, with the reason in a comment so it is not re-broken.
+
 ## Not numbered: the deliverables that went stale, found by the reviewer
 
 This one is deliberately outside the numbering, and the reason is a taxonomy rather than an
@@ -268,6 +322,21 @@ sweep, not a seam — the same instrument that found defect 16, which is the one
 submission cannot supply for itself. It has now fired twice, and both times the answer was that
 the artifact claimed something the repository did not support.
 
+### The same shape again, in a script written to display the work
+
+While rendering the real-inference verdict for review, the display script re-ran
+`run_guardrails` on the artifact the adapter returned and printed `PASS, failures=0` — for an
+artifact the adapter had already **rejected** and whose claims it had therefore cleared. An
+empty claim list passes every check vacuously.
+
+[scripts_run_ollama.py](../scripts_run_ollama.py) carries a comment warning about exactly
+this, placed there because the first version of that script did the same thing. The warning was
+read, the script was used as the model to copy from, and the trap was walked into anyway. Like
+D9's word count it is unnumbered, because it is a defect in a throwaway display script rather
+than in the model or the deliverables, and it belongs here for the reason that one does: the
+verdict is read off the artifact now, and a comment in the code is weaker protection than a
+shape that cannot be got wrong.
+
 **What changed.** `scripts_audit_figures.py` recomputes every figure D10, D11 and README assert,
 renders each into the exact string the document must contain, and exits non-zero on any drift. It
 also checks that D10's instrument table accounts for every defect in this log, and that D11 no
@@ -293,6 +362,8 @@ Defect density tracked **novelty, not care**:
 | optional — normalisation (written after the plan) | — | **4** |
 | real inference, and auditing what the stub looked like | — | **2** |
 | re-running the dimension audit against code and example | — | **2** |
+| rendering the brief for its actual reader | — | **1** |
+| switching the prompt from ids to indices | — | **1** |
 
 Phase 1 is where the plan designed something for the first time. Phases 2 and 3 applied
 patterns Phase 1 had already settled, and produced nothing worse than an import-order nit.

@@ -62,6 +62,36 @@ CLAIM_SCHEMA = {
 """Constrained decoding, per §10.5. Free prose would make every output check unworkable."""
 
 
+class RenderedPrompt(NamedTuple):
+    """The prompt and the index map that decodes a reply to it.
+
+    They are returned together because they must come from one pass over the same labs. A
+    second function deriving the ordering separately is how two components end up with
+    parallel definitions of the same thing, which is the defect class this build has hit
+    three times. The map is local to one call: the caller renders, sends, decodes, and drops
+    it. Nothing persists an index, and the artifact carries the real ids the map resolves to.
+    """
+
+    text: str
+    by_index: dict[str, CanonicalRef]
+
+
+def resolve_citation(token: str, by_index: dict[str, CanonicalRef]) -> CanonicalRef:
+    """Turn what the model wrote into a ref, or into one that cannot resolve.
+
+    Lenient about the form — `[2]`, `2` and ` [2] ` are the same citation — because the
+    brackets are presentation and a model that drops them has still cited the second result.
+    Strict about existence: `[9]` where three results were offered, a ULID the prompt never
+    contained, or anything that is not an index returns a ref carrying the token verbatim, so
+    guardrail 1 reports it as a citation that is not in inputs. Resolution never invents an
+    id, which is what keeps the check that catches fabrication unchanged by the switch.
+    """
+    index = token.strip().strip("[]").strip()
+    if index.isdigit() and index in by_index:
+        return by_index[index]
+    return CanonicalRef(entity_type="LabResult", entity_id=token, version=1)
+
+
 class GenerationContext(BaseModel):
     """Exactly what the model is allowed to see. No identity — §10.4."""
 
@@ -78,19 +108,32 @@ class GenerationContext(BaseModel):
             for lab in self.labs
         }
 
-    def render(self) -> str:
-        """The prompt. Ids are given because a claim must cite one."""
+    def render(self) -> RenderedPrompt:
+        """The prompt, labelling each result `[1]`, `[2]`, … instead of its id.
+
+        A model asked to echo a 26-character ULID will sometimes return one that is right in
+        its prefix and wrong in its tail. That is indistinguishable from a real id by eye, so
+        the only thing standing between it and a physician is guardrail 1. A single digit is
+        short enough to copy correctly and short enough for a reviewer to check, which
+        removes the cause rather than relying on the catch. An index the context never
+        offered still resolves to nothing and still fails as a fabricated citation.
+        """
+        by_index: dict[str, CanonicalRef] = {}
         lines = [
             "Patient context (no identifying detail is available to you):",
             f"  age {self.view.age_years}, sex {self.view.sex}",
             "",
-            "Lab results. Cite a result by its id. Do not state a value for a result whose",
-            "value is absent.",
+            "Lab results. Cite a result by its bracketed index, exactly as shown — [2], not",
+            "the analyte name. Do not state a value for a result whose value is absent.",
         ]
-        for lab in self.labs:
+        for position, lab in enumerate(self.labs, start=1):
+            tag = f"[{position}]"
+            by_index[str(position)] = CanonicalRef(
+                entity_type="LabResult", entity_id=lab.id, version=lab.version
+            )
             if lab.quantity is None:
                 lines.append(
-                    f"  {lab.id}: {lab.biomarker.raw_text} — VALUE ABSENT (unresolved conflict)"
+                    f"  {tag} {lab.biomarker.raw_text} — VALUE ABSENT (unresolved conflict)"
                 )
                 continue
             rng = (
@@ -99,7 +142,7 @@ class GenerationContext(BaseModel):
                 else ""
             )
             lines.append(
-                f"  {lab.id}: {lab.biomarker.raw_text} "
+                f"  {tag} {lab.biomarker.raw_text} "
                 f"{lab.quantity.value} {lab.quantity.unit or '(no unit recorded)'}{rng}"
             )
         if self.trends:
@@ -117,14 +160,14 @@ class GenerationContext(BaseModel):
         lines += [
             "",
             "Write one short claim per fact worth a physician's attention. Every claim cites",
-            "at least one id.",
+            "at least one index, written as it appears above.",
             "",
             "If a claim states a number, that number MUST also appear in that claim's",
-            "`values`, with the id it came from. A claim that states a number in its text and",
-            "declares none is rejected outright, because nothing can then be checked against",
-            "the record. Prefer describing a direction to restating a figure.",
+            "`values`, with the index it came from. A claim that states a number in its text",
+            "and declares none is rejected outright, because nothing can then be checked",
+            "against the record. Prefer describing a direction to restating a figure.",
         ]
-        return "\n".join(lines)
+        return RenderedPrompt(text="\n".join(lines), by_index=by_index)
 
 
 class Generated(NamedTuple):
@@ -189,7 +232,7 @@ class StubGenerator:
                     for rid in trend.numeric_basis
                 ],
             ))
-        return Generated(claims=claims, prompt=ctx.render(), notes=[])
+        return Generated(claims=claims, prompt=ctx.render().text, notes=[])
 
 
 class OllamaUnavailable(RuntimeError):
@@ -249,7 +292,7 @@ class OllamaGenerator:
     # ------------------------------------------------------------- generation
 
     def generate(self, ctx: GenerationContext) -> Generated:
-        prompt = ctx.render()
+        rendered = ctx.render()
         reply = self._post("/api/chat", {
             "model": self.model_id,
             "messages": [
@@ -258,38 +301,38 @@ class OllamaGenerator:
                     "content": (
                         "You summarise clinical data for a physician. State only what the "
                         "context contains. Never state a value for a result marked VALUE "
-                        "ABSENT. Every claim cites at least one id from the context, and "
-                        "every number you write in `text` must also be listed in that "
-                        "claim's `values` with the id it came from."
+                        "ABSENT. Every claim cites at least one bracketed index from the "
+                        "context, copied exactly, and every number you write in `text` must "
+                        "also be listed in that claim's `values` with the index it came from."
                     ),
                 },
-                {"role": "user", "content": prompt},
+                {"role": "user", "content": rendered.text},
             ],
             "stream": False,
             "format": CLAIM_SCHEMA,
             "options": {"temperature": 0, "num_predict": 600},
         })
         return Generated(
-            claims=self._parse(reply["message"]["content"], ctx),
-            prompt=prompt,
+            claims=self._parse(reply["message"]["content"], rendered.by_index),
+            prompt=rendered.text,
             notes=self._notes,
         )
 
-    def _parse(self, content: str, ctx: GenerationContext) -> list[AIClaim]:
-        """Turn the reply into claims, recording what could not be read.
+    def _parse(self, content: str, by_index: dict[str, CanonicalRef]) -> list[AIClaim]:
+        """Turn the reply into claims, resolving indices back to ids.
 
-        A citation the context never contained is passed through rather than dropped. That is
-        a hallucinated citation and guardrail 1 is what must catch it — a parser that silently
-        discarded it would hide exactly the failure the guardrails exist for.
+        A citation the context never offered is passed through rather than dropped. That is a
+        hallucinated citation and guardrail 1 is what must catch it — a parser that silently
+        discarded it would hide exactly the failure the guardrails exist for. `[9]` where the
+        prompt offered three results resolves to nothing and fails the same way a wrong id
+        did, as does anything that is not an index at all, so the check is unchanged by the
+        switch. The unresolved token is kept verbatim in `entity_id` so the failure names what
+        the model actually wrote.
         """
         self._notes: list[str] = []
-        refs = ctx.refs()
 
-        def ref_for(entity_id: str) -> CanonicalRef:
-            return refs.get(
-                entity_id,
-                CanonicalRef(entity_type="LabResult", entity_id=entity_id, version=1),
-            )
+        def ref_for(token: str) -> CanonicalRef:
+            return resolve_citation(token, by_index)
 
         try:
             payload = json.loads(content)

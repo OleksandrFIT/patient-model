@@ -1,15 +1,20 @@
 {
-  "ran_at": "2026-10-01T11:00:43.030542+00:00",
-  "elapsed_seconds": 17.48,
+  "ran_at": "2026-10-01T12:40:15.908864+00:00",
+  "elapsed_seconds": 11.76,
   "engine": "ollama",
   "engine_version": "0.34.4",
   "model_id": "qwen2.5:7b",
   "model_digest": null,
   "execution": "local",
-  "review": "pending",
-  "guardrail_failures": [],
+  "review": "rejected_by_guardrail",
+  "guardrail_failures": [
+    {
+      "check": "numbers_in_text_are_declared",
+      "detail": "claim states ['5.5', '7.2'] in prose and declares no values, so nothing can be compared against the record"
+    }
+  ],
   "generation_notes": [],
-  "narrative_delivered": true,
-  "claims": 3,
+  "narrative_delivered": false,
+  "claims": 0,
   "_note": "Not reproducible. A model's reply may differ between runs and between versions."
 }
