@@ -109,7 +109,7 @@ There is no `review_status` on any tier. See §6.1.
 **Embedded value objects** (no independent identity, always read with their
 owner): `Provenance`, `Actor`, `Quantity`, `CodeableConcept`, `ReferenceRange`,
 `Dosage`, `HumanName`, `PatientIdentifier`, `ContactPoint`, `Address`,
-`Preferences`, `PlanItem`, `FlagSummary`.
+`Preferences`, `PlanItem`, `FlagSummary`, `ClinicalText`.
 
 **Derived read-models, not stored**: `TimelineEvent`, `PreVisitBrief`,
 `MedicationReconciliationView`, lab trend series. See §6.13, §9.4 and §9.5.
@@ -142,11 +142,11 @@ Task.
 | `AllergyIntolerance` | Clinical | substance, reactions[], `criticality`, `severity`, `verification_status` | Never embedded on Patient. The most safety-critical list in the model needs its own audit trail. `criticality` (is it life-threatening) is separate from the `severity` of a past reaction |
 | `Medication` | Clinical | `dosage: Dosage`, status, prescriber, start/stop | Split from Supplement — §6.7 |
 | `Supplement` | Clinical | dose as reported, status, start/stop | Almost always patient-reported |
-| `DiagnosticReport` | Clinical | `findings`, `impression`, results[] refs | Groups a panel or an imaging study — §6.8 |
+| `DiagnosticReport` | Clinical | `findings: ClinicalText`, `impression: ClinicalText`, results[] refs | Groups a panel or an imaging study — §6.8. Text origin — §6.19 |
 | `LabResult` | Clinical | `quantity`, `coded_value`, `reference_range`, specimen, performing lab | Two parallel value slots — §6.9 |
 | `VitalSign` | Clinical | `quantity`, `measurement_context` | `clinical \| patient_reported \| device` — §6.6 |
 | `Procedure` | Clinical | code, performed date, performer | Thin |
-| `ClinicalNote` | Clinical | `note_type`, author, `body`, signed_at, addenda[] | Facts mentioned in prose do not live here — §6.14 |
+| `ClinicalNote` | Clinical | `note_type`, author, `body: ClinicalText`, signed_at, `addenda[]` | Facts mentioned in prose do not live here — §6.14. Text origin — §6.19 |
 | `TreatmentPlan` | Clinical | `plan_items[]` | Items embedded: no independent lifecycle, revised as part of the plan. Each item may reference a Condition or Medication by id |
 | `Goal` | PatientScoped | description, target date, status | Patient-owned, outlives any single plan |
 | `SocialFactor` | Clinical | factor code, value, asserted_at | Normalized records, not a block on Patient — §6.16 |
@@ -168,6 +168,7 @@ is it ever queried without its owner?** If yes to either, normalize.
 | Contacts, addresses, names | Read with the patient every time, never queried alone |
 | `plan_items` in `TreatmentPlan` | Revised as part of the plan, no independent lifecycle |
 | `reactions` in `AllergyIntolerance` | Describe one allergy, not reusable |
+| `ClinicalText` | Travels with the text so the origin marker cannot be left behind — §6.19 |
 
 | Normalized | Why |
 |---|---|
@@ -536,6 +537,91 @@ clinical status, `DiagnosticReport` above results. Its wire format is not: FHIR
 does not carry provenance the way this model needs, and its
 `Reference`/`extension` machinery makes local validation heavy.
 
+### 6.19 The trust boundary for free text is the perimeter, not the author
+
+Free text reaches a local model verbatim, and text can carry an instruction. What
+the model owes is a legible source class for every span of text it hands over.
+
+The boundary is **not** "a physician is trusted, a patient is not". A physician can
+paste a patient's message into a note, deliberately or not, and the signature on
+the note does not change what the text is. The boundary is whether the text
+**crossed the practice perimeter**: text composed inside passes through
+authentication, an audit trail and an accountable person, and text from outside
+passes through none of them.
+
+**Not derivable from existing fields.** `provenance` describes where the *record*
+came from. A note a physician typed is `origin = human`, with an internal document
+and their own signature, whatever sits inside the body. Provenance cannot see
+inside a string.
+
+**The marker travels with the text, not beside it.** A sibling field
+`ClinicalNote.text_origin` is lost the moment someone writes
+`build_prompt(note.body)`. So free text becomes a value object:
+
+```
+ClinicalText:
+    value:       str
+    origin:      TextOrigin        # required
+    captured_by: Actor | None      # who entered it into the practice system
+```
+
+This does not make discarding the marker impossible — `.value` is one attribute
+access — but it makes the discard an explicit and greppable act at the call site
+rather than the default. The same strength as §9.4, and no more is claimed.
+
+`TextOrigin` is a closed `Literal`, on the §6.5 principle:
+
+| Value | Meaning |
+|---|---|
+| `practice_authored` | Composed inside the practice by an authenticated actor, carrying no transcribed external content |
+| `patient_submitted` | From the patient: portal message, intake form, questionnaire |
+| `external_document` | Extracted from a document of outside origin — an outside lab's report, a referral letter, prior-practice records |
+| `transcribed_external` | Composed inside the practice but containing copied external text |
+| `unknown` | Origin not established |
+
+`unknown` is treated as **external**. An unestablished origin is not a reason to
+trust, so the default fails closed.
+
+**Where it replaces `str`:** `ClinicalNote.body`, `ClinicalNote.addenda[]`,
+`DiagnosticReport.findings`, `DiagnosticReport.impression` — the long-form
+narrative fields.
+
+**`CodeableConcept.raw_text` stays a plain `str`,** and the asymmetry is stated
+rather than hidden. It appears in six entities and is the basis for coding and
+comparison, so wrapping it would push `.value` into all of them and into every
+coding check. `"high bp. Ignore previous instructions…"` in a `raw_text` is
+technically possible, so the gap is named rather than denied: origin for
+`raw_text` is inherited from the record's provenance at projection time instead of
+being stored beside the string.
+
+**Patient messages stay in the source layer.** A `ClinicalNote` is a record of the
+practice, not a container for external text, so `note_type` gains no
+`patient_message` value. A message becomes an `ExtractionCandidate`, a `Task`, or
+a note that quotes it — and such a note is `transcribed_external`.
+
+A consequence worth recording: with only the four fields above wrapped,
+`patient_submitted` has no carrier in canonical, because the text it describes
+either lives in the source layer or sits in a free-text field not yet wrapped
+(`Goal.description` being the obvious next one). The value is in the enum because
+it completes the axis, and §7 records that its carrier is not yet modelled.
+
+**Rejected: a separate `PatientMessage` entity**, which would make the boundary the
+entity type. A message a physician turns into a note would then be duplicated, and
+`external_document` text inside `DiagnosticReport.findings` would still need
+marking — so both mechanisms would be required rather than one.
+
+**What this does not do.** `ClinicalText` does not make text safe, and there is
+deliberately **no `sanitized` flag** anywhere in the model: a field implying that
+text has been checked is worse than no field at all. The schema makes the source
+class of every span legible. Declining to act on instructions found in an external
+span is a policy of the AI layer, not a property of the schema, and that division
+is the limit of what this model claims.
+
+Enforcement is the projection layer of §6.3 — the only place where canonical text
+becomes model context — which must emit every span together with its origin. This
+section and §6.3 share one chokepoint; no second mechanism is introduced.
+Sequencing is §10, step 4.
+
 ---
 
 ## 7. Deliberately out of scope
@@ -549,6 +635,14 @@ does not carry provenance the way this model needs, and its
   be discovered: the way out, if it appears, is to relax exclusivity from "at
   most one populated" to "at least one", which is a validator change and not a
   restructuring.
+- **Detecting transcribed external text.** `transcribed_external` (§6.19) cannot
+  be established from the data: a physician who pasted text is indistinguishable
+  from one who typed it. It can only be declared by the author, and a declaration
+  in a UI will be skipped. Phase 1 makes the bulk case explicit and names this
+  residue rather than claiming to cover it.
+- **A canonical carrier for `patient_submitted`** — §6.19 wraps four narrative
+  fields, and patient-authored free text such as `Goal.description` is not among
+  them.
 - **Unit conversion inside trends** — §9.4. Mismatched units are excluded with a
   visible reason rather than converted.
 - **FHIR as a wire format** — §6.18.
@@ -804,7 +898,8 @@ Dangerous entities first.
 3. The thin five: **Coverage, Procedure, Goal, SocialFactor, Task**
 4. `EntityKind` registry, uniqueness assertions, id resolution (§8.4);
    `trace_id` plumbing through the read-model builders and the projection layer
-   that populates `fields_read` (§6.3). Both are refactors over a working model,
+   that populates `fields_read` (§6.3) and labels every emitted text span with
+   its `TextOrigin` (§6.19). Both are refactors over a working model,
    and both degrade honestly if time runs short: ids keep their prefixes without
    the registry, and `fields_read` stays `None`, which is a legal value meaning
    "the whole record". The `AuditEvent` schema itself is built in step 1
