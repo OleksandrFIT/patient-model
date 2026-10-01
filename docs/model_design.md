@@ -115,6 +115,9 @@ owner): `Provenance`, `Actor`, `Quantity`, `CodeableConcept`, `ReferenceRange`,
 **Derived read-models, not stored**: `TimelineEvent`, `PreVisitBrief`,
 `MedicationReconciliationView`, lab trend series. See §6.13, §9.4 and §9.5.
 
+§10 defines further types that are never persisted either: `AIReadScope`
+(§10.3) and the projection shapes `AIPatientView` and `PatientHeader` (§10.4).
+
 ---
 
 ## 4. Entities
@@ -134,7 +137,7 @@ Task.
 
 | Entity | Tier | Embedded within it | Note |
 |---|---|---|---|
-| `Patient` | Canonical | `identifiers[]`, `names[]`, `contacts[]`, `addresses[]`, `preferences`, care-team memberships | Identifiers are a list — §6.12. Contacts embedded: read with the patient 100% of the time, never queried alone |
+| `Patient` | Canonical | `identifiers[]`, `names[]`, `contacts[]`, `addresses[]`, `preferences`, care-team memberships | Identifiers are a list — §6.12. Contacts embedded: read with the patient 100% of the time, never queried alone. The AI projection carries no identity — §10.4 |
 | `Provider` | Canonical | `name`, `identifiers[]` | Referenced as prescriber, note author, lab orderer. A free-text name produces spelling drift and makes "all meds from Dr X" unanswerable |
 | `Consent` | PatientScoped | `scope`, validity window, `revoked_at`, `revoked_by` | An enforcement point, not documentation — §6.11. Enforced as a capability — §10.3 |
 | `Coverage` | PatientScoped | payer, member id, effective dates | Thin. Concierge practices commonly bill labs and procedures through insurance even when membership is self-pay |
@@ -1031,6 +1034,69 @@ every new read function must remember, and the one that forgets becomes the leak
 The token moves this from "remember to check" to "cannot be called without having
 checked".
 
+### 10.4 What AI may read, write, suggest, and must have approved (D6)
+
+This assembles rules already taken in §1, §6.14, §9.4, §9.6 and §10.1–10.3, plus
+two decisions taken here: the audit log is outside AI read scope, and the
+projection carries no identity.
+
+| Object | Read | Write | Suggest | Human approval |
+|---|---|---|---|---|
+| Canonical clinical records — `Condition`, `Medication`, `Supplement`, `LabResult`, `VitalSign`, `AllergyIntolerance`, `DiagnosticReport`, `Procedure`, `TreatmentPlan`, `Goal`, `SocialFactor`, `Encounter`, `ClinicalNote` | Yes, via `AIReadScope`; text spans labelled per §10.1 | **Never** | Via `ExtractionCandidate` | Acceptance into canonical |
+| `Patient` — age, sex | Yes, as `AIPatientView` | Never | — | — |
+| `Patient` — names, `identifiers`, contacts, addresses, exact date of birth | **No** | Never | — | — |
+| `DataQualityFlag` | Yes, and **must be surfaced** per §9.4 | Never | — | — |
+| `SourceReference` | Yes, and must be cited | Never | — | — |
+| `Provider` | Yes — prescriber, note author, lab orderer | Never | — | — |
+| `Consent` | Not read by the agent; consumed by the gate in §10.3 | Never | — | — |
+| `Coverage` | **No** — payment context is not clinical | Never | — | — |
+| `AuditEvent` | **No** | Never; written by the system | — | — |
+| `AIArtifact`, `AISummary` | Yes, including its own prior output | **Yes — the only writable objects** | — | `review` transitions |
+| `ExtractionCandidate` | Yes | Yes | This is the suggestion channel | Acceptance into canonical |
+| `Task` | Yes | No | `origin = ai_suggested`, `status = proposed` | Assignment |
+
+**The write column has exactly one non-empty row.** That is the shortest statement
+of §1.
+
+**The audit log is outside AI read scope.** There is no clinical need for an agent
+to reason about who did what, and the trail of every actor who touched a chart is a
+wider surface than the chart itself.
+
+**Identity is absent from the projection, and that is a type rather than a policy.**
+
+```
+AIPatientView:          # the only patient shape a projection emits
+    patient_id: ULID
+    age_years:  int
+    sex:        ...
+```
+
+No names, identifiers, contacts, addresses or exact date of birth. Age replaces
+date of birth because dosing and reference ranges need an age, not a birthday.
+Since the type has no identity fields, "the model saw the patient's name" is
+unexpressible rather than merely discouraged — the same move as `AIReadScope` in
+§10.3 and `Literal["local"]` in §10.2.
+
+Why this matters beyond minimisation: `fields_read` (§6.3) exists to measure
+exposure. A default projection carrying identifiers makes the measurement
+meaningless, because exposure is then maximal on every call.
+
+**The split is shown in the deliverables, not described in them.**
+
+```
+PreVisitBrief:                       # deterministic, assembled by the practice
+    header:     PatientHeader        # name, MRN, date of birth — for the physician
+    ...
+    unresolved: list[FlagSummary]    # required, §9.4
+    narrative:  AISummary | None     # generated from AIPatientView
+```
+
+Identity sits on the deterministic wrapper. The generated narrative is produced
+from `AIPatientView` and therefore cannot contain a name it never received. D3's
+example record and D8's workflow are to present these as two objects with two
+shapes; a sentence saying that the narrative omits identity is a weaker claim than
+a type that cannot carry one.
+
 ---
 
 ## 11. Build order
@@ -1045,9 +1111,12 @@ Dangerous entities first.
 3. The thin five: **Coverage, Procedure, Goal, SocialFactor, Task**
 4. `EntityKind` registry, uniqueness assertions, id resolution (§8.4);
    `trace_id` plumbing through the read-model builders and the projection layer
-   that populates `fields_read` (§6.3) and labels every emitted text span with
-   its `TextOrigin` (§10.1). Both are refactors over a working model,
-   and both degrade honestly if time runs short: ids keep their prefixes without
-   the registry, and `fields_read` stays `None`, which is a legal value meaning
-   "the whole record". The `AuditEvent` schema itself is built in step 1
+   that populates `fields_read` (§6.3), labels every emitted text span with its
+   `TextOrigin` (§10.1), emits `AIPatientView` rather than `Patient` (§10.4), and
+   admits no caller without an `AIReadScope` (§10.3). The registry and the
+   `fields_read` plumbing are refactors over a working model and degrade honestly
+   if time runs short: ids keep their prefixes without the registry, and
+   `fields_read` stays `None`, a legal value meaning "the whole record". The
+   consent gate does not degrade — see §10.3. The `AuditEvent` schema itself is
+   built in step 1
 5. Documentation
