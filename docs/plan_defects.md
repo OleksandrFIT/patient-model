@@ -234,6 +234,51 @@ Both now gate the submission: `scripts_audit_dimensions.py` exits non-zero on a 
 row, an identifier that does not resolve, or an entity D2 names and the example record does not
 contain.
 
+## Not numbered: the deliverables that went stale, found by the reviewer
+
+This one is deliberately outside the numbering, and the reason is a taxonomy rather than an
+excuse. The eighteen above are defects in the **code and the model** — something the system does
+wrong. This is a defect in AI-written **documentation**, which is where D9's unverified word count
+already sits, in D10's "claims that outran the code" rather than in this list. Numbering it here
+would make the two kinds of failure share a counter and make neither figure mean anything.
+
+It is still the worst of them.
+
+D11 stated that *"the optional normalisation build was not started."* The build was finished,
+committed, and sitting in `deliverables/normalisation/` with four outputs and 25 tests. In the
+same file, the table of what the repository can attest to claimed 271 tests, 10 defects, 2,684
+lines of `src/`, and 21 of 21 entities. D10 carried the same stale figures and, worse, contradicted
+itself: its instrument table accounted for sixteen defects while its own heading and bottom line
+had been updated past that. README's quickstart told a reviewer to expect 271 tests.
+
+**Nothing here was invented.** Every figure was correct at `1428ce4`, the commit that wrote D10 and
+D11, and verified at the time. Four feature commits then moved all of them — the normalisation
+build, real inference, the `Symptom` entity, and the dimension audit — and nothing re-read the
+documents that described the repository. The sentence about the normalisation build is the sharpest
+case: it was true when written, because the build genuinely had not been started yet, and it became
+a false claim by being left alone.
+
+That is what makes it worse than a wrong number. A reviewer cannot distinguish a figure that went
+stale from one that was never true, and should not have to. The claim sat in the one file whose
+subject is the honesty of the work, in a submission arguing that canonical data must never hold a
+value nobody vouched for.
+
+**How it surfaced.** The reviewer read the two documents against the repository. Not a test, not a
+sweep, not a seam — the same instrument that found defect 16, which is the one instrument a
+submission cannot supply for itself. It has now fired twice, and both times the answer was that
+the artifact claimed something the repository did not support.
+
+**What changed.** `scripts_audit_figures.py` recomputes every figure D10, D11 and README assert,
+renders each into the exact string the document must contain, and exits non-zero on any drift. It
+also checks that D10's instrument table accounts for every defect in this log, and that D11 no
+longer says the normalisation build was not started. The three failure modes were each verified by
+breaking them deliberately. The instruction that produced the script was blunter and is the lesson:
+check the figures against the repository *before* the commit, not after.
+
+There is no reason the dimension audit existed and this one did not. Both are the same shape — a
+claim in a document, resolved against the thing it describes — and only one of them had been built,
+because the dimension gap had been pointed out and this one had not yet.
+
 ## The pattern, which is the point
 
 Defect density tracked **novelty, not care**:

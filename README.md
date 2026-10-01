@@ -6,12 +6,13 @@ read the record but cannot write to it.
 
 ```bash
 python3.12 -m venv .venv && .venv/bin/pip install -e ".[dev]"
-.venv/bin/pytest -q          # 271 tests
-.venv/bin/ruff check src tests mock
+.venv/bin/pytest -q          # 319 tests
+.venv/bin/ruff check src tests mock scripts_*.py
 .venv/bin/python scripts_build_d3.py   # regenerate the example patient record
 .venv/bin/python scripts_normalise.py  # run the optional normalisation build
 .venv/bin/python scripts_run_ollama.py # D8 against a real local model
 .venv/bin/python scripts_audit_dimensions.py   # every required dimension, checked
+.venv/bin/python scripts_audit_figures.py      # every figure in D10 and D11, re-measured
 ```
 
 `scripts_audit_dimensions.py` is the one to run before trusting anything else here. It checks the
@@ -19,6 +20,12 @@ brief's 25 required dimensions against D2's map, every identifier D2 names again
 every entity D2 names against the example record — and exits non-zero on any gap. It found five
 entities that existed in code and were missing from the example, and one field the design document
 named that the code does not have.
+
+`scripts_audit_figures.py` is the second gate, and it exists because the first version of D10 and
+D11 carried figures that were true when written and were not re-checked while four later commits
+moved them. It recomputes every number those two documents assert — line counts, test count,
+entity count, defect count — and exits non-zero on any drift, so a stale claim fails here rather
+than reaching a reviewer.
 
 The design document, `docs/model_design.md`, is the specification. Where it and this README
 differ, the design document is correct.

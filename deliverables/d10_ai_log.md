@@ -15,9 +15,9 @@ AI produced three things, in order, each reviewed before the next began:
 
 | Artifact | In the repo | Size |
 |---|---|---|
-| The design specification | `docs/model_design.md` | 1,529 lines |
+| The design specification | `docs/model_design.md` | 1,595 lines |
 | The implementation plan | `docs/implementation_plan.md` | 29 tasks, 153 TDD steps |
-| The implementation | `src/`, `tests/`, `mock/` | 2,684 + 3,564 lines, 271 tests |
+| The implementation | `src/`, `tests/`, `mock/` | 4,550 + 4,364 lines, 319 tests |
 
 AI was **not** used to decide the stack, the workflow for D8, or whether to do the optional
 normalisation build. Those were set before any prompting, and are recorded in `CLAUDE.md`.
@@ -38,9 +38,10 @@ written. Nothing was implemented from a plan that had not been read.
 | 4 | Claude Opus | *(paste)* | Six security gaps found by audit: audit correlation, text perimeter, `AIArtifact`, consent gate, rights matrix, output guardrails | The audit distinguished "already covered and where" from "genuinely absent", including one case where the document contradicted itself | §6.3 claimed an agent's context could be reconstructed while the field list could not deliver it | Accepted all six. The self-contradiction was the most valuable finding of the session |
 | 5 | Claude Opus | *(paste)* | Error handling, context limits, and recursion through extracted data | §6.19's depth cap closed a question that arose later in §10.6 — a decision made for one reason resolved another | — | Accepted. `ai_inference` capped at `depth <= 1` |
 | 6 | Claude Opus | *(paste)* | The implementation plan | Full TDD granularity where the invariants live; honest about where it grouped mechanical work | Four defects in the code it specified, listed below | Accepted as a plan, executed task by task, corrected in flight |
-| 7 | Claude Opus | *(paste)* | Implementation, 29 tasks | 271 passing tests, ruff clean, every spec section traceable to a task | Ten defects, six of them in Phase 5 | Each corrected before the task was committed; all recorded |
+| 7 | Claude Opus | *(paste)* | Implementation, 29 tasks | 264 passing tests at the close of task 29, ruff clean, every spec section traceable to a task | Ten defects, six of them in Phase 5 | Each corrected before the task was committed; all recorded |
 | 8 | Claude Opus | *(paste)* | The optional normalisation build: three conflicting sources into canonical | Produced a state nobody designed — see `WINNER_UNREPRESENTABLE` in D8 | Four defects of its own, including a conflict model that could not represent the central case it existed for | Accepted, corrected, logged |
 | 9 | Claude Opus | *(paste)* | Wiring a real local model, and auditing what the stub looked like | Found that the stub reported `engine=ollama` with a real model name and a genuine prompt digest, for a prompt never sent | **The design's five output checks had a hole a real model walked straight through** | Accepted; `Engine.STUB` added, check 6 added |
+| 10 | Claude Opus | *(paste)* | Re-running the 25-dimension audit against the code and the example record | Two gaps that four earlier passes over the same table had not shown | The first audit had been circular — it compared a hand-written mapping to itself | Accepted; audit rewritten as `scripts_audit_dimensions.py`, which now gates the submission |
 
 ---
 
@@ -49,13 +50,14 @@ written. Nothing was implemented from a plan that had not been read.
 The full record is `docs/plan_defects.md`. The summary, with the numbers rather than an
 impression.
 
-### Sixteen defects in AI-written code, and how each surfaced
+### Eighteen defects in AI-written code, and how each surfaced
 
 | How found | Count | Example |
 |---|---|---|
 | Reading the code against the spec, before or while writing it | 6 | A Pydantic attribute without `ClassVar`, which stops the module importing at all, repeated across five entities |
 | Running a component on real output from the one upstream of it | 5 | The guardrails and the projection held **separate definitions** of droppability, so a brief that correctly omitted a resolved condition was rejected |
 | The plan's own tests | 2 | `TypeError` on any half-open reference range — the commonest shape, since hs-CRP has no lower bound |
+| Resolving a documented identifier against the code, and a documented entity against the example record | 2 | `TreatmentPlan.plan_items` appears in the design document and in D2; the field is `items`, and had read that way since the design phase |
 | An exhaustive sweep of one function's inputs | 1 | A budget of zero returned an empty projection instead of refusing |
 | **Running a real local model** | **1** | **The design's output checks had a hole. See below** |
 | **Being asked whether the artifact was real** | **1** | **The stub reported a real engine and model for a run that never happened** |
@@ -92,8 +94,8 @@ An artifact carrying four unverified numbers reached the physician, through a gu
 built specifically to stop that.
 
 **What makes it the strongest finding is what it survived.** The structured-output argument was
-proposed, costed, and approved across several exchanges. The plan specified the checks. Fourteen
-tests were written against them, including one asserting the guardrails cannot detect omission —
+proposed, costed, and approved across several exchanges. The plan specified the checks. Fourteen tests
+existed against them at that point — eighteen now, after check 6 — including one asserting the guardrails cannot detect omission —
 a test whose whole purpose is to pin a known limit. None of it caught this, and the reason is
 uncomfortable and general: **every test of check 2 supplied the values it then verified.** The
 tests proved that a declared number is compared correctly. They could not show that declaring
@@ -133,13 +135,27 @@ in the two phases that applied settled patterns, 1 in the schema phase, **6** in
 with the most original logic. A forecast of two to three for that phase was made in writing
 before it started; the direction held and the count was wrong by half.
 
-**Claims that outran the code.** Four distinct instances: a design section promising an audit
+**Claims that outran the code.** Five distinct instances: a design section promising an audit
 capability the field list could not deliver; a validator placed after a constraint that made it
 unreachable; a docstring asserting that wiring a real model would change "one method and no
-invariant", when the prompt had to move from after generation to before it; and this file's own
-sibling, D9, committed twice with a word count that had not been re-checked after the edit. The
-pattern is the same each time — an assertion written in the same breath as the thing it
-describes, with no step that verifies it.
+invariant", when the prompt had to move from after generation to before it; this file's own
+sibling, D9, committed twice with a word count that had not been re-checked after the edit; and
+the worst of the five, **D11 stating that the optional normalisation build "was not started"**
+while that build sat finished in the repository with four outputs and 25 tests — in the one
+file whose subject is the honesty of the work. The same commit left this file asserting 271
+tests and 10 defects. The pattern is the same each time: an assertion written in the same
+breath as the thing it describes, with no step that verifies it.
+
+The fifth instance is the only one that was never false when written. D11's figures were
+correct at the commit that produced it and were simply not re-checked while four feature
+commits moved the repository underneath them — the normalisation build, real inference, the
+`Symptom` entity and the dimension audit. A reader cannot distinguish that from a lie, and
+should not have to. It is also the instance least reachable by reading, because every sentence
+is locally plausible and only the repository contradicts it. `scripts_audit_figures.py` now
+recomputes every number in D10 and D11 from the repository and exits non-zero on any drift, so
+the claim fails the gate instead of reaching a reviewer. The instruction that produced it was
+blunter than the script: check the figures against the repository *before* the commit, not
+after.
 
 **Artifacts that looked like evidence.** The stub case above is the sharpest, and it is a
 distinct failure mode from the others: not a wrong claim in prose, but a well-formed data record
@@ -172,9 +188,9 @@ accept/reject decisions possible.
 ### The honest bottom line
 
 The design is defensible and the implementation works. Neither would be trustworthy as submitted
-if it had been accepted as produced: sixteen defects, five of which only a cross-component check
-could find, one that only a real model could find, four overstated claims, and one artifact that
-was itself a false claim.
+if it had been accepted as produced: eighteen defects, five of which only a cross-component check
+could find, one that only a real model could find, two that only resolving a document against the
+code could find, five overstated claims, and one artifact that was itself a false claim.
 
 The value came from the review discipline, not from the generation, and the table above ranks
 that discipline. Reading the code found the most defects. Crossing a seam found the worst of the
@@ -182,5 +198,8 @@ implementation ones. Running the real thing found the one that was wrong in the 
 category where neither the author nor the tests could have known what they had assumed.
 
 And one was found by none of those. A reviewer asked a question the work had not asked itself.
-Of the six instruments, that is the only one a submission cannot supply on its own, which is a
-poor note to end on and the accurate one.
+Of the seven instruments, that is the only one a submission cannot supply on its own — and it
+has now fired twice, the second time on this document's own sibling, where the claim had gone
+stale rather than been invented. Both times the correction was mechanised afterwards, into
+`Engine.STUB` and into `scripts_audit_figures.py`, which is the right response and still leaves
+the finding where it was made. That is a poor note to end on and the accurate one.
