@@ -1,5 +1,8 @@
 # Phase 1: a governed foundation for your patient data
 
+> 699 words. The count is this summary's prose — the headings and this note are not part
+> of it — and `scripts_audit_figures.py` fails if it leaves the 500–700 the brief asks for.
+
 ## What a canonical patient model is
 
 Your patient data lives in several places at once — your EMR, lab portals, PDFs from outside

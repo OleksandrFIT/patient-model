@@ -1,4 +1,4 @@
-"""Audit every number D10 and D11 assert against the repository they describe.
+"""Audit every number D9, D10 and D11 assert against the repository they describe.
 
     .venv/bin/python scripts_audit_figures.py
 
@@ -17,6 +17,13 @@ Historical figures are excluded on purpose. D10's prompt log says the implementa
 264 tests, which is a statement about commit 6c9e024 and cannot drift; the gate covers only
 claims about the repository as it stands.
 
+D9's length is the one figure here that is a bound rather than a measurement to match, and it was
+the last one outside this gate -- which it had the least right to be, having been stated wrongly
+three times running: 714 words claimed as fitting the limit, then 701 claimed as 697, then 699
+verified (26f5fdc, 945c7c7, c5fba67). The bound itself is read out of ASSIGNMENT.md rather than
+written in here, for the same reason the dimension audit reads its list from there: a constant
+copied beside the claim is a second copy to drift with it.
+
 Exits non-zero on any drift, so it can gate a submission.
 """
 
@@ -30,9 +37,11 @@ WORDS = {
     21: "Twenty-one", 22: "Twenty-two", 23: "Twenty-three", 24: "Twenty-four",
 }
 
+D9 = pathlib.Path("deliverables/d9_client_summary.md")
 D10 = pathlib.Path("deliverables/d10_ai_log.md")
 D11 = pathlib.Path("deliverables/d11_time_log.md")
 README = pathlib.Path("README.md")
+ASSIGNMENT = pathlib.Path("ASSIGNMENT.md")
 
 
 def lines_in(*globs: str) -> int:
@@ -41,6 +50,30 @@ def lines_in(*globs: str) -> int:
         for g in globs
         for p in pathlib.Path().glob(g)
     )
+
+
+def d9_words() -> int:
+    """D9's length, counted the way D9 says it is counted.
+
+    Prose only: a heading line and the note at the top are not part of the summary a client
+    reads. The basis has to be stated in the document and enforced here from the same rule,
+    because the two plausible ways of counting disagree by 54 words -- `wc -w` on the file
+    returns the headings as well -- and a limit that depends on which one a reader picks is
+    not a limit.
+    """
+    return sum(
+        len(re.findall(r"\S+", line))
+        for line in D9.read_text().splitlines()
+        if not line.startswith(("#", ">"))
+    )
+
+
+def d9_bound() -> tuple[int, int]:
+    """The word limit, read from the brief rather than kept as a constant here."""
+    found = re.search(r"Expected length: (\d+)[-\u2013](\d+) words", ASSIGNMENT.read_text())
+    if not found:
+        raise SystemExit("could not read D9's word limit out of ASSIGNMENT.md")
+    return int(found.group(1)), int(found.group(2))
 
 
 ACTIVITY_ROW = re.compile(r"^\| (?!\*\*Total)(?!Activity)(?!---)(?:.+?) \| (\d+):(\d\d) \|$")
@@ -93,6 +126,9 @@ def facts() -> dict[str, int]:
     defects = pathlib.Path("docs/plan_defects.md").read_text()
     return {
         "spec_lines": len(spec.splitlines()),
+        # D11 states the section count beside the line count, so it drifts the same way.
+        "spec_sections": len(re.findall(r"^## \d+\.", spec, re.MULTILINE)),
+        "d9_words": d9_words(),
         "claude_md_lines": len(pathlib.Path("CLAUDE.md").read_text().splitlines()),
         "src_lines": lines_in("src/**/*.py"),
         "test_lines": lines_in("tests/**/*.py", "mock/**/*.py"),
@@ -125,8 +161,10 @@ def expected(f: dict[str, int]) -> list[tuple[pathlib.Path, str, str]]:
         # The four decisions taken before any prompt in this repository.
         (D10, "size of the hand-written CLAUDE.md",
          f"a {f['claude_md_lines']}-line `CLAUDE.md`"),
+        (D9, "the word count D9 states about itself",
+         f"> {f['d9_words']} words."),
         (D11, "design document size",
-         f"`docs/model_design.md`, {f['spec_lines']:,} lines"),
+         f"`docs/model_design.md`, {f['spec_lines']:,} lines, {f['spec_sections']} sections"),
         (D11, "implementation plan size",
          f"{f['plan_tasks']} tasks, {f['plan_steps']} steps"),
         (D11, "code size",
@@ -195,23 +233,34 @@ def main() -> int:
             + " — and each is presented as the same work"
         )
 
+    # D9 against the brief's own limit. The check above only holds D9's stated count to the
+    # file; this one holds the file to the assignment, and both are needed: a wrong count
+    # inside the range and a right count outside it are different failures.
+    lo, hi = d9_bound()
+    if not lo <= f["d9_words"] <= hi:
+        problems.append(
+            f"d9_client_summary.md: {f['d9_words']} words of prose, outside the {lo}-{hi} "
+            "ASSIGNMENT.md sets (headings and the opening note excluded, as D9 states)"
+        )
+
     # The claim this gate was built after. Kept as a named check rather than left to the
     # figures above, because it was prose and no number would have caught it.
     if "normalisation build was not started" in D11.read_text():
         problems.append("d11_time_log.md: still says the normalisation build was not started")
 
     print(
-        f"spec {f['spec_lines']:,} lines  |  src {f['src_lines']:,}  |  tests+mock "
-        f"{f['test_lines']:,}  |  {f['tests']} tests  |  {f['entities']} entities  |  "
-        f"{f['defects']} defects  |  CLAUDE.md {f['claude_md_lines']}"
+        f"spec {f['spec_lines']:,} lines / {f['spec_sections']} sections  |  src "
+        f"{f['src_lines']:,}  |  tests+mock {f['test_lines']:,}  |  {f['tests']} tests  |  "
+        f"{f['entities']} entities  |  {f['defects']} defects  |  CLAUDE.md "
+        f"{f['claude_md_lines']}  |  D9 {f['d9_words']} words ({lo}-{hi})"
     )
     if problems:
         print(f"\n{len(problems)} PROBLEM(S):")
         for p in problems:
             print(f"  - {p}")
         return 1
-    print("\nno drift: every figure D10 and D11 assert matches the repository, and the")
-    print("instrument table accounts for every defect in the log.")
+    print("\nno drift: every figure D9, D10 and D11 assert matches the repository, D9 is")
+    print("inside the brief's limit, and the instrument table accounts for every defect.")
     return 0
 
 

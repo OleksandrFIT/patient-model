@@ -48,6 +48,38 @@ status is derived from open flags because a stored one goes stale.
 
 ---
 
+## D4's ten items, and where each one lives
+
+Same purpose as the table above. D4 lists ten things the model must track, and a reviewer going
+through them one by one should find each rather than have to derive it. Nine are fields. The
+tenth — human review status — is **absent as a field by design**, and that is said here plainly
+instead of being left to §6.1 to argue.
+
+| D4 asks the model to track | Where it is |
+|---|---|
+| Source system | `SourceDocument.source_class` in the source layer, reached by `Provenance.source_refs` → `SourceReference.document_id` |
+| Source document | `SourceReference.document_id`, with `SourceDocument.filename` and `content_sha256` — the hash is what makes the document the one that was read |
+| Source field | `SourceReference.field_path`, plus `page`, `span_start`/`span_end` and `quote` (§6.17) |
+| Date imported | `Provenance.imported_at` — distinct from `asserted_at`, which is when a human or system vouched for the value |
+| Date last updated | `updated_at` on every canonical record (§2.1) |
+| Who or what changed the record | `updated_by` for the current state, and `AuditEvent.actor` per event — append-only, reads logged as well as writes (§6.3) |
+| Whether a field came from a human, a source system or AI extraction | `Provenance.origin`, five values, with `ai_extraction` and `ai_inference` kept apart because the second compounds (§6.19) |
+| Confidence level, if AI extraction was used | `Provenance.extraction_confidence` |
+| **Human review status** | **No field, deliberately (§6.1).** AI never writes to canonical, so canonical cannot by construction hold unreviewed AI content for a status to describe |
+| Version history | `version` and `superseded_by` on every record, with the field-level delta on `AuditEvent.field_delta` (§6.15) |
+
+The review-status capability is not missing; it is three fields that already exist, and the
+reason for preferring them is that a stored status diverges from reality the moment a flag is
+resolved and the field is not updated with it:
+
+| The question D4 is really asking | What answers it |
+|---|---|
+| Is anything about this record still outstanding? | Open `DataQualityFlag` records targeting it — `status`, and `severity` for how badly |
+| Who vouched for this value? | `Provenance.asserted_by` — for an accepted extraction, the human who accepted it, not the model |
+| When was it reviewed, and from which candidate? | `AuditEvent`, correlated by `trace_id`, plus `ExtractionCandidate.produced` in the AI layer |
+
+---
+
 ## Identity and context
 
 | Element | What it contains | Why it matters | Source systems | AI / workflow use | Risks if missing, stale, duplicated or wrong |
@@ -101,6 +133,11 @@ status is derived from open flags because a stored one goes stale.
 | **LabTrend** | Full series, `numeric_basis`, **required** `excluded[]`, direction | A comparator point leaves the **arithmetic**, not the series: three consecutive `TSH <0.01` are a signal, and dropping them loses it | Trend analysis, brief | Excluding points silently is the failure this prevents. `direction` is indeterminate below two numeric points — the minimum at which a direction exists, not a tuned threshold |
 | **PreVisitBrief** | Header with identity, clinical lists, trends, timeline, **required** `unresolved[]`, optional narrative | Identity sits on the deterministic wrapper; the narrative is generated from `AIPatientView` and cannot contain a name it never received (§10.4) | D8's workflow | `unresolved` is required with no default, so a brief that dropped a flagged lab cannot be constructed. The brief has **no context budget** — only the narrative is bounded |
 
+Five of the assignment's six columns here, and the divergence is deliberate: *Source systems* is
+dropped because nothing in this table has one. Each of these is computed from canonical records on
+demand and never stored (§6.13), so its sources are the records it projects — named in its own row
+rather than given as a column that would read "canonical" three times.
+
 ---
 
 ## AI layer
@@ -110,3 +147,7 @@ status is derived from open flags because a stored one goes stale.
 | **AIArtifact** | `trace_id`, versioned `inputs`, `omitted`, `produced`, `prompt_digest`, model id and digest, engine, `execution`, `consent_ref`, review, guardrail failures | What is recorded about one generation. `execution` is `Literal["local"]`, so a cloud run is unrepresentable | Audit, review queue | The prompt is **not** stored: it contains PHI, and storing it duplicates canonical data outside canonical governance. Digest plus versioned inputs supports *reconstruction*, which holds only while those versions are unchanged — and the digest proves when it no longer does |
 | **AISummary** | Claims, each with citations and structured values; required `unresolved[]` | Structured, not prose, because over prose none of the five output checks works | The narrative a physician reads | A number extractor over prose that misses one produces a **false pass**, worse than no check |
 | **ExtractionCandidate** | Proposed entity type and payload, `produced[]` | The suggestion channel. Nothing here is canonical | Human review | `produced` runs this direction because canonical never references the AI layer. Its durability is the lineage's durability: prune the AI layer and facts already accepted can no longer be explained |
+
+Five columns again, for the same reason: the AI layer's input is canonical, not a source system.
+What a given generation actually read is recorded per artifact in `AIArtifact.inputs` with the
+record versions it saw, which is a stronger answer than a column here could give.

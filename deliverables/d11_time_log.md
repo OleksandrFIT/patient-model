@@ -58,7 +58,7 @@ passing flags to it as structure rather than prose.
 | | |
 |---|---|
 | Commits | One per task or per decision — see `git log --oneline` |
-| Design document | `docs/model_design.md`, 1,595 lines, 11 sections |
+| Design document | `docs/model_design.md`, 1,669 lines, 12 sections |
 | Implementation plan | `docs/implementation_plan.md`, 29 tasks, 153 steps |
 | Code | 4,638 lines in `src/`, 4,466 in `tests/` and `mock/` |
 | Tests | 324, all passing; ruff clean |

@@ -23,9 +23,15 @@ named that the code does not have.
 
 `scripts_audit_figures.py` is the second gate, and it exists because the first version of D10 and
 D11 carried figures that were true when written and were not re-checked while four later commits
-moved them. It recomputes every number those two documents assert — line counts, test count,
-entity count, defect count — and exits non-zero on any drift, so a stale claim fails here rather
-than reaching a reviewer.
+moved them. It recomputes every number D9, D10 and D11 assert — line counts, the spec's section
+count, test count, entity count, defect count, and D9's length against the 500–700 words the
+brief sets — and exits non-zero on any drift, so a stale claim fails here rather than reaching a
+reviewer.
+
+D9's word count was the last figure outside it, and the one with the worst record: it was stated
+wrongly three times before it was right — 714 words claimed as fitting, then 701 claimed as 697,
+then 699 verified (`26f5fdc`, `945c7c7`, `c5fba67`). The bound is read out of `ASSIGNMENT.md`
+rather than written into the script, so the gate cannot drift from the brief either.
 
 The design document, `docs/model_design.md`, is the specification. Where it and this README
 differ, the design document is correct.
@@ -304,6 +310,33 @@ could be lied to. It holds because `AIArtifact` is constructed only by the local
 adapter, and no public path takes `execution` as an argument. The prompt itself is never
 stored — only its digest, alongside versioned `inputs`, so the prompt can be *reconstructed*
 from canonical rather than duplicated outside canonical governance.
+
+---
+
+## How this would be integrated
+
+Phase 1 ships no transport, and `docs/model_design.md` §12 states that as a position rather than
+leaving it as a silence. The short form:
+
+**The contracts already exist as types.** Inbound, `src/pai3/normalise/` turns three source
+formats into canonical records. Outbound, `src/pai3/readmodels/` builds `PreVisitBrief`,
+`TimelineEvent` and `LabTrend` on demand, and `src/pai3/ai/` hands an agent an `AIPatientView`
+and nothing wider. An HTTP layer over this is a serialiser and a router, not a second model.
+
+**Four things the canonical layer already gives it**, each decided for a clinical reason and
+none of them added for an API: prefixed ULIDs that are never reused, so a URL stays valid;
+`version` and `updated_at` on every record, which is what an ETag and an `If-Match` precondition
+are built from; no `deleted` in `record_status`, so a 404-after-delete cannot happen and
+`superseded_by` names the replacement; and `AuditEvent.trace_id`, which a request id maps onto,
+so "what did this call read" comes out of the audit stream rather than a second log that can
+disagree with it.
+
+**What a remote caller does not change.** It is a channel, not an author:
+`provenance.asserted_by` still names whoever vouched, and the write column of the rights matrix
+above stays one row wide.
+
+Not built, with the reasons in §12.4: the transport itself, authentication and authorisation
+beyond the consent gate, a filter and pagination grammar, webhooks, FHIR as a wire format.
 
 ---
 

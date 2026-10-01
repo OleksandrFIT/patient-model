@@ -743,6 +743,8 @@ as a known limit. It no longer does.
   re-check at artifact construction, not guaranteed.
 - **Unit conversion inside trends** — §9.4. Mismatched units are excluded with a
   visible reason rather than converted.
+- **An API or wire surface** — §12. The read models and the projection are the
+  contracts; the transport over them is not Phase 1.
 - **FHIR as a wire format** — §6.18.
 - **Temporal queries** — §6.15.
 
@@ -1593,3 +1595,75 @@ and nothing else may join them.
    broken promise. The `AuditEvent` schema itself, including both fields, is built
    in step 1.
 7. Documentation
+
+---
+
+## 12. Integration and API readiness
+
+Phase 1 ships no transport. What it ships is what a transport needs: contracts that already
+exist as types, and ids stable enough to put in a URL. This section states the position so
+that "no API" is a decision in the document rather than a silence in it.
+
+### 12.1 The surface that already exists
+
+| Direction | Where | Contract |
+|---|---|---|
+| Inbound | `normalise/readers.py`, `normalise/pipeline.py` | Three source formats — nested JSON, extracted PDF rows, a CSV of free text — become `RawAssertion`s and then canonical records. `normalise(source_dir)` returns one `Result` holding the records, the `SourceReference`s, the flags and the refusals |
+| Outbound, deterministic | `readmodels/brief.py`, `timeline.py`, `trend.py` | `PreVisitBrief`, `TimelineEvent`, `LabTrend` — assembled from canonical on demand, never stored (§6.13) |
+| Outbound, to an agent | `ai/scope.py`, `ai/projection.py` | `authorize_ai_read` → `AIReadScope` → `project_patient` / `project_records` → `AIPatientView` and `ProjectionResult`. The only shape an agent can be handed (§10.3, §10.4) |
+| Evidence | `SourceReference` | Document, page, `field_path`, span, quote — what a citation resolves to |
+
+The claim this makes is narrow and testable: **an HTTP layer over this would be a serialiser
+and a router, not a second model.** The read models are the response bodies. Nothing in §10
+would move, because the gate and the projection sit below the transport rather than beside it.
+
+### 12.2 What the canonical layer already gives a transport
+
+Each of these was decided for a clinical reason stated elsewhere in this document and happens
+to be what an API needs. None of them was added for an API.
+
+- **Stable resource ids.** Prefixed ULIDs (§8), allocated once and never reused or migrated
+  (§8.2), so a URL minted today resolves to the same record indefinitely.
+- **Preconditions without a new field.** `version` and `updated_at` are on every record
+  (§2.1), and `updated_at` is `AwareDatetime`, which refuses a naive value outright. An ETag
+  and an `If-Match` precondition are built from those two and nothing else.
+- **No resource ever disappears.** `record_status` has no `deleted` (§2.1). A client holding
+  a reference gets `superseded` or `entered_in_error`, and `superseded_by` names the record
+  that replaced it. A 404 after a delete is unrepresentable because there is no delete.
+- **Request correlation is already in the audit trail.** `AuditEvent.trace_id` (§6.3) is what
+  a request id maps onto, so "what did this call read" is answerable from the audit stream
+  rather than from a separate access log that can disagree with it.
+- **A collection endpoint exists in all but name.** `DataQualityFlag` is an entity rather than
+  an embedded list so that the review queue is a cross-patient query (§6.5) —
+  `Result.review_queue` already returns it worst-first, and
+  `deliverables/normalisation/review_queue.md` is that query rendered.
+
+### 12.3 What a write path would have to obey
+
+A write arriving over a transport changes nothing about who vouched for it. **The caller is a
+channel, not an author.** The record still carries `provenance.asserted_by` naming the human
+or source system that asserted the value, and `origin` may not become `human` because a
+request happened to be authenticated.
+
+§10.4's write column does not widen because the caller is remote. An agent reaching the model
+through an API has the same single row — `AIArtifact`, `AISummary`, `ExtractionCandidate` —
+and proposes a canonical record the same way, as an `ExtractionCandidate` that a human
+accepts.
+
+### 12.4 Deliberately not built
+
+- **The transport itself.** No HTTP or GraphQL layer, no OpenAPI document, no wire DTOs
+  separate from the models.
+- **Authentication and authorisation.** §10.3 gates the AI read path and nothing else;
+  general access control is already out of scope (§7).
+- **A filter and pagination grammar.** Fixing it now fixes the query shapes before a consumer
+  has asked for one.
+- **Webhooks or an event feed.** `AuditEvent` is append-only and would be the source, but
+  delivery semantics — retries, ordering, at-least-once — are a service concern and not a
+  model one.
+- **FHIR as a wire format** — §6.18.
+
+The reason is the one §11 gives for demonstrating D8 rather than specifying it: a contract
+pinned before its consumers exist freezes the wrong shape, and a frozen wrong shape costs
+more to remove than an absent one. What this section does commit to is the narrower claim
+above — that the model does not have to change to acquire a transport.
