@@ -7,7 +7,7 @@ AI-processing consent expires this month" would be unanswerable. Coverage arrive
 Phase 3.
 """
 
-from datetime import datetime
+from datetime import date, datetime
 
 from pydantic import AwareDatetime, model_validator
 
@@ -41,3 +41,18 @@ class Consent(PatientScoped):
         if moment < self.effective_from:
             return False
         return self.effective_until is None or moment <= self.effective_until
+
+
+class Coverage(PatientScoped):
+    """Payment context. Thin by design (§4).
+
+    Kept because a concierge practice commonly bills labs and procedures through
+    insurance even when membership is self-pay, so "if relevant" in the brief is a scope
+    call rather than permission to assume it away. Outside AI read scope (§10.4): payment
+    context is not clinical.
+    """
+
+    payer: str
+    member_id: str | None = None
+    effective_from: date | None = None
+    effective_until: date | None = None

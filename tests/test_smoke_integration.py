@@ -1,4 +1,4 @@
-"""One patient, one record of every entity, wired together.
+"""One patient, one record of every canonical entity, wired together.
 
 Not in the plan. Everything up to here is unit-level: no test constructs two entities
 and checks that the ids pointing between them resolve. The first integration is Task 29's
@@ -11,13 +11,16 @@ record holds about another actually exists.
 
 from datetime import UTC, date, datetime, timedelta
 
-from pai3.entities.administrative import Consent
+from pai3.entities.administrative import Consent, Coverage
 from pai3.entities.clinical import (
     AllergyIntolerance,
     Condition,
     Criticality,
     Encounter,
+    Goal,
+    Procedure,
     Reaction,
+    SocialFactor,
 )
 from pai3.entities.infrastructure import (
     AuditAction,
@@ -36,6 +39,7 @@ from pai3.entities.therapy import (
     SupplementStatus,
     TreatmentPlan,
 )
+from pai3.entities.workflow import Task, TaskOrigin, TaskStatus
 from pai3.enums import (
     ClinicalStatus,
     ConsentScope,
@@ -258,18 +262,66 @@ def build_cohort() -> dict[str, object]:
         field_delta={"quantity": (None, "5.6 mIU/L")},
     )
 
+    coverage = Coverage(
+        **_base("cov"),
+        patient_id=patient_id,
+        payer="Meridian Health",
+        member_id="MH-88213",
+        effective_from=date(2026, 1, 1),
+    )
+
+    procedure = Procedure(
+        **_base("proc"),
+        patient_id=patient_id,
+        encounter_id=encounter_id,
+        code=CodeableConcept(raw_text="thyroid ultrasound", system="ICD-10-PCS", code="BB44ZZZ"),
+        performed_on=date(2026, 3, 12),
+        performer_id=provider.id,
+        outcome="no nodules",
+    )
+
+    goal = Goal(
+        **_base("goal"),
+        patient_id=patient_id,
+        description="Keep TSH inside range without a dose increase",
+        target_date=date(2026, 9, 1),
+    )
+
+    social = SocialFactor(
+        **_base("soc"),
+        patient_id=patient_id,
+        encounter_id=encounter_id,
+        factor=CodeableConcept(raw_text="smoking status", system="LOINC", code="72166-2"),
+        value="never smoked",
+        asserted_on=date(2026, 3, 12),
+    )
+
+    task = Task(
+        **_base("task"),
+        patient_id=patient_id,
+        encounter_id=encounter_id,
+        description="Repeat TSH in six weeks",
+        origin=TaskOrigin.HUMAN,
+        status=TaskStatus.OPEN,
+        assignee_id=provider.id,
+        due_on=date(2026, 4, 23),
+        source_ref=lab.id,
+    )
+
     return {
         "patient": patient, "provider": provider, "consent": consent,
         "encounter": encounter, "source_ref": source_ref, "condition": condition,
         "allergy": allergy, "medication": medication, "supplement": supplement,
         "lab": lab, "report": report, "vital": vital, "note": note, "plan": plan,
-        "flag": flag, "audit": audit,
+        "flag": flag, "audit": audit, "coverage": coverage, "procedure": procedure,
+        "goal": goal, "social": social, "task": task,
     }
 
 
 def test_every_built_entity_constructs_for_one_patient():
+    # All twenty-one canonical entities, for one patient.
     cohort = build_cohort()
-    assert len(cohort) == 16
+    assert len(cohort) == 21
 
 
 def test_every_id_one_record_holds_about_another_resolves():
@@ -296,6 +348,9 @@ def test_every_id_one_record_holds_about_another_resolves():
         ("audit.targets[0]", c["audit"].targets[0], known),
         ("plan.items[0].targets[0]", c["plan"].items[0].targets[0], known),
         ("plan.items[0].targets[1]", c["plan"].items[0].targets[1], known),
+        ("procedure.performer_id", c["procedure"].performer_id, {provider_id}),
+        ("task.assignee_id", c["task"].assignee_id, {provider_id}),
+        ("task.source_ref", c["task"].source_ref, known),
     ]
     for label, value, allowed in references:
         assert value in allowed, f"{label} = {value!r} points at nothing"

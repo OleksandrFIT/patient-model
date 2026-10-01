@@ -99,3 +99,37 @@ class Encounter(PatientScoped):
         if self.ended_at is not None and self.ended_at < self.started_at:
             raise ValueError("ended_at precedes started_at")
         return self
+
+
+class Procedure(ClinicalRecord):
+    """Thin (§4)."""
+
+    code: CodeableConcept
+    performed_on: date
+    performer_id: str | None = None
+    outcome: str | None = None
+
+
+class Goal(PatientScoped):
+    """Patient-owned, and outlives any single treatment plan (§2.4).
+
+    PatientScoped rather than ClinicalRecord: a goal can exist before any plan and
+    before any visit, which is why it did not fold into TreatmentPlan.
+    """
+
+    description: str = Field(min_length=1)
+    target_date: date | None = None
+    status: str = "active"
+
+
+class SocialFactor(ClinicalRecord):
+    """Smoking, alcohol, sleep, occupation, living situation.
+
+    A record with an assertion date rather than a mutable block on Patient, because the
+    whole risk here is staleness -- "smoker" recorded in 2019 and never revisited -- and
+    a block has no history (§6.16).
+    """
+
+    factor: CodeableConcept
+    value: str
+    asserted_on: date
