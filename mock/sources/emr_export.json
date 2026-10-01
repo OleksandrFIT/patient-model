@@ -1,0 +1,45 @@
+{
+  "_source": "Westside EMR v11 patient export",
+  "_exported_at": "2026-03-10T22:14:00Z",
+  "patient": {
+    "mrn": "MRN-4471",
+    "first_name": "Dana",
+    "last_name": "Okafor",
+    "dob": "1979-04-02",
+    "sex": "F"
+  },
+  "problems": [
+    {"desc": "Hypothyroidism", "icd10": "E03.9", "status": "active", "onset": "2021-05-14"},
+    {"desc": "Type 2 diabetes mellitus", "icd10": "E11.9", "status": "active", "onset": "2023-08-02"}
+  ],
+  "medications": [
+    {
+      "name": "levothyroxine", "rxnorm": "10582", "sig": "75 mcg daily",
+      "dose_amount": 75, "dose_unit": "mcg", "frequency": "daily",
+      "status": "active", "start": "2021-06-01", "prescriber": "Reyes, Ana"
+    },
+    {
+      "name": "metformin", "rxnorm": "6809", "sig": "500 mg twice daily",
+      "dose_amount": 500, "dose_unit": "mg", "frequency": "BID",
+      "status": "active", "start": "2023-08-10", "prescriber": "Reyes, Ana"
+    }
+  ],
+  "supplements": [
+    {"name": "vitamin D3", "sig": "1000 IU daily"}
+  ],
+  "allergies": [
+    {"substance": "penicillin", "rxnorm": "7980", "reaction": "hives", "criticality": "high"}
+  ],
+  "labs": [
+    {
+      "analyte": "TSH", "loinc": "3016-3", "value": 5.6, "unit": "mIU/L",
+      "collected": "2026-02-26", "ref_low": 0.4, "ref_high": 4.0, "abnormal": "H",
+      "lab": "Meridian Labs"
+    },
+    {
+      "analyte": "HbA1c", "loinc": "4548-4", "value": 54, "unit": "mmol/mol",
+      "collected": "2026-02-26", "ref_low": 20, "ref_high": 42,
+      "lab": "Meridian Labs"
+    }
+  ]
+}

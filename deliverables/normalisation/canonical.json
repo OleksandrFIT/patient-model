@@ -1,0 +1,3303 @@
+{
+  "_note": "Normalised from three conflicting sources in mock/sources/. Canonical holds only what a source vouched for; an unresolved conflict leaves the field empty and the flag names both candidates (model_design.md §9.3).",
+  "source_documents": [
+    {
+      "id": "doc_emr",
+      "source_class": "emr",
+      "filename": "emr_export.json",
+      "content_sha256": "sha256:2e3c382d9e49181ac556685fb4eb25a9e318fe311702127354b8df8b37fc05f2",
+      "received_at": "2026-03-11T08:00:00Z",
+      "declared_row_count": 9
+    },
+    {
+      "id": "doc_lab",
+      "source_class": "lab_report",
+      "filename": "lab_report_extraction.json",
+      "content_sha256": "sha256:273b42f6f882fd031b9bf61a7c6c64b1967c3a77d8af04b59259de255b48eaef",
+      "received_at": "2026-03-11T08:00:00Z",
+      "declared_row_count": null
+    },
+    {
+      "id": "doc_intake",
+      "source_class": "intake",
+      "filename": "intake_form.csv",
+      "content_sha256": "sha256:fcc2422f6f44488330eb0a6eb83df5c06da014972e5b318afd3b376d8225f9ea",
+      "received_at": "2026-03-11T08:00:00Z",
+      "declared_row_count": null
+    }
+  ],
+  "canonical": {
+    "patient": {
+      "id": "pat_0001",
+      "provenance": {
+        "origin": "source_system",
+        "asserted_by": {
+          "kind": "pipeline",
+          "ref": "normaliser",
+          "label": "normaliser"
+        },
+        "asserted_at": "2026-03-11T09:00:00Z",
+        "imported_at": "2026-03-11T09:00:00Z",
+        "source_refs": [
+          "sref_0001",
+          "sref_0002"
+        ],
+        "derived_from": [],
+        "depth": 0,
+        "extraction_confidence": null
+      },
+      "field_provenance": {},
+      "record_status": "active",
+      "version": 1,
+      "superseded_by": null,
+      "created_at": "2026-03-11T09:00:00Z",
+      "updated_at": "2026-03-11T09:00:00Z",
+      "updated_by": {
+        "kind": "human",
+        "ref": "user_steward",
+        "label": "M. Chen, data steward"
+      },
+      "identifiers": [
+        {
+          "system": "emr-west",
+          "value": "MRN-4471",
+          "assigner": null
+        },
+        {
+          "system": "intake-form",
+          "value": "MRN-4471",
+          "assigner": null
+        }
+      ],
+      "names": [
+        {
+          "given": [
+            "Dana"
+          ],
+          "family": "Okafor",
+          "prefix": null
+        }
+      ],
+      "birth_date": "1979-04-02",
+      "sex_at_birth": "female",
+      "gender_identity": null,
+      "contacts": [],
+      "addresses": [],
+      "preferences": null,
+      "care_team": []
+    },
+    "conditions": [
+      {
+        "id": "cond_0001",
+        "provenance": {
+          "origin": "source_system",
+          "asserted_by": {
+            "kind": "pipeline",
+            "ref": "normaliser",
+            "label": "normaliser"
+          },
+          "asserted_at": "2026-03-11T09:00:00Z",
+          "imported_at": "2026-03-11T09:00:00Z",
+          "source_refs": [
+            "sref_0003",
+            "sref_0004"
+          ],
+          "derived_from": [],
+          "depth": 0,
+          "extraction_confidence": null
+        },
+        "field_provenance": {},
+        "record_status": "active",
+        "version": 1,
+        "superseded_by": null,
+        "created_at": "2026-03-11T09:00:00Z",
+        "updated_at": "2026-03-11T09:00:00Z",
+        "updated_by": {
+          "kind": "human",
+          "ref": "user_steward",
+          "label": "M. Chen, data steward"
+        },
+        "patient_id": "pat_0001",
+        "encounter_id": null,
+        "code": {
+          "raw_text": "Hypothyroidism",
+          "system": "ICD-10",
+          "code": "E03.9",
+          "display": null
+        },
+        "clinical_status": "active",
+        "verification_status": "confirmed",
+        "onset": "2021-05-14",
+        "abatement": null,
+        "recorded_by": null
+      },
+      {
+        "id": "cond_0002",
+        "provenance": {
+          "origin": "source_system",
+          "asserted_by": {
+            "kind": "pipeline",
+            "ref": "normaliser",
+            "label": "normaliser"
+          },
+          "asserted_at": "2026-03-11T09:00:00Z",
+          "imported_at": "2026-03-11T09:00:00Z",
+          "source_refs": [
+            "sref_0005",
+            "sref_0006"
+          ],
+          "derived_from": [],
+          "depth": 0,
+          "extraction_confidence": null
+        },
+        "field_provenance": {},
+        "record_status": "active",
+        "version": 1,
+        "superseded_by": null,
+        "created_at": "2026-03-11T09:00:00Z",
+        "updated_at": "2026-03-11T09:00:00Z",
+        "updated_by": {
+          "kind": "human",
+          "ref": "user_steward",
+          "label": "M. Chen, data steward"
+        },
+        "patient_id": "pat_0001",
+        "encounter_id": null,
+        "code": {
+          "raw_text": "Type 2 diabetes mellitus",
+          "system": "ICD-10",
+          "code": "E11.9",
+          "display": null
+        },
+        "clinical_status": "active",
+        "verification_status": "confirmed",
+        "onset": "2023-08-02",
+        "abatement": null,
+        "recorded_by": null
+      },
+      {
+        "id": "cond_0003",
+        "provenance": {
+          "origin": "human",
+          "asserted_by": {
+            "kind": "human",
+            "ref": "pat_self",
+            "label": "patient, via intake form"
+          },
+          "asserted_at": "2026-03-11T09:00:00Z",
+          "imported_at": "2026-03-11T09:00:00Z",
+          "source_refs": [
+            "sref_0040"
+          ],
+          "derived_from": [],
+          "depth": 0,
+          "extraction_confidence": null
+        },
+        "field_provenance": {},
+        "record_status": "active",
+        "version": 1,
+        "superseded_by": null,
+        "created_at": "2026-03-11T09:00:00Z",
+        "updated_at": "2026-03-11T09:00:00Z",
+        "updated_by": {
+          "kind": "human",
+          "ref": "user_steward",
+          "label": "M. Chen, data steward"
+        },
+        "patient_id": "pat_0001",
+        "encounter_id": null,
+        "code": {
+          "raw_text": "fibromyalgia",
+          "system": null,
+          "code": null,
+          "display": null
+        },
+        "clinical_status": "active",
+        "verification_status": "unconfirmed",
+        "onset": null,
+        "abatement": null,
+        "recorded_by": null
+      }
+    ],
+    "medications": [
+      {
+        "id": "med_0001",
+        "provenance": {
+          "origin": "source_system",
+          "asserted_by": {
+            "kind": "pipeline",
+            "ref": "normaliser",
+            "label": "normaliser"
+          },
+          "asserted_at": "2026-03-11T09:00:00Z",
+          "imported_at": "2026-03-11T09:00:00Z",
+          "source_refs": [
+            "sref_0007",
+            "sref_0008"
+          ],
+          "derived_from": [],
+          "depth": 0,
+          "extraction_confidence": null
+        },
+        "field_provenance": {},
+        "record_status": "active",
+        "version": 1,
+        "superseded_by": null,
+        "created_at": "2026-03-11T09:00:00Z",
+        "updated_at": "2026-03-11T09:00:00Z",
+        "updated_by": {
+          "kind": "human",
+          "ref": "user_steward",
+          "label": "M. Chen, data steward"
+        },
+        "patient_id": "pat_0001",
+        "encounter_id": null,
+        "drug": {
+          "raw_text": "levothyroxine",
+          "system": "RxNorm",
+          "code": "10582",
+          "display": null
+        },
+        "dosage": {
+          "text": "75 mcg daily",
+          "amount": 75.0,
+          "unit": "mcg",
+          "frequency": "daily",
+          "route": null
+        },
+        "status": "active",
+        "started_on": "2021-06-01",
+        "stopped_on": null,
+        "prescriber_id": "Reyes, Ana",
+        "indication": null
+      },
+      {
+        "id": "med_0002",
+        "provenance": {
+          "origin": "source_system",
+          "asserted_by": {
+            "kind": "pipeline",
+            "ref": "normaliser",
+            "label": "normaliser"
+          },
+          "asserted_at": "2026-03-11T09:00:00Z",
+          "imported_at": "2026-03-11T09:00:00Z",
+          "source_refs": [
+            "sref_0009",
+            "sref_0010"
+          ],
+          "derived_from": [],
+          "depth": 0,
+          "extraction_confidence": null
+        },
+        "field_provenance": {},
+        "record_status": "active",
+        "version": 1,
+        "superseded_by": null,
+        "created_at": "2026-03-11T09:00:00Z",
+        "updated_at": "2026-03-11T09:00:00Z",
+        "updated_by": {
+          "kind": "human",
+          "ref": "user_steward",
+          "label": "M. Chen, data steward"
+        },
+        "patient_id": "pat_0001",
+        "encounter_id": null,
+        "drug": {
+          "raw_text": "metformin",
+          "system": "RxNorm",
+          "code": "6809",
+          "display": null
+        },
+        "dosage": {
+          "text": "500 mg twice daily",
+          "amount": 500.0,
+          "unit": "mg",
+          "frequency": "BID",
+          "route": null
+        },
+        "status": "active",
+        "started_on": "2023-08-10",
+        "stopped_on": null,
+        "prescriber_id": "Reyes, Ana",
+        "indication": null
+      }
+    ],
+    "supplements": [
+      {
+        "id": "supp_0001",
+        "provenance": {
+          "origin": "source_system",
+          "asserted_by": {
+            "kind": "pipeline",
+            "ref": "normaliser",
+            "label": "normaliser"
+          },
+          "asserted_at": "2026-03-11T09:00:00Z",
+          "imported_at": "2026-03-11T09:00:00Z",
+          "source_refs": [
+            "sref_0015",
+            "sref_0016"
+          ],
+          "derived_from": [],
+          "depth": 0,
+          "extraction_confidence": null
+        },
+        "field_provenance": {},
+        "record_status": "active",
+        "version": 1,
+        "superseded_by": null,
+        "created_at": "2026-03-11T09:00:00Z",
+        "updated_at": "2026-03-11T09:00:00Z",
+        "updated_by": {
+          "kind": "human",
+          "ref": "user_steward",
+          "label": "M. Chen, data steward"
+        },
+        "patient_id": "pat_0001",
+        "encounter_id": null,
+        "substance": {
+          "raw_text": "vitamin D3",
+          "system": null,
+          "code": null,
+          "display": null
+        },
+        "dosage": {
+          "text": "1000 IU daily",
+          "amount": null,
+          "unit": null,
+          "frequency": null,
+          "route": null
+        },
+        "status": "active",
+        "started_on": null,
+        "stopped_on": null,
+        "reported_reason": null
+      },
+      {
+        "id": "supp_0002",
+        "provenance": {
+          "origin": "human",
+          "asserted_by": {
+            "kind": "human",
+            "ref": "pat_self",
+            "label": "patient, via intake form"
+          },
+          "asserted_at": "2026-03-11T09:00:00Z",
+          "imported_at": "2026-03-11T09:00:00Z",
+          "source_refs": [
+            "sref_0042"
+          ],
+          "derived_from": [],
+          "depth": 0,
+          "extraction_confidence": null
+        },
+        "field_provenance": {},
+        "record_status": "active",
+        "version": 1,
+        "superseded_by": null,
+        "created_at": "2026-03-11T09:00:00Z",
+        "updated_at": "2026-03-11T09:00:00Z",
+        "updated_by": {
+          "kind": "human",
+          "ref": "user_steward",
+          "label": "M. Chen, data steward"
+        },
+        "patient_id": "pat_0001",
+        "encounter_id": null,
+        "substance": {
+          "raw_text": "biotin 5000mcg",
+          "system": null,
+          "code": null,
+          "display": null
+        },
+        "dosage": {
+          "text": "biotin 5000mcg",
+          "amount": null,
+          "unit": null,
+          "frequency": null,
+          "route": null
+        },
+        "status": "active",
+        "started_on": null,
+        "stopped_on": null,
+        "reported_reason": null
+      }
+    ],
+    "allergies": [
+      {
+        "id": "alg_0001",
+        "provenance": {
+          "origin": "source_system",
+          "asserted_by": {
+            "kind": "pipeline",
+            "ref": "normaliser",
+            "label": "normaliser"
+          },
+          "asserted_at": "2026-03-11T09:00:00Z",
+          "imported_at": "2026-03-11T09:00:00Z",
+          "source_refs": [
+            "sref_0017",
+            "sref_0018"
+          ],
+          "derived_from": [],
+          "depth": 0,
+          "extraction_confidence": null
+        },
+        "field_provenance": {},
+        "record_status": "active",
+        "version": 1,
+        "superseded_by": null,
+        "created_at": "2026-03-11T09:00:00Z",
+        "updated_at": "2026-03-11T09:00:00Z",
+        "updated_by": {
+          "kind": "human",
+          "ref": "user_steward",
+          "label": "M. Chen, data steward"
+        },
+        "patient_id": "pat_0001",
+        "encounter_id": null,
+        "substance": {
+          "raw_text": "penicillin",
+          "system": "RxNorm",
+          "code": "7980",
+          "display": null
+        },
+        "criticality": "high",
+        "verification_status": "confirmed",
+        "reactions": [],
+        "recorded_by": null
+      }
+    ],
+    "lab_results": [
+      {
+        "id": "lab_0001",
+        "provenance": {
+          "origin": "source_system",
+          "asserted_by": {
+            "kind": "pipeline",
+            "ref": "normaliser",
+            "label": "normaliser"
+          },
+          "asserted_at": "2026-03-11T09:00:00Z",
+          "imported_at": "2026-03-11T09:00:00Z",
+          "source_refs": [
+            "sref_0019",
+            "sref_0020"
+          ],
+          "derived_from": [],
+          "depth": 0,
+          "extraction_confidence": 0.97
+        },
+        "field_provenance": {},
+        "record_status": "active",
+        "version": 1,
+        "superseded_by": null,
+        "created_at": "2026-03-11T09:00:00Z",
+        "updated_at": "2026-03-11T09:00:00Z",
+        "updated_by": {
+          "kind": "human",
+          "ref": "user_steward",
+          "label": "M. Chen, data steward"
+        },
+        "patient_id": "pat_0001",
+        "encounter_id": null,
+        "biomarker": {
+          "raw_text": "TSH",
+          "system": "LOINC",
+          "code": "3016-3",
+          "display": null
+        },
+        "collection_date": "2026-02-26T00:00:00Z",
+        "quantity": {
+          "value": 5.6,
+          "unit": "mIU/L",
+          "ucum_code": null,
+          "comparator": null
+        },
+        "coded_value": null,
+        "reference_range": {
+          "low": 0.4,
+          "high": 4.0,
+          "source_label": null
+        },
+        "reported_interpretation": {
+          "raw_text": "H",
+          "system": null,
+          "code": null,
+          "display": null
+        },
+        "specimen": null,
+        "performing_lab": "Meridian Labs",
+        "ordering_provider_id": null,
+        "report_id": null
+      },
+      {
+        "id": "lab_0002",
+        "provenance": {
+          "origin": "source_system",
+          "asserted_by": {
+            "kind": "pipeline",
+            "ref": "normaliser",
+            "label": "normaliser"
+          },
+          "asserted_at": "2026-03-11T09:00:00Z",
+          "imported_at": "2026-03-11T09:00:00Z",
+          "source_refs": [
+            "sref_0021",
+            "sref_0022"
+          ],
+          "derived_from": [],
+          "depth": 0,
+          "extraction_confidence": 0.95
+        },
+        "field_provenance": {},
+        "record_status": "active",
+        "version": 1,
+        "superseded_by": null,
+        "created_at": "2026-03-11T09:00:00Z",
+        "updated_at": "2026-03-11T09:00:00Z",
+        "updated_by": {
+          "kind": "human",
+          "ref": "user_steward",
+          "label": "M. Chen, data steward"
+        },
+        "patient_id": "pat_0001",
+        "encounter_id": null,
+        "biomarker": {
+          "raw_text": "HbA1c",
+          "system": "LOINC",
+          "code": "4548-4",
+          "display": null
+        },
+        "collection_date": "2026-02-26T00:00:00Z",
+        "quantity": {
+          "value": 7.1,
+          "unit": "%",
+          "ucum_code": null,
+          "comparator": null
+        },
+        "coded_value": null,
+        "reference_range": {
+          "low": 4.0,
+          "high": 5.6,
+          "source_label": null
+        },
+        "reported_interpretation": null,
+        "specimen": null,
+        "performing_lab": "Meridian Labs",
+        "ordering_provider_id": null,
+        "report_id": null
+      },
+      {
+        "id": "lab_0003",
+        "provenance": {
+          "origin": "ai_extraction",
+          "asserted_by": {
+            "kind": "human",
+            "ref": "user_steward",
+            "label": "M. Chen, data steward"
+          },
+          "asserted_at": "2026-03-11T09:00:00Z",
+          "imported_at": "2026-03-11T09:00:00Z",
+          "source_refs": [
+            "sref_0031"
+          ],
+          "derived_from": [],
+          "depth": 0,
+          "extraction_confidence": 0.81
+        },
+        "field_provenance": {},
+        "record_status": "active",
+        "version": 1,
+        "superseded_by": null,
+        "created_at": "2026-03-11T09:00:00Z",
+        "updated_at": "2026-03-11T09:00:00Z",
+        "updated_by": {
+          "kind": "human",
+          "ref": "user_steward",
+          "label": "M. Chen, data steward"
+        },
+        "patient_id": "pat_0001",
+        "encounter_id": null,
+        "biomarker": {
+          "raw_text": "free T4",
+          "system": "LOINC",
+          "code": "3024-7",
+          "display": null
+        },
+        "collection_date": "2026-02-26T00:00:00Z",
+        "quantity": {
+          "value": 11.2,
+          "unit": null,
+          "ucum_code": null,
+          "comparator": null
+        },
+        "coded_value": null,
+        "reference_range": null,
+        "reported_interpretation": null,
+        "specimen": null,
+        "performing_lab": "Meridian Labs",
+        "ordering_provider_id": null,
+        "report_id": null
+      },
+      {
+        "id": "lab_0004",
+        "provenance": {
+          "origin": "ai_extraction",
+          "asserted_by": {
+            "kind": "human",
+            "ref": "user_steward",
+            "label": "M. Chen, data steward"
+          },
+          "asserted_at": "2026-03-11T09:00:00Z",
+          "imported_at": "2026-03-11T09:00:00Z",
+          "source_refs": [
+            "sref_0032",
+            "sref_0033"
+          ],
+          "derived_from": [],
+          "depth": 0,
+          "extraction_confidence": 0.88
+        },
+        "field_provenance": {},
+        "record_status": "active",
+        "version": 1,
+        "superseded_by": null,
+        "created_at": "2026-03-11T09:00:00Z",
+        "updated_at": "2026-03-11T09:00:00Z",
+        "updated_by": {
+          "kind": "human",
+          "ref": "user_steward",
+          "label": "M. Chen, data steward"
+        },
+        "patient_id": "pat_0001",
+        "encounter_id": null,
+        "biomarker": {
+          "raw_text": "glucose, fasting",
+          "system": "LOINC",
+          "code": "1558-6",
+          "display": null
+        },
+        "collection_date": "2026-02-26T00:00:00Z",
+        "quantity": null,
+        "coded_value": null,
+        "reference_range": {
+          "low": 3.9,
+          "high": 5.5,
+          "source_label": null
+        },
+        "reported_interpretation": null,
+        "specimen": null,
+        "performing_lab": "Meridian Labs",
+        "ordering_provider_id": null,
+        "report_id": null
+      },
+      {
+        "id": "lab_0005",
+        "provenance": {
+          "origin": "ai_extraction",
+          "asserted_by": {
+            "kind": "human",
+            "ref": "user_steward",
+            "label": "M. Chen, data steward"
+          },
+          "asserted_at": "2026-03-11T09:00:00Z",
+          "imported_at": "2026-03-11T09:00:00Z",
+          "source_refs": [
+            "sref_0038"
+          ],
+          "derived_from": [],
+          "depth": 0,
+          "extraction_confidence": 0.94
+        },
+        "field_provenance": {},
+        "record_status": "active",
+        "version": 1,
+        "superseded_by": null,
+        "created_at": "2026-03-11T09:00:00Z",
+        "updated_at": "2026-03-11T09:00:00Z",
+        "updated_by": {
+          "kind": "human",
+          "ref": "user_steward",
+          "label": "M. Chen, data steward"
+        },
+        "patient_id": "pat_0001",
+        "encounter_id": null,
+        "biomarker": {
+          "raw_text": "ferritin",
+          "system": "LOINC",
+          "code": "2276-4",
+          "display": null
+        },
+        "collection_date": "2026-02-26T00:00:00Z",
+        "quantity": {
+          "value": 18.0,
+          "unit": "ug/L",
+          "ucum_code": null,
+          "comparator": null
+        },
+        "coded_value": null,
+        "reference_range": {
+          "low": 30.0,
+          "high": 300.0,
+          "source_label": null
+        },
+        "reported_interpretation": {
+          "raw_text": "N",
+          "system": null,
+          "code": null,
+          "display": null
+        },
+        "specimen": null,
+        "performing_lab": "Meridian Labs",
+        "ordering_provider_id": null,
+        "report_id": null
+      }
+    ],
+    "source_references": [
+      {
+        "id": "sref_0001",
+        "provenance": {
+          "origin": "system_derived",
+          "asserted_by": {
+            "kind": "pipeline",
+            "ref": "normaliser",
+            "label": "normaliser"
+          },
+          "asserted_at": "2026-03-11T09:00:00Z",
+          "imported_at": null,
+          "source_refs": [],
+          "derived_from": [],
+          "depth": 0,
+          "extraction_confidence": null
+        },
+        "field_provenance": {},
+        "record_status": "active",
+        "version": 1,
+        "superseded_by": null,
+        "created_at": "2026-03-11T09:00:00Z",
+        "updated_at": "2026-03-11T09:00:00Z",
+        "updated_by": {
+          "kind": "pipeline",
+          "ref": "normaliser",
+          "label": "normaliser"
+        },
+        "patient_id": "pat_0001",
+        "document_id": "doc_emr",
+        "page": null,
+        "field_path": "patient",
+        "span_start": null,
+        "span_end": null,
+        "quote": null
+      },
+      {
+        "id": "sref_0002",
+        "provenance": {
+          "origin": "system_derived",
+          "asserted_by": {
+            "kind": "pipeline",
+            "ref": "normaliser",
+            "label": "normaliser"
+          },
+          "asserted_at": "2026-03-11T09:00:00Z",
+          "imported_at": null,
+          "source_refs": [],
+          "derived_from": [],
+          "depth": 0,
+          "extraction_confidence": null
+        },
+        "field_provenance": {},
+        "record_status": "active",
+        "version": 1,
+        "superseded_by": null,
+        "created_at": "2026-03-11T09:00:00Z",
+        "updated_at": "2026-03-11T09:00:00Z",
+        "updated_by": {
+          "kind": "pipeline",
+          "ref": "normaliser",
+          "label": "normaliser"
+        },
+        "patient_id": "pat_0001",
+        "document_id": "doc_intake",
+        "page": null,
+        "field_path": "mrn",
+        "span_start": null,
+        "span_end": null,
+        "quote": "MRN-4471"
+      },
+      {
+        "id": "sref_0003",
+        "provenance": {
+          "origin": "system_derived",
+          "asserted_by": {
+            "kind": "pipeline",
+            "ref": "normaliser",
+            "label": "normaliser"
+          },
+          "asserted_at": "2026-03-11T09:00:00Z",
+          "imported_at": null,
+          "source_refs": [],
+          "derived_from": [],
+          "depth": 0,
+          "extraction_confidence": null
+        },
+        "field_provenance": {},
+        "record_status": "active",
+        "version": 1,
+        "superseded_by": null,
+        "created_at": "2026-03-11T09:00:00Z",
+        "updated_at": "2026-03-11T09:00:00Z",
+        "updated_by": {
+          "kind": "pipeline",
+          "ref": "normaliser",
+          "label": "normaliser"
+        },
+        "patient_id": "pat_0001",
+        "document_id": "doc_emr",
+        "page": null,
+        "field_path": "problems[0]",
+        "span_start": null,
+        "span_end": null,
+        "quote": null
+      },
+      {
+        "id": "sref_0004",
+        "provenance": {
+          "origin": "system_derived",
+          "asserted_by": {
+            "kind": "pipeline",
+            "ref": "normaliser",
+            "label": "normaliser"
+          },
+          "asserted_at": "2026-03-11T09:00:00Z",
+          "imported_at": null,
+          "source_refs": [],
+          "derived_from": [],
+          "depth": 0,
+          "extraction_confidence": null
+        },
+        "field_provenance": {},
+        "record_status": "active",
+        "version": 1,
+        "superseded_by": null,
+        "created_at": "2026-03-11T09:00:00Z",
+        "updated_at": "2026-03-11T09:00:00Z",
+        "updated_by": {
+          "kind": "pipeline",
+          "ref": "normaliser",
+          "label": "normaliser"
+        },
+        "patient_id": "pat_0001",
+        "document_id": "doc_intake",
+        "page": null,
+        "field_path": "conditions",
+        "span_start": null,
+        "span_end": null,
+        "quote": "hypothyroid; type 2 diabetes; fibromyalgia"
+      },
+      {
+        "id": "sref_0005",
+        "provenance": {
+          "origin": "system_derived",
+          "asserted_by": {
+            "kind": "pipeline",
+            "ref": "normaliser",
+            "label": "normaliser"
+          },
+          "asserted_at": "2026-03-11T09:00:00Z",
+          "imported_at": null,
+          "source_refs": [],
+          "derived_from": [],
+          "depth": 0,
+          "extraction_confidence": null
+        },
+        "field_provenance": {},
+        "record_status": "active",
+        "version": 1,
+        "superseded_by": null,
+        "created_at": "2026-03-11T09:00:00Z",
+        "updated_at": "2026-03-11T09:00:00Z",
+        "updated_by": {
+          "kind": "pipeline",
+          "ref": "normaliser",
+          "label": "normaliser"
+        },
+        "patient_id": "pat_0001",
+        "document_id": "doc_emr",
+        "page": null,
+        "field_path": "problems[1]",
+        "span_start": null,
+        "span_end": null,
+        "quote": null
+      },
+      {
+        "id": "sref_0006",
+        "provenance": {
+          "origin": "system_derived",
+          "asserted_by": {
+            "kind": "pipeline",
+            "ref": "normaliser",
+            "label": "normaliser"
+          },
+          "asserted_at": "2026-03-11T09:00:00Z",
+          "imported_at": null,
+          "source_refs": [],
+          "derived_from": [],
+          "depth": 0,
+          "extraction_confidence": null
+        },
+        "field_provenance": {},
+        "record_status": "active",
+        "version": 1,
+        "superseded_by": null,
+        "created_at": "2026-03-11T09:00:00Z",
+        "updated_at": "2026-03-11T09:00:00Z",
+        "updated_by": {
+          "kind": "pipeline",
+          "ref": "normaliser",
+          "label": "normaliser"
+        },
+        "patient_id": "pat_0001",
+        "document_id": "doc_intake",
+        "page": null,
+        "field_path": "conditions",
+        "span_start": null,
+        "span_end": null,
+        "quote": "hypothyroid; type 2 diabetes; fibromyalgia"
+      },
+      {
+        "id": "sref_0007",
+        "provenance": {
+          "origin": "system_derived",
+          "asserted_by": {
+            "kind": "pipeline",
+            "ref": "normaliser",
+            "label": "normaliser"
+          },
+          "asserted_at": "2026-03-11T09:00:00Z",
+          "imported_at": null,
+          "source_refs": [],
+          "derived_from": [],
+          "depth": 0,
+          "extraction_confidence": null
+        },
+        "field_provenance": {},
+        "record_status": "active",
+        "version": 1,
+        "superseded_by": null,
+        "created_at": "2026-03-11T09:00:00Z",
+        "updated_at": "2026-03-11T09:00:00Z",
+        "updated_by": {
+          "kind": "pipeline",
+          "ref": "normaliser",
+          "label": "normaliser"
+        },
+        "patient_id": "pat_0001",
+        "document_id": "doc_emr",
+        "page": null,
+        "field_path": "medications[0]",
+        "span_start": null,
+        "span_end": null,
+        "quote": null
+      },
+      {
+        "id": "sref_0008",
+        "provenance": {
+          "origin": "system_derived",
+          "asserted_by": {
+            "kind": "pipeline",
+            "ref": "normaliser",
+            "label": "normaliser"
+          },
+          "asserted_at": "2026-03-11T09:00:00Z",
+          "imported_at": null,
+          "source_refs": [],
+          "derived_from": [],
+          "depth": 0,
+          "extraction_confidence": null
+        },
+        "field_provenance": {},
+        "record_status": "active",
+        "version": 1,
+        "superseded_by": null,
+        "created_at": "2026-03-11T09:00:00Z",
+        "updated_at": "2026-03-11T09:00:00Z",
+        "updated_by": {
+          "kind": "pipeline",
+          "ref": "normaliser",
+          "label": "normaliser"
+        },
+        "patient_id": "pat_0001",
+        "document_id": "doc_intake",
+        "page": null,
+        "field_path": "medications",
+        "span_start": null,
+        "span_end": null,
+        "quote": "levothyroxine 75mcg daily; metformin 1000mg twice a day"
+      },
+      {
+        "id": "sref_0009",
+        "provenance": {
+          "origin": "system_derived",
+          "asserted_by": {
+            "kind": "pipeline",
+            "ref": "normaliser",
+            "label": "normaliser"
+          },
+          "asserted_at": "2026-03-11T09:00:00Z",
+          "imported_at": null,
+          "source_refs": [],
+          "derived_from": [],
+          "depth": 0,
+          "extraction_confidence": null
+        },
+        "field_provenance": {},
+        "record_status": "active",
+        "version": 1,
+        "superseded_by": null,
+        "created_at": "2026-03-11T09:00:00Z",
+        "updated_at": "2026-03-11T09:00:00Z",
+        "updated_by": {
+          "kind": "pipeline",
+          "ref": "normaliser",
+          "label": "normaliser"
+        },
+        "patient_id": "pat_0001",
+        "document_id": "doc_emr",
+        "page": null,
+        "field_path": "medications[1]",
+        "span_start": null,
+        "span_end": null,
+        "quote": null
+      },
+      {
+        "id": "sref_0010",
+        "provenance": {
+          "origin": "system_derived",
+          "asserted_by": {
+            "kind": "pipeline",
+            "ref": "normaliser",
+            "label": "normaliser"
+          },
+          "asserted_at": "2026-03-11T09:00:00Z",
+          "imported_at": null,
+          "source_refs": [],
+          "derived_from": [],
+          "depth": 0,
+          "extraction_confidence": null
+        },
+        "field_provenance": {},
+        "record_status": "active",
+        "version": 1,
+        "superseded_by": null,
+        "created_at": "2026-03-11T09:00:00Z",
+        "updated_at": "2026-03-11T09:00:00Z",
+        "updated_by": {
+          "kind": "pipeline",
+          "ref": "normaliser",
+          "label": "normaliser"
+        },
+        "patient_id": "pat_0001",
+        "document_id": "doc_intake",
+        "page": null,
+        "field_path": "medications",
+        "span_start": null,
+        "span_end": null,
+        "quote": "levothyroxine 75mcg daily; metformin 1000mg twice a day"
+      },
+      {
+        "id": "sref_0011",
+        "provenance": {
+          "origin": "system_derived",
+          "asserted_by": {
+            "kind": "pipeline",
+            "ref": "normaliser",
+            "label": "normaliser"
+          },
+          "asserted_at": "2026-03-11T09:00:00Z",
+          "imported_at": null,
+          "source_refs": [],
+          "derived_from": [],
+          "depth": 0,
+          "extraction_confidence": null
+        },
+        "field_provenance": {},
+        "record_status": "active",
+        "version": 1,
+        "superseded_by": null,
+        "created_at": "2026-03-11T09:00:00Z",
+        "updated_at": "2026-03-11T09:00:00Z",
+        "updated_by": {
+          "kind": "pipeline",
+          "ref": "normaliser",
+          "label": "normaliser"
+        },
+        "patient_id": "pat_0001",
+        "document_id": "doc_emr",
+        "page": null,
+        "field_path": "medications[1]",
+        "span_start": null,
+        "span_end": null,
+        "quote": null
+      },
+      {
+        "id": "sref_0012",
+        "provenance": {
+          "origin": "system_derived",
+          "asserted_by": {
+            "kind": "pipeline",
+            "ref": "normaliser",
+            "label": "normaliser"
+          },
+          "asserted_at": "2026-03-11T09:00:00Z",
+          "imported_at": null,
+          "source_refs": [],
+          "derived_from": [],
+          "depth": 0,
+          "extraction_confidence": null
+        },
+        "field_provenance": {},
+        "record_status": "active",
+        "version": 1,
+        "superseded_by": null,
+        "created_at": "2026-03-11T09:00:00Z",
+        "updated_at": "2026-03-11T09:00:00Z",
+        "updated_by": {
+          "kind": "pipeline",
+          "ref": "normaliser",
+          "label": "normaliser"
+        },
+        "patient_id": "pat_0001",
+        "document_id": "doc_intake",
+        "page": null,
+        "field_path": "medications",
+        "span_start": null,
+        "span_end": null,
+        "quote": "levothyroxine 75mcg daily; metformin 1000mg twice a day"
+      },
+      {
+        "id": "sref_0013",
+        "provenance": {
+          "origin": "system_derived",
+          "asserted_by": {
+            "kind": "pipeline",
+            "ref": "normaliser",
+            "label": "normaliser"
+          },
+          "asserted_at": "2026-03-11T09:00:00Z",
+          "imported_at": null,
+          "source_refs": [],
+          "derived_from": [],
+          "depth": 0,
+          "extraction_confidence": null
+        },
+        "field_provenance": {},
+        "record_status": "active",
+        "version": 1,
+        "superseded_by": null,
+        "created_at": "2026-03-11T09:00:00Z",
+        "updated_at": "2026-03-11T09:00:00Z",
+        "updated_by": {
+          "kind": "pipeline",
+          "ref": "normaliser",
+          "label": "normaliser"
+        },
+        "patient_id": "pat_0001",
+        "document_id": "doc_emr",
+        "page": null,
+        "field_path": "medications[1]",
+        "span_start": null,
+        "span_end": null,
+        "quote": null
+      },
+      {
+        "id": "sref_0014",
+        "provenance": {
+          "origin": "system_derived",
+          "asserted_by": {
+            "kind": "pipeline",
+            "ref": "normaliser",
+            "label": "normaliser"
+          },
+          "asserted_at": "2026-03-11T09:00:00Z",
+          "imported_at": null,
+          "source_refs": [],
+          "derived_from": [],
+          "depth": 0,
+          "extraction_confidence": null
+        },
+        "field_provenance": {},
+        "record_status": "active",
+        "version": 1,
+        "superseded_by": null,
+        "created_at": "2026-03-11T09:00:00Z",
+        "updated_at": "2026-03-11T09:00:00Z",
+        "updated_by": {
+          "kind": "pipeline",
+          "ref": "normaliser",
+          "label": "normaliser"
+        },
+        "patient_id": "pat_0001",
+        "document_id": "doc_intake",
+        "page": null,
+        "field_path": "medications",
+        "span_start": null,
+        "span_end": null,
+        "quote": "levothyroxine 75mcg daily; metformin 1000mg twice a day"
+      },
+      {
+        "id": "sref_0015",
+        "provenance": {
+          "origin": "system_derived",
+          "asserted_by": {
+            "kind": "pipeline",
+            "ref": "normaliser",
+            "label": "normaliser"
+          },
+          "asserted_at": "2026-03-11T09:00:00Z",
+          "imported_at": null,
+          "source_refs": [],
+          "derived_from": [],
+          "depth": 0,
+          "extraction_confidence": null
+        },
+        "field_provenance": {},
+        "record_status": "active",
+        "version": 1,
+        "superseded_by": null,
+        "created_at": "2026-03-11T09:00:00Z",
+        "updated_at": "2026-03-11T09:00:00Z",
+        "updated_by": {
+          "kind": "pipeline",
+          "ref": "normaliser",
+          "label": "normaliser"
+        },
+        "patient_id": "pat_0001",
+        "document_id": "doc_emr",
+        "page": null,
+        "field_path": "supplements[0]",
+        "span_start": null,
+        "span_end": null,
+        "quote": null
+      },
+      {
+        "id": "sref_0016",
+        "provenance": {
+          "origin": "system_derived",
+          "asserted_by": {
+            "kind": "pipeline",
+            "ref": "normaliser",
+            "label": "normaliser"
+          },
+          "asserted_at": "2026-03-11T09:00:00Z",
+          "imported_at": null,
+          "source_refs": [],
+          "derived_from": [],
+          "depth": 0,
+          "extraction_confidence": null
+        },
+        "field_provenance": {},
+        "record_status": "active",
+        "version": 1,
+        "superseded_by": null,
+        "created_at": "2026-03-11T09:00:00Z",
+        "updated_at": "2026-03-11T09:00:00Z",
+        "updated_by": {
+          "kind": "pipeline",
+          "ref": "normaliser",
+          "label": "normaliser"
+        },
+        "patient_id": "pat_0001",
+        "document_id": "doc_intake",
+        "page": null,
+        "field_path": "supplements",
+        "span_start": null,
+        "span_end": null,
+        "quote": "vitamin D drops; biotin 5000mcg"
+      },
+      {
+        "id": "sref_0017",
+        "provenance": {
+          "origin": "system_derived",
+          "asserted_by": {
+            "kind": "pipeline",
+            "ref": "normaliser",
+            "label": "normaliser"
+          },
+          "asserted_at": "2026-03-11T09:00:00Z",
+          "imported_at": null,
+          "source_refs": [],
+          "derived_from": [],
+          "depth": 0,
+          "extraction_confidence": null
+        },
+        "field_provenance": {},
+        "record_status": "active",
+        "version": 1,
+        "superseded_by": null,
+        "created_at": "2026-03-11T09:00:00Z",
+        "updated_at": "2026-03-11T09:00:00Z",
+        "updated_by": {
+          "kind": "pipeline",
+          "ref": "normaliser",
+          "label": "normaliser"
+        },
+        "patient_id": "pat_0001",
+        "document_id": "doc_emr",
+        "page": null,
+        "field_path": "allergies[0]",
+        "span_start": null,
+        "span_end": null,
+        "quote": null
+      },
+      {
+        "id": "sref_0018",
+        "provenance": {
+          "origin": "system_derived",
+          "asserted_by": {
+            "kind": "pipeline",
+            "ref": "normaliser",
+            "label": "normaliser"
+          },
+          "asserted_at": "2026-03-11T09:00:00Z",
+          "imported_at": null,
+          "source_refs": [],
+          "derived_from": [],
+          "depth": 0,
+          "extraction_confidence": null
+        },
+        "field_provenance": {},
+        "record_status": "active",
+        "version": 1,
+        "superseded_by": null,
+        "created_at": "2026-03-11T09:00:00Z",
+        "updated_at": "2026-03-11T09:00:00Z",
+        "updated_by": {
+          "kind": "pipeline",
+          "ref": "normaliser",
+          "label": "normaliser"
+        },
+        "patient_id": "pat_0001",
+        "document_id": "doc_intake",
+        "page": null,
+        "field_path": "allergies",
+        "span_start": null,
+        "span_end": null,
+        "quote": "penicillin"
+      },
+      {
+        "id": "sref_0019",
+        "provenance": {
+          "origin": "system_derived",
+          "asserted_by": {
+            "kind": "pipeline",
+            "ref": "normaliser",
+            "label": "normaliser"
+          },
+          "asserted_at": "2026-03-11T09:00:00Z",
+          "imported_at": null,
+          "source_refs": [],
+          "derived_from": [],
+          "depth": 0,
+          "extraction_confidence": null
+        },
+        "field_provenance": {},
+        "record_status": "active",
+        "version": 1,
+        "superseded_by": null,
+        "created_at": "2026-03-11T09:00:00Z",
+        "updated_at": "2026-03-11T09:00:00Z",
+        "updated_by": {
+          "kind": "pipeline",
+          "ref": "normaliser",
+          "label": "normaliser"
+        },
+        "patient_id": "pat_0001",
+        "document_id": "doc_emr",
+        "page": null,
+        "field_path": "labs[0]",
+        "span_start": null,
+        "span_end": null,
+        "quote": null
+      },
+      {
+        "id": "sref_0020",
+        "provenance": {
+          "origin": "system_derived",
+          "asserted_by": {
+            "kind": "pipeline",
+            "ref": "normaliser",
+            "label": "normaliser"
+          },
+          "asserted_at": "2026-03-11T09:00:00Z",
+          "imported_at": null,
+          "source_refs": [],
+          "derived_from": [],
+          "depth": 0,
+          "extraction_confidence": null
+        },
+        "field_provenance": {},
+        "record_status": "active",
+        "version": 1,
+        "superseded_by": null,
+        "created_at": "2026-03-11T09:00:00Z",
+        "updated_at": "2026-03-11T09:00:00Z",
+        "updated_by": {
+          "kind": "pipeline",
+          "ref": "normaliser",
+          "label": "normaliser"
+        },
+        "patient_id": "pat_0001",
+        "document_id": "doc_lab",
+        "page": 1,
+        "field_path": "rows[0]",
+        "span_start": null,
+        "span_end": null,
+        "quote": "TSH 5.6 mIU/L (0.4-4.0) H"
+      },
+      {
+        "id": "sref_0021",
+        "provenance": {
+          "origin": "system_derived",
+          "asserted_by": {
+            "kind": "pipeline",
+            "ref": "normaliser",
+            "label": "normaliser"
+          },
+          "asserted_at": "2026-03-11T09:00:00Z",
+          "imported_at": null,
+          "source_refs": [],
+          "derived_from": [],
+          "depth": 0,
+          "extraction_confidence": null
+        },
+        "field_provenance": {},
+        "record_status": "active",
+        "version": 1,
+        "superseded_by": null,
+        "created_at": "2026-03-11T09:00:00Z",
+        "updated_at": "2026-03-11T09:00:00Z",
+        "updated_by": {
+          "kind": "pipeline",
+          "ref": "normaliser",
+          "label": "normaliser"
+        },
+        "patient_id": "pat_0001",
+        "document_id": "doc_emr",
+        "page": null,
+        "field_path": "labs[1]",
+        "span_start": null,
+        "span_end": null,
+        "quote": null
+      },
+      {
+        "id": "sref_0022",
+        "provenance": {
+          "origin": "system_derived",
+          "asserted_by": {
+            "kind": "pipeline",
+            "ref": "normaliser",
+            "label": "normaliser"
+          },
+          "asserted_at": "2026-03-11T09:00:00Z",
+          "imported_at": null,
+          "source_refs": [],
+          "derived_from": [],
+          "depth": 0,
+          "extraction_confidence": null
+        },
+        "field_provenance": {},
+        "record_status": "active",
+        "version": 1,
+        "superseded_by": null,
+        "created_at": "2026-03-11T09:00:00Z",
+        "updated_at": "2026-03-11T09:00:00Z",
+        "updated_by": {
+          "kind": "pipeline",
+          "ref": "normaliser",
+          "label": "normaliser"
+        },
+        "patient_id": "pat_0001",
+        "document_id": "doc_lab",
+        "page": 2,
+        "field_path": "rows[4]",
+        "span_start": null,
+        "span_end": null,
+        "quote": "HbA1c 7.1 %"
+      },
+      {
+        "id": "sref_0023",
+        "provenance": {
+          "origin": "system_derived",
+          "asserted_by": {
+            "kind": "pipeline",
+            "ref": "normaliser",
+            "label": "normaliser"
+          },
+          "asserted_at": "2026-03-11T09:00:00Z",
+          "imported_at": null,
+          "source_refs": [],
+          "derived_from": [],
+          "depth": 0,
+          "extraction_confidence": null
+        },
+        "field_provenance": {},
+        "record_status": "active",
+        "version": 1,
+        "superseded_by": null,
+        "created_at": "2026-03-11T09:00:00Z",
+        "updated_at": "2026-03-11T09:00:00Z",
+        "updated_by": {
+          "kind": "pipeline",
+          "ref": "normaliser",
+          "label": "normaliser"
+        },
+        "patient_id": "pat_0001",
+        "document_id": "doc_emr",
+        "page": null,
+        "field_path": "labs[1]",
+        "span_start": null,
+        "span_end": null,
+        "quote": null
+      },
+      {
+        "id": "sref_0024",
+        "provenance": {
+          "origin": "system_derived",
+          "asserted_by": {
+            "kind": "pipeline",
+            "ref": "normaliser",
+            "label": "normaliser"
+          },
+          "asserted_at": "2026-03-11T09:00:00Z",
+          "imported_at": null,
+          "source_refs": [],
+          "derived_from": [],
+          "depth": 0,
+          "extraction_confidence": null
+        },
+        "field_provenance": {},
+        "record_status": "active",
+        "version": 1,
+        "superseded_by": null,
+        "created_at": "2026-03-11T09:00:00Z",
+        "updated_at": "2026-03-11T09:00:00Z",
+        "updated_by": {
+          "kind": "pipeline",
+          "ref": "normaliser",
+          "label": "normaliser"
+        },
+        "patient_id": "pat_0001",
+        "document_id": "doc_lab",
+        "page": 2,
+        "field_path": "rows[4]",
+        "span_start": null,
+        "span_end": null,
+        "quote": "HbA1c 7.1 %"
+      },
+      {
+        "id": "sref_0025",
+        "provenance": {
+          "origin": "system_derived",
+          "asserted_by": {
+            "kind": "pipeline",
+            "ref": "normaliser",
+            "label": "normaliser"
+          },
+          "asserted_at": "2026-03-11T09:00:00Z",
+          "imported_at": null,
+          "source_refs": [],
+          "derived_from": [],
+          "depth": 0,
+          "extraction_confidence": null
+        },
+        "field_provenance": {},
+        "record_status": "active",
+        "version": 1,
+        "superseded_by": null,
+        "created_at": "2026-03-11T09:00:00Z",
+        "updated_at": "2026-03-11T09:00:00Z",
+        "updated_by": {
+          "kind": "pipeline",
+          "ref": "normaliser",
+          "label": "normaliser"
+        },
+        "patient_id": "pat_0001",
+        "document_id": "doc_emr",
+        "page": null,
+        "field_path": "labs[1]",
+        "span_start": null,
+        "span_end": null,
+        "quote": null
+      },
+      {
+        "id": "sref_0026",
+        "provenance": {
+          "origin": "system_derived",
+          "asserted_by": {
+            "kind": "pipeline",
+            "ref": "normaliser",
+            "label": "normaliser"
+          },
+          "asserted_at": "2026-03-11T09:00:00Z",
+          "imported_at": null,
+          "source_refs": [],
+          "derived_from": [],
+          "depth": 0,
+          "extraction_confidence": null
+        },
+        "field_provenance": {},
+        "record_status": "active",
+        "version": 1,
+        "superseded_by": null,
+        "created_at": "2026-03-11T09:00:00Z",
+        "updated_at": "2026-03-11T09:00:00Z",
+        "updated_by": {
+          "kind": "pipeline",
+          "ref": "normaliser",
+          "label": "normaliser"
+        },
+        "patient_id": "pat_0001",
+        "document_id": "doc_lab",
+        "page": 2,
+        "field_path": "rows[4]",
+        "span_start": null,
+        "span_end": null,
+        "quote": "HbA1c 7.1 %"
+      },
+      {
+        "id": "sref_0027",
+        "provenance": {
+          "origin": "system_derived",
+          "asserted_by": {
+            "kind": "pipeline",
+            "ref": "normaliser",
+            "label": "normaliser"
+          },
+          "asserted_at": "2026-03-11T09:00:00Z",
+          "imported_at": null,
+          "source_refs": [],
+          "derived_from": [],
+          "depth": 0,
+          "extraction_confidence": null
+        },
+        "field_provenance": {},
+        "record_status": "active",
+        "version": 1,
+        "superseded_by": null,
+        "created_at": "2026-03-11T09:00:00Z",
+        "updated_at": "2026-03-11T09:00:00Z",
+        "updated_by": {
+          "kind": "pipeline",
+          "ref": "normaliser",
+          "label": "normaliser"
+        },
+        "patient_id": "pat_0001",
+        "document_id": "doc_emr",
+        "page": null,
+        "field_path": "labs[1]",
+        "span_start": null,
+        "span_end": null,
+        "quote": null
+      },
+      {
+        "id": "sref_0028",
+        "provenance": {
+          "origin": "system_derived",
+          "asserted_by": {
+            "kind": "pipeline",
+            "ref": "normaliser",
+            "label": "normaliser"
+          },
+          "asserted_at": "2026-03-11T09:00:00Z",
+          "imported_at": null,
+          "source_refs": [],
+          "derived_from": [],
+          "depth": 0,
+          "extraction_confidence": null
+        },
+        "field_provenance": {},
+        "record_status": "active",
+        "version": 1,
+        "superseded_by": null,
+        "created_at": "2026-03-11T09:00:00Z",
+        "updated_at": "2026-03-11T09:00:00Z",
+        "updated_by": {
+          "kind": "pipeline",
+          "ref": "normaliser",
+          "label": "normaliser"
+        },
+        "patient_id": "pat_0001",
+        "document_id": "doc_lab",
+        "page": 2,
+        "field_path": "rows[4]",
+        "span_start": null,
+        "span_end": null,
+        "quote": "HbA1c 7.1 %"
+      },
+      {
+        "id": "sref_0029",
+        "provenance": {
+          "origin": "system_derived",
+          "asserted_by": {
+            "kind": "pipeline",
+            "ref": "normaliser",
+            "label": "normaliser"
+          },
+          "asserted_at": "2026-03-11T09:00:00Z",
+          "imported_at": null,
+          "source_refs": [],
+          "derived_from": [],
+          "depth": 0,
+          "extraction_confidence": null
+        },
+        "field_provenance": {},
+        "record_status": "active",
+        "version": 1,
+        "superseded_by": null,
+        "created_at": "2026-03-11T09:00:00Z",
+        "updated_at": "2026-03-11T09:00:00Z",
+        "updated_by": {
+          "kind": "pipeline",
+          "ref": "normaliser",
+          "label": "normaliser"
+        },
+        "patient_id": "pat_0001",
+        "document_id": "doc_emr",
+        "page": null,
+        "field_path": "labs[1]",
+        "span_start": null,
+        "span_end": null,
+        "quote": null
+      },
+      {
+        "id": "sref_0030",
+        "provenance": {
+          "origin": "system_derived",
+          "asserted_by": {
+            "kind": "pipeline",
+            "ref": "normaliser",
+            "label": "normaliser"
+          },
+          "asserted_at": "2026-03-11T09:00:00Z",
+          "imported_at": null,
+          "source_refs": [],
+          "derived_from": [],
+          "depth": 0,
+          "extraction_confidence": null
+        },
+        "field_provenance": {},
+        "record_status": "active",
+        "version": 1,
+        "superseded_by": null,
+        "created_at": "2026-03-11T09:00:00Z",
+        "updated_at": "2026-03-11T09:00:00Z",
+        "updated_by": {
+          "kind": "pipeline",
+          "ref": "normaliser",
+          "label": "normaliser"
+        },
+        "patient_id": "pat_0001",
+        "document_id": "doc_lab",
+        "page": 2,
+        "field_path": "rows[4]",
+        "span_start": null,
+        "span_end": null,
+        "quote": "HbA1c 7.1 %"
+      },
+      {
+        "id": "sref_0031",
+        "provenance": {
+          "origin": "system_derived",
+          "asserted_by": {
+            "kind": "pipeline",
+            "ref": "normaliser",
+            "label": "normaliser"
+          },
+          "asserted_at": "2026-03-11T09:00:00Z",
+          "imported_at": null,
+          "source_refs": [],
+          "derived_from": [],
+          "depth": 0,
+          "extraction_confidence": null
+        },
+        "field_provenance": {},
+        "record_status": "active",
+        "version": 1,
+        "superseded_by": null,
+        "created_at": "2026-03-11T09:00:00Z",
+        "updated_at": "2026-03-11T09:00:00Z",
+        "updated_by": {
+          "kind": "pipeline",
+          "ref": "normaliser",
+          "label": "normaliser"
+        },
+        "patient_id": "pat_0001",
+        "document_id": "doc_lab",
+        "page": 1,
+        "field_path": "rows[1]",
+        "span_start": null,
+        "span_end": null,
+        "quote": "Free T4 11.2 ( - )"
+      },
+      {
+        "id": "sref_0032",
+        "provenance": {
+          "origin": "system_derived",
+          "asserted_by": {
+            "kind": "pipeline",
+            "ref": "normaliser",
+            "label": "normaliser"
+          },
+          "asserted_at": "2026-03-11T09:00:00Z",
+          "imported_at": null,
+          "source_refs": [],
+          "derived_from": [],
+          "depth": 0,
+          "extraction_confidence": null
+        },
+        "field_provenance": {},
+        "record_status": "active",
+        "version": 1,
+        "superseded_by": null,
+        "created_at": "2026-03-11T09:00:00Z",
+        "updated_at": "2026-03-11T09:00:00Z",
+        "updated_by": {
+          "kind": "pipeline",
+          "ref": "normaliser",
+          "label": "normaliser"
+        },
+        "patient_id": "pat_0001",
+        "document_id": "doc_lab",
+        "page": 2,
+        "field_path": "rows[2]",
+        "span_start": null,
+        "span_end": null,
+        "quote": "Glucose, fasting 7.2 mmol/L"
+      },
+      {
+        "id": "sref_0033",
+        "provenance": {
+          "origin": "system_derived",
+          "asserted_by": {
+            "kind": "pipeline",
+            "ref": "normaliser",
+            "label": "normaliser"
+          },
+          "asserted_at": "2026-03-11T09:00:00Z",
+          "imported_at": null,
+          "source_refs": [],
+          "derived_from": [],
+          "depth": 0,
+          "extraction_confidence": null
+        },
+        "field_provenance": {},
+        "record_status": "active",
+        "version": 1,
+        "superseded_by": null,
+        "created_at": "2026-03-11T09:00:00Z",
+        "updated_at": "2026-03-11T09:00:00Z",
+        "updated_by": {
+          "kind": "pipeline",
+          "ref": "normaliser",
+          "label": "normaliser"
+        },
+        "patient_id": "pat_0001",
+        "document_id": "doc_lab",
+        "page": 3,
+        "field_path": "rows[3]",
+        "span_start": null,
+        "span_end": null,
+        "quote": "Glucose (fasting) 5.5 mmol/L  [amended page]"
+      },
+      {
+        "id": "sref_0034",
+        "provenance": {
+          "origin": "system_derived",
+          "asserted_by": {
+            "kind": "pipeline",
+            "ref": "normaliser",
+            "label": "normaliser"
+          },
+          "asserted_at": "2026-03-11T09:00:00Z",
+          "imported_at": null,
+          "source_refs": [],
+          "derived_from": [],
+          "depth": 0,
+          "extraction_confidence": null
+        },
+        "field_provenance": {},
+        "record_status": "active",
+        "version": 1,
+        "superseded_by": null,
+        "created_at": "2026-03-11T09:00:00Z",
+        "updated_at": "2026-03-11T09:00:00Z",
+        "updated_by": {
+          "kind": "pipeline",
+          "ref": "normaliser",
+          "label": "normaliser"
+        },
+        "patient_id": "pat_0001",
+        "document_id": "doc_lab",
+        "page": 2,
+        "field_path": "rows[2]",
+        "span_start": null,
+        "span_end": null,
+        "quote": "Glucose, fasting 7.2 mmol/L"
+      },
+      {
+        "id": "sref_0035",
+        "provenance": {
+          "origin": "system_derived",
+          "asserted_by": {
+            "kind": "pipeline",
+            "ref": "normaliser",
+            "label": "normaliser"
+          },
+          "asserted_at": "2026-03-11T09:00:00Z",
+          "imported_at": null,
+          "source_refs": [],
+          "derived_from": [],
+          "depth": 0,
+          "extraction_confidence": null
+        },
+        "field_provenance": {},
+        "record_status": "active",
+        "version": 1,
+        "superseded_by": null,
+        "created_at": "2026-03-11T09:00:00Z",
+        "updated_at": "2026-03-11T09:00:00Z",
+        "updated_by": {
+          "kind": "pipeline",
+          "ref": "normaliser",
+          "label": "normaliser"
+        },
+        "patient_id": "pat_0001",
+        "document_id": "doc_lab",
+        "page": 3,
+        "field_path": "rows[3]",
+        "span_start": null,
+        "span_end": null,
+        "quote": "Glucose (fasting) 5.5 mmol/L  [amended page]"
+      },
+      {
+        "id": "sref_0036",
+        "provenance": {
+          "origin": "system_derived",
+          "asserted_by": {
+            "kind": "pipeline",
+            "ref": "normaliser",
+            "label": "normaliser"
+          },
+          "asserted_at": "2026-03-11T09:00:00Z",
+          "imported_at": null,
+          "source_refs": [],
+          "derived_from": [],
+          "depth": 0,
+          "extraction_confidence": null
+        },
+        "field_provenance": {},
+        "record_status": "active",
+        "version": 1,
+        "superseded_by": null,
+        "created_at": "2026-03-11T09:00:00Z",
+        "updated_at": "2026-03-11T09:00:00Z",
+        "updated_by": {
+          "kind": "pipeline",
+          "ref": "normaliser",
+          "label": "normaliser"
+        },
+        "patient_id": "pat_0001",
+        "document_id": "doc_lab",
+        "page": 2,
+        "field_path": "rows[2]",
+        "span_start": null,
+        "span_end": null,
+        "quote": "Glucose, fasting 7.2 mmol/L"
+      },
+      {
+        "id": "sref_0037",
+        "provenance": {
+          "origin": "system_derived",
+          "asserted_by": {
+            "kind": "pipeline",
+            "ref": "normaliser",
+            "label": "normaliser"
+          },
+          "asserted_at": "2026-03-11T09:00:00Z",
+          "imported_at": null,
+          "source_refs": [],
+          "derived_from": [],
+          "depth": 0,
+          "extraction_confidence": null
+        },
+        "field_provenance": {},
+        "record_status": "active",
+        "version": 1,
+        "superseded_by": null,
+        "created_at": "2026-03-11T09:00:00Z",
+        "updated_at": "2026-03-11T09:00:00Z",
+        "updated_by": {
+          "kind": "pipeline",
+          "ref": "normaliser",
+          "label": "normaliser"
+        },
+        "patient_id": "pat_0001",
+        "document_id": "doc_lab",
+        "page": 3,
+        "field_path": "rows[3]",
+        "span_start": null,
+        "span_end": null,
+        "quote": "Glucose (fasting) 5.5 mmol/L  [amended page]"
+      },
+      {
+        "id": "sref_0038",
+        "provenance": {
+          "origin": "system_derived",
+          "asserted_by": {
+            "kind": "pipeline",
+            "ref": "normaliser",
+            "label": "normaliser"
+          },
+          "asserted_at": "2026-03-11T09:00:00Z",
+          "imported_at": null,
+          "source_refs": [],
+          "derived_from": [],
+          "depth": 0,
+          "extraction_confidence": null
+        },
+        "field_provenance": {},
+        "record_status": "active",
+        "version": 1,
+        "superseded_by": null,
+        "created_at": "2026-03-11T09:00:00Z",
+        "updated_at": "2026-03-11T09:00:00Z",
+        "updated_by": {
+          "kind": "pipeline",
+          "ref": "normaliser",
+          "label": "normaliser"
+        },
+        "patient_id": "pat_0001",
+        "document_id": "doc_lab",
+        "page": 2,
+        "field_path": "rows[5]",
+        "span_start": null,
+        "span_end": null,
+        "quote": "Ferritin 18 ug/L (30-300) N   [range printed for adult male]"
+      },
+      {
+        "id": "sref_0039",
+        "provenance": {
+          "origin": "system_derived",
+          "asserted_by": {
+            "kind": "pipeline",
+            "ref": "normaliser",
+            "label": "normaliser"
+          },
+          "asserted_at": "2026-03-11T09:00:00Z",
+          "imported_at": null,
+          "source_refs": [],
+          "derived_from": [],
+          "depth": 0,
+          "extraction_confidence": null
+        },
+        "field_provenance": {},
+        "record_status": "active",
+        "version": 1,
+        "superseded_by": null,
+        "created_at": "2026-03-11T09:00:00Z",
+        "updated_at": "2026-03-11T09:00:00Z",
+        "updated_by": {
+          "kind": "pipeline",
+          "ref": "normaliser",
+          "label": "normaliser"
+        },
+        "patient_id": "pat_0001",
+        "document_id": "doc_lab",
+        "page": 3,
+        "field_path": "rows[6]",
+        "span_start": null,
+        "span_end": null,
+        "quote": "Vitamin D 25-OH 62 nmol/L  (collection date illegible)"
+      },
+      {
+        "id": "sref_0040",
+        "provenance": {
+          "origin": "system_derived",
+          "asserted_by": {
+            "kind": "pipeline",
+            "ref": "normaliser",
+            "label": "normaliser"
+          },
+          "asserted_at": "2026-03-11T09:00:00Z",
+          "imported_at": null,
+          "source_refs": [],
+          "derived_from": [],
+          "depth": 0,
+          "extraction_confidence": null
+        },
+        "field_provenance": {},
+        "record_status": "active",
+        "version": 1,
+        "superseded_by": null,
+        "created_at": "2026-03-11T09:00:00Z",
+        "updated_at": "2026-03-11T09:00:00Z",
+        "updated_by": {
+          "kind": "pipeline",
+          "ref": "normaliser",
+          "label": "normaliser"
+        },
+        "patient_id": "pat_0001",
+        "document_id": "doc_intake",
+        "page": null,
+        "field_path": "conditions",
+        "span_start": null,
+        "span_end": null,
+        "quote": "hypothyroid; type 2 diabetes; fibromyalgia"
+      },
+      {
+        "id": "sref_0041",
+        "provenance": {
+          "origin": "system_derived",
+          "asserted_by": {
+            "kind": "pipeline",
+            "ref": "normaliser",
+            "label": "normaliser"
+          },
+          "asserted_at": "2026-03-11T09:00:00Z",
+          "imported_at": null,
+          "source_refs": [],
+          "derived_from": [],
+          "depth": 0,
+          "extraction_confidence": null
+        },
+        "field_provenance": {},
+        "record_status": "active",
+        "version": 1,
+        "superseded_by": null,
+        "created_at": "2026-03-11T09:00:00Z",
+        "updated_at": "2026-03-11T09:00:00Z",
+        "updated_by": {
+          "kind": "pipeline",
+          "ref": "normaliser",
+          "label": "normaliser"
+        },
+        "patient_id": "pat_0001",
+        "document_id": "doc_intake",
+        "page": null,
+        "field_path": "conditions",
+        "span_start": null,
+        "span_end": null,
+        "quote": "hypothyroid; type 2 diabetes; fibromyalgia"
+      },
+      {
+        "id": "sref_0042",
+        "provenance": {
+          "origin": "system_derived",
+          "asserted_by": {
+            "kind": "pipeline",
+            "ref": "normaliser",
+            "label": "normaliser"
+          },
+          "asserted_at": "2026-03-11T09:00:00Z",
+          "imported_at": null,
+          "source_refs": [],
+          "derived_from": [],
+          "depth": 0,
+          "extraction_confidence": null
+        },
+        "field_provenance": {},
+        "record_status": "active",
+        "version": 1,
+        "superseded_by": null,
+        "created_at": "2026-03-11T09:00:00Z",
+        "updated_at": "2026-03-11T09:00:00Z",
+        "updated_by": {
+          "kind": "pipeline",
+          "ref": "normaliser",
+          "label": "normaliser"
+        },
+        "patient_id": "pat_0001",
+        "document_id": "doc_intake",
+        "page": null,
+        "field_path": "supplements",
+        "span_start": null,
+        "span_end": null,
+        "quote": "vitamin D drops; biotin 5000mcg"
+      },
+      {
+        "id": "sref_0043",
+        "provenance": {
+          "origin": "system_derived",
+          "asserted_by": {
+            "kind": "pipeline",
+            "ref": "normaliser",
+            "label": "normaliser"
+          },
+          "asserted_at": "2026-03-11T09:00:00Z",
+          "imported_at": null,
+          "source_refs": [],
+          "derived_from": [],
+          "depth": 0,
+          "extraction_confidence": null
+        },
+        "field_provenance": {},
+        "record_status": "active",
+        "version": 1,
+        "superseded_by": null,
+        "created_at": "2026-03-11T09:00:00Z",
+        "updated_at": "2026-03-11T09:00:00Z",
+        "updated_by": {
+          "kind": "pipeline",
+          "ref": "normaliser",
+          "label": "normaliser"
+        },
+        "patient_id": "pat_0001",
+        "document_id": "doc_intake",
+        "page": null,
+        "field_path": "supplements",
+        "span_start": null,
+        "span_end": null,
+        "quote": "vitamin D drops; biotin 5000mcg"
+      },
+      {
+        "id": "sref_0044",
+        "provenance": {
+          "origin": "system_derived",
+          "asserted_by": {
+            "kind": "pipeline",
+            "ref": "normaliser",
+            "label": "normaliser"
+          },
+          "asserted_at": "2026-03-11T09:00:00Z",
+          "imported_at": null,
+          "source_refs": [],
+          "derived_from": [],
+          "depth": 0,
+          "extraction_confidence": null
+        },
+        "field_provenance": {},
+        "record_status": "active",
+        "version": 1,
+        "superseded_by": null,
+        "created_at": "2026-03-11T09:00:00Z",
+        "updated_at": "2026-03-11T09:00:00Z",
+        "updated_by": {
+          "kind": "pipeline",
+          "ref": "normaliser",
+          "label": "normaliser"
+        },
+        "patient_id": "pat_0001",
+        "document_id": "doc_lab",
+        "page": 3,
+        "field_path": "rows[7]",
+        "span_start": null,
+        "span_end": null,
+        "quote": "████ 1.9 ██/█  (band obscured by stamp)"
+      }
+    ],
+    "data_quality_flags": [
+      {
+        "id": "flag_0008",
+        "provenance": {
+          "origin": "system_derived",
+          "asserted_by": {
+            "kind": "pipeline",
+            "ref": "normaliser",
+            "label": "normaliser"
+          },
+          "asserted_at": "2026-03-11T09:00:00Z",
+          "imported_at": null,
+          "source_refs": [],
+          "derived_from": [],
+          "depth": 0,
+          "extraction_confidence": null
+        },
+        "field_provenance": {},
+        "record_status": "active",
+        "version": 1,
+        "superseded_by": null,
+        "created_at": "2026-03-11T09:00:00Z",
+        "updated_at": "2026-03-11T09:00:00Z",
+        "updated_by": {
+          "kind": "pipeline",
+          "ref": "normaliser",
+          "label": "normaliser"
+        },
+        "patient_id": "pat_0001",
+        "code": "CONFLICTING_VALUES",
+        "severity": "blocking",
+        "message": "lab 1558-6|2026-02-26, field value: lab_report p2 = 7.2 vs lab_report p3 = 5.5. Unresolved — lab_value: both candidates are lab_report, so no rule applies. The field is left empty (§9.3).",
+        "status": "open",
+        "targets": [
+          {
+            "entity_type": "LabResult",
+            "entity_id": "lab_0004",
+            "field_path": "value"
+          }
+        ],
+        "candidates": [
+          "sref_0036",
+          "sref_0037"
+        ],
+        "source_locator": []
+      },
+      {
+        "id": "flag_0002",
+        "provenance": {
+          "origin": "system_derived",
+          "asserted_by": {
+            "kind": "pipeline",
+            "ref": "normaliser",
+            "label": "normaliser"
+          },
+          "asserted_at": "2026-03-11T09:00:00Z",
+          "imported_at": null,
+          "source_refs": [],
+          "derived_from": [],
+          "depth": 0,
+          "extraction_confidence": null
+        },
+        "field_provenance": {},
+        "record_status": "active",
+        "version": 1,
+        "superseded_by": null,
+        "created_at": "2026-03-11T09:00:00Z",
+        "updated_at": "2026-03-11T09:00:00Z",
+        "updated_by": {
+          "kind": "pipeline",
+          "ref": "normaliser",
+          "label": "normaliser"
+        },
+        "patient_id": "pat_0001",
+        "code": "DISCONTINUED_SHOWN_ACTIVE",
+        "severity": "blocking",
+        "message": "metformin: the EMR shows it active and the patient reports stopping it ('around January, not sure of the date'). The trust rule gives the patient the status, but §9.8 requires a stop date for a stopped medication and she cannot name one. Canonical keeps 'active' and this flag blocks any autonomous use until the month is established.",
+        "status": "open",
+        "targets": [
+          {
+            "entity_type": "Medication",
+            "entity_id": "med_0002",
+            "field_path": "status"
+          }
+        ],
+        "candidates": [
+          "sref_0013",
+          "sref_0014"
+        ],
+        "source_locator": []
+      },
+      {
+        "id": "flag_0001",
+        "provenance": {
+          "origin": "system_derived",
+          "asserted_by": {
+            "kind": "pipeline",
+            "ref": "normaliser",
+            "label": "normaliser"
+          },
+          "asserted_at": "2026-03-11T09:00:00Z",
+          "imported_at": null,
+          "source_refs": [],
+          "derived_from": [],
+          "depth": 0,
+          "extraction_confidence": null
+        },
+        "field_provenance": {},
+        "record_status": "active",
+        "version": 1,
+        "superseded_by": null,
+        "created_at": "2026-03-11T09:00:00Z",
+        "updated_at": "2026-03-11T09:00:00Z",
+        "updated_by": {
+          "kind": "pipeline",
+          "ref": "normaliser",
+          "label": "normaliser"
+        },
+        "patient_id": "pat_0001",
+        "code": "CONFLICTING_VALUES",
+        "severity": "human_review_required",
+        "message": "medication 6809, field dose_amount: emr = 500.0 vs intake = 1000.0. Resolved to emr by rule [prescribed: emr > intake]; a human should confirm the other source is wrong rather than newer.",
+        "status": "open",
+        "targets": [
+          {
+            "entity_type": "Medication",
+            "entity_id": "med_0002",
+            "field_path": "dose_amount"
+          }
+        ],
+        "candidates": [
+          "sref_0011",
+          "sref_0012"
+        ],
+        "source_locator": []
+      },
+      {
+        "id": "flag_0003",
+        "provenance": {
+          "origin": "system_derived",
+          "asserted_by": {
+            "kind": "pipeline",
+            "ref": "normaliser",
+            "label": "normaliser"
+          },
+          "asserted_at": "2026-03-11T09:00:00Z",
+          "imported_at": null,
+          "source_refs": [],
+          "derived_from": [],
+          "depth": 0,
+          "extraction_confidence": null
+        },
+        "field_provenance": {},
+        "record_status": "active",
+        "version": 1,
+        "superseded_by": null,
+        "created_at": "2026-03-11T09:00:00Z",
+        "updated_at": "2026-03-11T09:00:00Z",
+        "updated_by": {
+          "kind": "pipeline",
+          "ref": "normaliser",
+          "label": "normaliser"
+        },
+        "patient_id": "pat_0001",
+        "code": "CONFLICTING_VALUES",
+        "severity": "human_review_required",
+        "message": "lab 4548-4|2026-02-26, field ref_high: emr = 42 vs lab_report p2 = 5.6. Resolved to lab_report by rule [lab_value: lab_report > emr > intake]; a human should confirm the other source is wrong rather than newer.",
+        "status": "open",
+        "targets": [
+          {
+            "entity_type": "LabResult",
+            "entity_id": "lab_0002",
+            "field_path": "ref_high"
+          }
+        ],
+        "candidates": [
+          "sref_0023",
+          "sref_0024"
+        ],
+        "source_locator": []
+      },
+      {
+        "id": "flag_0004",
+        "provenance": {
+          "origin": "system_derived",
+          "asserted_by": {
+            "kind": "pipeline",
+            "ref": "normaliser",
+            "label": "normaliser"
+          },
+          "asserted_at": "2026-03-11T09:00:00Z",
+          "imported_at": null,
+          "source_refs": [],
+          "derived_from": [],
+          "depth": 0,
+          "extraction_confidence": null
+        },
+        "field_provenance": {},
+        "record_status": "active",
+        "version": 1,
+        "superseded_by": null,
+        "created_at": "2026-03-11T09:00:00Z",
+        "updated_at": "2026-03-11T09:00:00Z",
+        "updated_by": {
+          "kind": "pipeline",
+          "ref": "normaliser",
+          "label": "normaliser"
+        },
+        "patient_id": "pat_0001",
+        "code": "CONFLICTING_VALUES",
+        "severity": "human_review_required",
+        "message": "lab 4548-4|2026-02-26, field ref_low: emr = 20 vs lab_report p2 = 4.0. Resolved to lab_report by rule [lab_value: lab_report > emr > intake]; a human should confirm the other source is wrong rather than newer.",
+        "status": "open",
+        "targets": [
+          {
+            "entity_type": "LabResult",
+            "entity_id": "lab_0002",
+            "field_path": "ref_low"
+          }
+        ],
+        "candidates": [
+          "sref_0025",
+          "sref_0026"
+        ],
+        "source_locator": []
+      },
+      {
+        "id": "flag_0006",
+        "provenance": {
+          "origin": "system_derived",
+          "asserted_by": {
+            "kind": "pipeline",
+            "ref": "normaliser",
+            "label": "normaliser"
+          },
+          "asserted_at": "2026-03-11T09:00:00Z",
+          "imported_at": null,
+          "source_refs": [],
+          "derived_from": [],
+          "depth": 0,
+          "extraction_confidence": null
+        },
+        "field_provenance": {},
+        "record_status": "active",
+        "version": 1,
+        "superseded_by": null,
+        "created_at": "2026-03-11T09:00:00Z",
+        "updated_at": "2026-03-11T09:00:00Z",
+        "updated_by": {
+          "kind": "pipeline",
+          "ref": "normaliser",
+          "label": "normaliser"
+        },
+        "patient_id": "pat_0001",
+        "code": "CONFLICTING_VALUES",
+        "severity": "human_review_required",
+        "message": "lab 4548-4|2026-02-26, field value: emr = 54.0 vs lab_report p2 = 7.1. Resolved to lab_report by rule [lab_value: lab_report > emr > intake]; a human should confirm the other source is wrong rather than newer.",
+        "status": "open",
+        "targets": [
+          {
+            "entity_type": "LabResult",
+            "entity_id": "lab_0002",
+            "field_path": "value"
+          }
+        ],
+        "candidates": [
+          "sref_0029",
+          "sref_0030"
+        ],
+        "source_locator": []
+      },
+      {
+        "id": "flag_0011",
+        "provenance": {
+          "origin": "system_derived",
+          "asserted_by": {
+            "kind": "pipeline",
+            "ref": "normaliser",
+            "label": "normaliser"
+          },
+          "asserted_at": "2026-03-11T09:00:00Z",
+          "imported_at": null,
+          "source_refs": [],
+          "derived_from": [],
+          "depth": 0,
+          "extraction_confidence": null
+        },
+        "field_provenance": {},
+        "record_status": "active",
+        "version": 1,
+        "superseded_by": null,
+        "created_at": "2026-03-11T09:00:00Z",
+        "updated_at": "2026-03-11T09:00:00Z",
+        "updated_by": {
+          "kind": "pipeline",
+          "ref": "normaliser",
+          "label": "normaliser"
+        },
+        "patient_id": "pat_0001",
+        "code": "CONFLICTING_VALUES",
+        "severity": "human_review_required",
+        "message": "biotin 5000mcg: reported on the intake form and absent from the EMR supplement list. Kept, because the patient is the authority on what she takes — but the EMR list is now known to be incomplete.",
+        "status": "open",
+        "targets": [
+          {
+            "entity_type": "Supplement",
+            "entity_id": "supp_0002",
+            "field_path": null
+          }
+        ],
+        "candidates": [
+          "sref_0043"
+        ],
+        "source_locator": []
+      },
+      {
+        "id": "flag_0007",
+        "provenance": {
+          "origin": "system_derived",
+          "asserted_by": {
+            "kind": "pipeline",
+            "ref": "normaliser",
+            "label": "normaliser"
+          },
+          "asserted_at": "2026-03-11T09:00:00Z",
+          "imported_at": null,
+          "source_refs": [],
+          "derived_from": [],
+          "depth": 0,
+          "extraction_confidence": null
+        },
+        "field_provenance": {},
+        "record_status": "active",
+        "version": 1,
+        "superseded_by": null,
+        "created_at": "2026-03-11T09:00:00Z",
+        "updated_at": "2026-03-11T09:00:00Z",
+        "updated_by": {
+          "kind": "pipeline",
+          "ref": "normaliser",
+          "label": "normaliser"
+        },
+        "patient_id": "pat_0001",
+        "code": "DUPLICATE_CANDIDATE",
+        "severity": "human_review_required",
+        "message": "glucose, fasting appears more than once in one document (2 rows). One is likely an amended result; the pages are attached so a human can see which supersedes which.",
+        "status": "open",
+        "targets": [
+          {
+            "entity_type": "LabResult",
+            "entity_id": "lab_0004",
+            "field_path": null
+          }
+        ],
+        "candidates": [
+          "sref_0034",
+          "sref_0035"
+        ],
+        "source_locator": []
+      },
+      {
+        "id": "flag_0012",
+        "provenance": {
+          "origin": "system_derived",
+          "asserted_by": {
+            "kind": "pipeline",
+            "ref": "normaliser",
+            "label": "normaliser"
+          },
+          "asserted_at": "2026-03-11T09:00:00Z",
+          "imported_at": null,
+          "source_refs": [],
+          "derived_from": [],
+          "depth": 0,
+          "extraction_confidence": null
+        },
+        "field_provenance": {},
+        "record_status": "active",
+        "version": 1,
+        "superseded_by": null,
+        "created_at": "2026-03-11T09:00:00Z",
+        "updated_at": "2026-03-11T09:00:00Z",
+        "updated_by": {
+          "kind": "pipeline",
+          "ref": "normaliser",
+          "label": "normaliser"
+        },
+        "patient_id": "pat_0001",
+        "code": "EXTRACTION_FAILED",
+        "severity": "human_review_required",
+        "message": "doc_lab page 3: analyte or value could not be read from the page. Read as '████ 1.9 ██/█  (band obscured by stamp)' with confidence 0.31. No canonical record was created.",
+        "status": "open",
+        "targets": [],
+        "candidates": [],
+        "source_locator": [
+          "sref_0044"
+        ]
+      },
+      {
+        "id": "flag_0016",
+        "provenance": {
+          "origin": "system_derived",
+          "asserted_by": {
+            "kind": "pipeline",
+            "ref": "normaliser",
+            "label": "normaliser"
+          },
+          "asserted_at": "2026-03-11T09:00:00Z",
+          "imported_at": null,
+          "source_refs": [],
+          "derived_from": [],
+          "depth": 0,
+          "extraction_confidence": null
+        },
+        "field_provenance": {},
+        "record_status": "active",
+        "version": 1,
+        "superseded_by": null,
+        "created_at": "2026-03-11T09:00:00Z",
+        "updated_at": "2026-03-11T09:00:00Z",
+        "updated_by": {
+          "kind": "pipeline",
+          "ref": "normaliser",
+          "label": "normaliser"
+        },
+        "patient_id": "pat_0001",
+        "code": "INTERPRETATION_DISAGREES_WITH_RANGE",
+        "severity": "human_review_required",
+        "message": "ferritin: lab reported 'N' but the stored range gives 'low' — the stored range is suspect",
+        "status": "open",
+        "targets": [
+          {
+            "entity_type": "LabResult",
+            "entity_id": "lab_0005",
+            "field_path": "reported_interpretation"
+          }
+        ],
+        "candidates": [],
+        "source_locator": []
+      },
+      {
+        "id": "flag_0014",
+        "provenance": {
+          "origin": "system_derived",
+          "asserted_by": {
+            "kind": "pipeline",
+            "ref": "normaliser",
+            "label": "normaliser"
+          },
+          "asserted_at": "2026-03-11T09:00:00Z",
+          "imported_at": null,
+          "source_refs": [],
+          "derived_from": [],
+          "depth": 0,
+          "extraction_confidence": null
+        },
+        "field_provenance": {},
+        "record_status": "active",
+        "version": 1,
+        "superseded_by": null,
+        "created_at": "2026-03-11T09:00:00Z",
+        "updated_at": "2026-03-11T09:00:00Z",
+        "updated_by": {
+          "kind": "pipeline",
+          "ref": "normaliser",
+          "label": "normaliser"
+        },
+        "patient_id": "pat_0001",
+        "code": "MISSING_UNIT",
+        "severity": "human_review_required",
+        "message": "free T4: value 11.2 has no unit",
+        "status": "open",
+        "targets": [
+          {
+            "entity_type": "LabResult",
+            "entity_id": "lab_0003",
+            "field_path": "quantity"
+          }
+        ],
+        "candidates": [],
+        "source_locator": []
+      },
+      {
+        "id": "flag_0009",
+        "provenance": {
+          "origin": "system_derived",
+          "asserted_by": {
+            "kind": "pipeline",
+            "ref": "normaliser",
+            "label": "normaliser"
+          },
+          "asserted_at": "2026-03-11T09:00:00Z",
+          "imported_at": null,
+          "source_refs": [],
+          "derived_from": [],
+          "depth": 0,
+          "extraction_confidence": null
+        },
+        "field_provenance": {},
+        "record_status": "active",
+        "version": 1,
+        "superseded_by": null,
+        "created_at": "2026-03-11T09:00:00Z",
+        "updated_at": "2026-03-11T09:00:00Z",
+        "updated_by": {
+          "kind": "pipeline",
+          "ref": "normaliser",
+          "label": "normaliser"
+        },
+        "patient_id": "pat_0001",
+        "code": "RECORD_REJECTED_AT_INGEST",
+        "severity": "human_review_required",
+        "message": "vitamin D, 25-OH: rejected at ingest — no collection date. The value stays in the source document; re-read the page or request a reissue.",
+        "status": "open",
+        "targets": [],
+        "candidates": [],
+        "source_locator": [
+          "sref_0039"
+        ]
+      },
+      {
+        "id": "flag_0010",
+        "provenance": {
+          "origin": "system_derived",
+          "asserted_by": {
+            "kind": "pipeline",
+            "ref": "normaliser",
+            "label": "normaliser"
+          },
+          "asserted_at": "2026-03-11T09:00:00Z",
+          "imported_at": null,
+          "source_refs": [],
+          "derived_from": [],
+          "depth": 0,
+          "extraction_confidence": null
+        },
+        "field_provenance": {},
+        "record_status": "active",
+        "version": 1,
+        "superseded_by": null,
+        "created_at": "2026-03-11T09:00:00Z",
+        "updated_at": "2026-03-11T09:00:00Z",
+        "updated_by": {
+          "kind": "pipeline",
+          "ref": "normaliser",
+          "label": "normaliser"
+        },
+        "patient_id": "pat_0001",
+        "code": "UNCODED_CONCEPT",
+        "severity": "human_review_required",
+        "message": "'fibromyalgia': asserted on the intake form only, so it is UNCONFIRMED and not assertable in a summary. No code was matched, so the term was not guessed at — a clinician should confirm and code it.",
+        "status": "open",
+        "targets": [
+          {
+            "entity_type": "Condition",
+            "entity_id": "cond_0003",
+            "field_path": null
+          }
+        ],
+        "candidates": [
+          "sref_0041"
+        ],
+        "source_locator": []
+      },
+      {
+        "id": "flag_0013",
+        "provenance": {
+          "origin": "system_derived",
+          "asserted_by": {
+            "kind": "pipeline",
+            "ref": "normaliser",
+            "label": "normaliser"
+          },
+          "asserted_at": "2026-03-11T09:00:00Z",
+          "imported_at": null,
+          "source_refs": [],
+          "derived_from": [],
+          "depth": 0,
+          "extraction_confidence": null
+        },
+        "field_provenance": {},
+        "record_status": "active",
+        "version": 1,
+        "superseded_by": null,
+        "created_at": "2026-03-11T09:00:00Z",
+        "updated_at": "2026-03-11T09:00:00Z",
+        "updated_by": {
+          "kind": "pipeline",
+          "ref": "normaliser",
+          "label": "normaliser"
+        },
+        "patient_id": "pat_0001",
+        "code": "UNCODED_CONCEPT",
+        "severity": "human_review_required",
+        "message": "condition 'fibromyalgia' is not coded",
+        "status": "open",
+        "targets": [
+          {
+            "entity_type": "Condition",
+            "entity_id": "cond_0003",
+            "field_path": "code"
+          }
+        ],
+        "candidates": [],
+        "source_locator": []
+      },
+      {
+        "id": "flag_0005",
+        "provenance": {
+          "origin": "system_derived",
+          "asserted_by": {
+            "kind": "pipeline",
+            "ref": "normaliser",
+            "label": "normaliser"
+          },
+          "asserted_at": "2026-03-11T09:00:00Z",
+          "imported_at": null,
+          "source_refs": [],
+          "derived_from": [],
+          "depth": 0,
+          "extraction_confidence": null
+        },
+        "field_provenance": {},
+        "record_status": "active",
+        "version": 1,
+        "superseded_by": null,
+        "created_at": "2026-03-11T09:00:00Z",
+        "updated_at": "2026-03-11T09:00:00Z",
+        "updated_by": {
+          "kind": "pipeline",
+          "ref": "normaliser",
+          "label": "normaliser"
+        },
+        "patient_id": "pat_0001",
+        "code": "UNIT_MISMATCH",
+        "severity": "human_review_required",
+        "message": "lab 4548-4|2026-02-26, field unit: emr = 'mmol/mol' vs lab_report p2 = '%'. Resolved to lab_report by rule [lab_value: lab_report > emr > intake]; a human should confirm the other source is wrong rather than newer.",
+        "status": "open",
+        "targets": [
+          {
+            "entity_type": "LabResult",
+            "entity_id": "lab_0002",
+            "field_path": "unit"
+          }
+        ],
+        "candidates": [
+          "sref_0027",
+          "sref_0028"
+        ],
+        "source_locator": []
+      },
+      {
+        "id": "flag_0015",
+        "provenance": {
+          "origin": "system_derived",
+          "asserted_by": {
+            "kind": "pipeline",
+            "ref": "normaliser",
+            "label": "normaliser"
+          },
+          "asserted_at": "2026-03-11T09:00:00Z",
+          "imported_at": null,
+          "source_refs": [],
+          "derived_from": [],
+          "depth": 0,
+          "extraction_confidence": null
+        },
+        "field_provenance": {},
+        "record_status": "active",
+        "version": 1,
+        "superseded_by": null,
+        "created_at": "2026-03-11T09:00:00Z",
+        "updated_at": "2026-03-11T09:00:00Z",
+        "updated_by": {
+          "kind": "pipeline",
+          "ref": "normaliser",
+          "label": "normaliser"
+        },
+        "patient_id": "pat_0001",
+        "code": "MISSING_REFERENCE_RANGE",
+        "severity": "warning",
+        "message": "free T4: no reference range from the performing lab",
+        "status": "open",
+        "targets": [
+          {
+            "entity_type": "LabResult",
+            "entity_id": "lab_0003",
+            "field_path": "reference_range"
+          }
+        ],
+        "candidates": [],
+        "source_locator": []
+      }
+    ]
+  },
+  "not_accepted": {
+    "_note": "Stayed in the source layer. No canonical record exists for these.",
+    "rows": [
+      {
+        "locator": {
+          "document_id": "doc_lab",
+          "page": 3,
+          "field_path": "rows[6]",
+          "quote": "Vitamin D 25-OH 62 nmol/L  (collection date illegible)"
+        },
+        "reason": "no collection date: the result cannot be trended or placed on a timeline",
+        "raw": {
+          "analyte": "vitamin D, 25-OH",
+          "value": 62.0
+        }
+      }
+    ]
+  },
+  "audit": [
+    {
+      "id": "aud_0001",
+      "provenance": {
+        "origin": "system_derived",
+        "asserted_by": {
+          "kind": "pipeline",
+          "ref": "normaliser",
+          "label": "normaliser"
+        },
+        "asserted_at": "2026-03-11T09:00:00Z",
+        "imported_at": null,
+        "source_refs": [],
+        "derived_from": [],
+        "depth": 0,
+        "extraction_confidence": null
+      },
+      "field_provenance": {},
+      "record_status": "active",
+      "version": 1,
+      "superseded_by": null,
+      "created_at": "2026-03-11T09:00:00Z",
+      "updated_at": "2026-03-11T09:00:00Z",
+      "updated_by": {
+        "kind": "pipeline",
+        "ref": "normaliser",
+        "label": "normaliser"
+      },
+      "patient_id": "pat_0001",
+      "action": "ingest_started",
+      "trace_id": "trc_normalisation_run",
+      "actor": {
+        "kind": "pipeline",
+        "ref": "normaliser",
+        "label": "normaliser"
+      },
+      "targets": [],
+      "fields_read": null,
+      "field_delta": {},
+      "ingest": {
+        "source_document_id": "doc_emr",
+        "expected": 9,
+        "accepted": 0,
+        "rejected": 0,
+        "failure_reason": null
+      },
+      "occurred_at": null,
+      "inputs": []
+    },
+    {
+      "id": "aud_0002",
+      "provenance": {
+        "origin": "system_derived",
+        "asserted_by": {
+          "kind": "pipeline",
+          "ref": "normaliser",
+          "label": "normaliser"
+        },
+        "asserted_at": "2026-03-11T09:00:00Z",
+        "imported_at": null,
+        "source_refs": [],
+        "derived_from": [],
+        "depth": 0,
+        "extraction_confidence": null
+      },
+      "field_provenance": {},
+      "record_status": "active",
+      "version": 1,
+      "superseded_by": null,
+      "created_at": "2026-03-11T09:00:00Z",
+      "updated_at": "2026-03-11T09:00:00Z",
+      "updated_by": {
+        "kind": "pipeline",
+        "ref": "normaliser",
+        "label": "normaliser"
+      },
+      "patient_id": "pat_0001",
+      "action": "ingest_completed",
+      "trace_id": "trc_normalisation_run",
+      "actor": {
+        "kind": "pipeline",
+        "ref": "normaliser",
+        "label": "normaliser"
+      },
+      "targets": [],
+      "fields_read": null,
+      "field_delta": {},
+      "ingest": {
+        "source_document_id": "doc_emr",
+        "expected": 9,
+        "accepted": 9,
+        "rejected": 0,
+        "failure_reason": null
+      },
+      "occurred_at": null,
+      "inputs": []
+    },
+    {
+      "id": "aud_0003",
+      "provenance": {
+        "origin": "system_derived",
+        "asserted_by": {
+          "kind": "pipeline",
+          "ref": "normaliser",
+          "label": "normaliser"
+        },
+        "asserted_at": "2026-03-11T09:00:00Z",
+        "imported_at": null,
+        "source_refs": [],
+        "derived_from": [],
+        "depth": 0,
+        "extraction_confidence": null
+      },
+      "field_provenance": {},
+      "record_status": "active",
+      "version": 1,
+      "superseded_by": null,
+      "created_at": "2026-03-11T09:00:00Z",
+      "updated_at": "2026-03-11T09:00:00Z",
+      "updated_by": {
+        "kind": "pipeline",
+        "ref": "normaliser",
+        "label": "normaliser"
+      },
+      "patient_id": "pat_0001",
+      "action": "ingest_started",
+      "trace_id": "trc_normalisation_run",
+      "actor": {
+        "kind": "pipeline",
+        "ref": "normaliser",
+        "label": "normaliser"
+      },
+      "targets": [],
+      "fields_read": null,
+      "field_delta": {},
+      "ingest": {
+        "source_document_id": "doc_lab",
+        "expected": null,
+        "accepted": 0,
+        "rejected": 0,
+        "failure_reason": null
+      },
+      "occurred_at": null,
+      "inputs": []
+    },
+    {
+      "id": "aud_0004",
+      "provenance": {
+        "origin": "system_derived",
+        "asserted_by": {
+          "kind": "pipeline",
+          "ref": "normaliser",
+          "label": "normaliser"
+        },
+        "asserted_at": "2026-03-11T09:00:00Z",
+        "imported_at": null,
+        "source_refs": [],
+        "derived_from": [],
+        "depth": 0,
+        "extraction_confidence": null
+      },
+      "field_provenance": {},
+      "record_status": "active",
+      "version": 1,
+      "superseded_by": null,
+      "created_at": "2026-03-11T09:00:00Z",
+      "updated_at": "2026-03-11T09:00:00Z",
+      "updated_by": {
+        "kind": "pipeline",
+        "ref": "normaliser",
+        "label": "normaliser"
+      },
+      "patient_id": "pat_0001",
+      "action": "ingest_completed",
+      "trace_id": "trc_normalisation_run",
+      "actor": {
+        "kind": "pipeline",
+        "ref": "normaliser",
+        "label": "normaliser"
+      },
+      "targets": [],
+      "fields_read": null,
+      "field_delta": {},
+      "ingest": {
+        "source_document_id": "doc_lab",
+        "expected": null,
+        "accepted": 7,
+        "rejected": 1,
+        "failure_reason": null
+      },
+      "occurred_at": null,
+      "inputs": []
+    },
+    {
+      "id": "aud_0005",
+      "provenance": {
+        "origin": "system_derived",
+        "asserted_by": {
+          "kind": "pipeline",
+          "ref": "normaliser",
+          "label": "normaliser"
+        },
+        "asserted_at": "2026-03-11T09:00:00Z",
+        "imported_at": null,
+        "source_refs": [],
+        "derived_from": [],
+        "depth": 0,
+        "extraction_confidence": null
+      },
+      "field_provenance": {},
+      "record_status": "active",
+      "version": 1,
+      "superseded_by": null,
+      "created_at": "2026-03-11T09:00:00Z",
+      "updated_at": "2026-03-11T09:00:00Z",
+      "updated_by": {
+        "kind": "pipeline",
+        "ref": "normaliser",
+        "label": "normaliser"
+      },
+      "patient_id": "pat_0001",
+      "action": "ingest_started",
+      "trace_id": "trc_normalisation_run",
+      "actor": {
+        "kind": "pipeline",
+        "ref": "normaliser",
+        "label": "normaliser"
+      },
+      "targets": [],
+      "fields_read": null,
+      "field_delta": {},
+      "ingest": {
+        "source_document_id": "doc_intake",
+        "expected": null,
+        "accepted": 0,
+        "rejected": 0,
+        "failure_reason": null
+      },
+      "occurred_at": null,
+      "inputs": []
+    },
+    {
+      "id": "aud_0006",
+      "provenance": {
+        "origin": "system_derived",
+        "asserted_by": {
+          "kind": "pipeline",
+          "ref": "normaliser",
+          "label": "normaliser"
+        },
+        "asserted_at": "2026-03-11T09:00:00Z",
+        "imported_at": null,
+        "source_refs": [],
+        "derived_from": [],
+        "depth": 0,
+        "extraction_confidence": null
+      },
+      "field_provenance": {},
+      "record_status": "active",
+      "version": 1,
+      "superseded_by": null,
+      "created_at": "2026-03-11T09:00:00Z",
+      "updated_at": "2026-03-11T09:00:00Z",
+      "updated_by": {
+        "kind": "pipeline",
+        "ref": "normaliser",
+        "label": "normaliser"
+      },
+      "patient_id": "pat_0001",
+      "action": "ingest_completed",
+      "trace_id": "trc_normalisation_run",
+      "actor": {
+        "kind": "pipeline",
+        "ref": "normaliser",
+        "label": "normaliser"
+      },
+      "targets": [],
+      "fields_read": null,
+      "field_delta": {},
+      "ingest": {
+        "source_document_id": "doc_intake",
+        "expected": null,
+        "accepted": 9,
+        "rejected": 0,
+        "failure_reason": null
+      },
+      "occurred_at": null,
+      "inputs": []
+    }
+  ]
+}

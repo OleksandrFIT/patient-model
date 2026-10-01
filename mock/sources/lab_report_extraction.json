@@ -1,0 +1,99 @@
+{
+  "_source": "Meridian Labs report, 26 Feb 2026, extracted from PDF",
+  "_extractor": "local-vision-ocr v0.4",
+  "_document_pages": 3,
+  "rows": [
+    {
+      "page": 1,
+      "analyte": "TSH",
+      "loinc": "3016-3",
+      "value": 5.6,
+      "unit": "mIU/L",
+      "collected": "2026-02-26",
+      "ref_low": 0.4,
+      "ref_high": 4.0,
+      "flag": "H",
+      "confidence": 0.97,
+      "quote": "TSH 5.6 mIU/L (0.4-4.0) H"
+    },
+    {
+      "page": 1,
+      "analyte": "free T4",
+      "loinc": "3024-7",
+      "value": 11.2,
+      "unit": null,
+      "collected": "2026-02-26",
+      "confidence": 0.81,
+      "quote": "Free T4 11.2 ( - )"
+    },
+    {
+      "page": 2,
+      "analyte": "glucose, fasting",
+      "loinc": "1558-6",
+      "value": 7.2,
+      "unit": "mmol/L",
+      "collected": "2026-02-26",
+      "ref_low": 3.9,
+      "ref_high": 5.5,
+      "confidence": 0.93,
+      "quote": "Glucose, fasting 7.2 mmol/L"
+    },
+    {
+      "page": 3,
+      "analyte": "glucose, fasting",
+      "loinc": "1558-6",
+      "value": 5.5,
+      "unit": "mmol/L",
+      "collected": "2026-02-26",
+      "ref_low": 3.9,
+      "ref_high": 5.5,
+      "confidence": 0.88,
+      "quote": "Glucose (fasting) 5.5 mmol/L  [amended page]"
+    },
+    {
+      "page": 2,
+      "analyte": "HbA1c",
+      "loinc": "4548-4",
+      "value": 7.1,
+      "unit": "%",
+      "collected": "2026-02-26",
+      "ref_low": 4.0,
+      "ref_high": 5.6,
+      "confidence": 0.95,
+      "quote": "HbA1c 7.1 %"
+    },
+    {
+      "page": 2,
+      "analyte": "ferritin",
+      "loinc": "2276-4",
+      "value": 18,
+      "unit": "ug/L",
+      "collected": "2026-02-26",
+      "ref_low": 30,
+      "ref_high": 300,
+      "flag": "N",
+      "confidence": 0.94,
+      "quote": "Ferritin 18 ug/L (30-300) N   [range printed for adult male]"
+    },
+    {
+      "page": 3,
+      "analyte": "vitamin D, 25-OH",
+      "loinc": "1989-3",
+      "value": 62,
+      "unit": "nmol/L",
+      "collected": null,
+      "confidence": 0.74,
+      "quote": "Vitamin D 25-OH 62 nmol/L  (collection date illegible)"
+    },
+    {
+      "page": 3,
+      "analyte": null,
+      "loinc": null,
+      "value": null,
+      "unit": null,
+      "collected": "2026-02-26",
+      "confidence": 0.31,
+      "quote": "\u2588\u2588\u2588\u2588 1.9 \u2588\u2588/\u2588  (band obscured by stamp)"
+    }
+  ]
+}

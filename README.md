@@ -9,6 +9,7 @@ python3.12 -m venv .venv && .venv/bin/pip install -e ".[dev]"
 .venv/bin/pytest -q          # 271 tests
 .venv/bin/ruff check src tests mock
 .venv/bin/python scripts_build_d3.py   # regenerate the example patient record
+.venv/bin/python scripts_normalise.py  # run the optional normalisation build
 ```
 
 The design document, `docs/model_design.md`, is the specification. Where it and this README
@@ -31,6 +32,11 @@ differ, the design document is correct.
 | D9 | Client-ready summary | `deliverables/d9_client_summary.md` |
 | D10 | AI prompt log and critique | `deliverables/d10_ai_log.md`, with the defect record in `docs/plan_defects.md` |
 | D11 | Time log | `deliverables/d11_time_log.md` |
+| — | **Optional advanced build**: three conflicting sources normalised | `deliverables/normalisation/`, with its own README; code in `src/pai3/normalise/` |
+
+The optional build is where the six flag codes that nothing raised during the main
+implementation actually fire — which is what shows they were declarations rather than dead
+code. `deliverables/normalisation/README.md` says what it automated and what it refused to.
 
 `docs/implementation_plan.md` is the build plan, not a deliverable. It is included because
 D10 asks what the AI produced and what was wrong with it, and the plan is the largest piece
