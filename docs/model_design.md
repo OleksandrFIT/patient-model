@@ -112,7 +112,7 @@ owner): `Provenance`, `Actor`, `Quantity`, `CodeableConcept`, `ReferenceRange`,
 `Preferences`, `PlanItem`, `FlagSummary`.
 
 **Derived read-models, not stored**: `TimelineEvent`, `PreVisitBrief`,
-`MedicationReconciliationView`, lab trend series. See §6.13 and §9.2.
+`MedicationReconciliationView`, lab trend series. See §6.13, §9.4 and §9.5.
 
 ---
 
@@ -247,6 +247,11 @@ Declared per entity class, not globally: a global list of four names would leave
 `Condition` with none, and `clinical_status` is exactly where conditions
 conflict — "resolved" in the EMR against "active" in the intake form.
 
+The whitelist does not grow by default. `reported_interpretation` (§6.9) was
+considered and rejected as its first candidate: two lab reports disagreeing on
+`H` against `N` for the same draw is a `DUPLICATE_CANDIDATE` flag, not a
+field-level provenance conflict.
+
 Consumers read `field_provenance.get(f) or provenance`. One helper.
 
 **Rejected: an assertion-based model** where every clinical fact is an assertion
@@ -298,8 +303,8 @@ Shape: `targets: list[(entity_type, entity_id, field_path)]`,
 `code` is a **closed enum, never free text**, because under §6.9 and §9.1 it is
 the only carrier of *why* a value is absent, and consumers branch on it:
 `CONFLICTING_VALUES`, `MISSING_UNIT`, `MISSING_REFERENCE_RANGE`,
-`EXTRACTION_FAILED`, `DISCONTINUED_SHOWN_ACTIVE`,
-`DUPLICATE_CANDIDATE`, `UNCODED_CONCEPT`.
+`UNIT_MISMATCH`, `INTERPRETATION_DISAGREES_WITH_RANGE`, `EXTRACTION_FAILED`,
+`DISCONTINUED_SHOWN_ACTIVE`, `DUPLICATE_CANDIDATE`, `UNCODED_CONCEPT`.
 
 `candidates` is what makes a conflict actionable: it lets the UI say "glucose —
 conflict between EMR 5.5 and lab 7.2, unresolved" rather than merely reporting
@@ -385,8 +390,21 @@ value absent" is unrepresentable, and consumers make one `None` check rather
 than two. `quantity is not None` implies a value exists.
 
 `comparator` carries limit-of-detection results — `TSH <0.01`, `hs-CRP <0.3` —
-which are neither coded values nor plain numbers. Trend analysis must be able to
-exclude them: `<0.01` cannot be averaged as `0.01`.
+which are neither coded values nor plain numbers. It makes a value an interval
+rather than a point, which changes both range comparison (§9.5) and trend
+arithmetic (§9.4): `<0.01` cannot be averaged as `0.01`, and it cannot be
+compared to a reference range as though it were a measured `0.01`.
+
+**`reported_interpretation`.** The lab's own abnormal flag — `H`, `L`, `HH`, `A`
+— stored as a `CodeableConcept` rather than as a new enum, so `raw_text` is
+required, the code is optional, and §6.10 applies unchanged: the token the lab
+sent is never overwritten by a normalised code. It is independent of the
+exclusivity above — a result can carry both a quantity and the lab's reading of
+it.
+
+Why store it when interpretation is derived (§9.5): the lab vouched for its `H`.
+That is a source fact, and replacing it with our own computation is no better
+than letting AI rewrite canonical (§1).
 
 Known gap: a result that is both coded and numeric ("Positive, titer 1:160") is
 not representable under either design. If it appears, exclusivity relaxes from
@@ -486,6 +504,13 @@ does not carry provenance the way this model needs, and its
   layer with aggregates promoted to `VitalSign`. Not Phase 1.
 - **`PatientLink` / merge candidates.** Belongs to the optional normalization
   build, not the base model.
+- **A result that is both coded and numeric** — "Positive, titer 1:160". Not
+  representable under the two-slot design (§6.9). Named here rather than left to
+  be discovered: the way out, if it appears, is to relax exclusivity from "at
+  most one populated" to "at least one", which is a validator change and not a
+  restructuring.
+- **Unit conversion inside trends** — §9.4. Mismatched units are excluded with a
+  visible reason rather than converted.
 - **FHIR as a wire format** — §6.18.
 - **Temporal queries** — §6.15.
 
@@ -636,7 +661,90 @@ A brief that dropped a flagged lab cannot be constructed — the field must be
 filled deliberately. Plus one test: for any patient with an open blocking flag,
 the brief mentions it. The convention becomes a failing test.
 
-### 9.5 The rule this gives the AI layer (feeds D6)
+The same requirement applied to a lab trend, where the temptation is to drop
+points rather than whole records:
+
+```
+LabTrend:
+    analyte:       CodeableConcept
+    series:        list[TrendPoint]      # every point, in order, comparator kept
+    numeric_basis: list[ULID]            # which of them fed the arithmetic
+    excluded:      list[ExcludedPoint]   # required, no default
+    direction:     rising | falling | flat | indeterminate
+    unresolved:    list[FlagSummary]     # required
+```
+
+A point with a comparator is excluded from the **arithmetic**, not from the
+**series**. `TSH <0.01` on three consecutive draws is clinically meaningful —
+consistently suppressed — and dropping it loses real signal. The physician sees
+`<0.01, <0.01, <0.01` on the chart while the trend arrow abstains.
+
+`ExcludedPoint` carries the result id, the date, the value as it arrived, and a
+reason from a closed enum: `LIMIT_OF_DETECTION`, `NO_VALUE` (§9.3),
+`CODED_RESULT`, `UNIT_MISMATCH`, `PATIENT_REPORTED`.
+
+`UNIT_MISMATCH` is deliberate. A trend that quietly adds 5.5 mmol/L to 99 mg/dL
+is the exact failure this model exists to prevent. Converting requires UCUM plus
+a conversion table, which is real scope; for Phase 1, excluding with a visible
+reason is the honest option.
+
+**No tuned thresholds.** `direction` is `indeterminate` when and only when
+`len(numeric_basis) < 2` — not a chosen number, but the minimum at which a
+direction exists at all. Whether an arrow can be trusted when half the points
+were excluded is a clinical judgement, not a schema rule. This is stated
+explicitly so that nobody later inserts `0.5`.
+
+### 9.5 Derived interpretation: a comparator is an interval, not a defect
+
+Whether a result is low, normal or high is **derived**, not stored. A
+`comparator` (§6.9) turns the value into a half-open interval, and the comparison
+against a reference range is decidable only when that interval lies entirely on
+one side of the boundary.
+
+| `comparator` | Condition | Result |
+|---|---|---|
+| none | ordinary comparison | `low \| normal \| high` |
+| `<x` | `x <= range.low` | `low` |
+| `<x` | `range.low` is 0 or absent, and `x <= range.high` | `normal` |
+| `>x` | `x >= range.high` | `high` |
+| any | the interval crosses a boundary | `indeterminate` |
+
+Worked through:
+
+- `TSH <0.01`, range 0.4–4.0 → `0.01 <= 0.4` → **`low`**. Strictly sound:
+  anything below 0.01 is below 0.4.
+- `hs-CRP <0.3`, range 0–3.0 → the lower bound is 0 and `0.3 <= 3.0` →
+  **`normal`**. Without that row this returns `indeterminate` and floods the
+  output with results a physician reads as plainly normal.
+- `>100` against an upper bound of 150 → the true value lies in `(100, ∞)`, which
+  crosses 150 → **`indeterminate`**.
+
+**Why `indeterminate` is a value and not a flag.** `>100` against an upper bound
+of 150 is not a data defect. The value is correct, it is vouched for, and only
+the derived interpretation is unavailable. Raising a `DataQualityFlag` would fill
+the review queue with items nobody can resolve, because there is nothing to fix.
+Correct data is never flagged. `indeterminate` surfaces through the same
+read-model rule as `unresolved` (§9.4).
+
+**Reported against computed.** `LabResult.reported_interpretation` holds what the
+lab itself asserted. When it is present, it is what read-models display; the
+computed value is then used for exactly two things — filling in when the lab sent
+nothing, labelled as computed, and detecting disagreement.
+
+Disagreement between the two *is* a defect:
+`INTERPRETATION_DISAGREES_WITH_RANGE`. It almost always means the reference range
+stored here is not the one the lab used, which makes every other interpretation
+against that range suspect. A computed `indeterminate` alongside a reported value
+is not a disagreement.
+
+The lab's assertion is never overwritten by the computed one, for the same reason
+AI output never overwrites canonical (§1): the lab vouched for its `H`, and that
+is a source fact.
+
+Implementation: one pure function, one test per row of the table above. That is
+what keeps the rule out of the intuition of whoever reads the code next.
+
+### 9.6 The rule this gives the AI layer (feeds D6)
 
 An agent **may read** a blocking-flagged record, **must cite the flag**, and may
 **neither** assert the value — there is none — **nor** infer it from
