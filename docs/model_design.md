@@ -847,6 +847,9 @@ is the exact failure this model exists to prevent. Converting requires UCUM plus
 a conversion table, which is real scope; for Phase 1, excluding with a visible
 reason is the honest option.
 
+The same shape is reused for context omissions in §10.6, rather than a second
+pattern being invented for the same problem.
+
 **No tuned thresholds.** `direction` is `indeterminate` when and only when
 `len(numeric_basis) < 2` — not a chosen number, but the minimum at which a
 direction exists at all. Whether an arrow can be trusted when half the points
@@ -1093,6 +1096,7 @@ awaiting a human.
 | `patient_id` | `ULID` | |
 | `trace_id` | `ULID` | The other side of the join in §6.3. Without it, correlated read events connect to nothing |
 | `inputs` | `list[CanonicalRef]` | `(entity_type, id, version)`. §6.14 promises this in prose; here it is a field |
+| `omitted` | `list[OmittedRecord]` | What did not fit the context budget (§10.6), recorded beside `inputs` so what the generation did not see sits next to what it did |
 | `prompt_digest` | `str` | A hash, not the prompt — see below |
 | `model_id` | `str` | |
 | `model_digest` | `str \| None` | `llama-3.3-70b` is not a reproducible identifier: one name covers several quantisations, and incident analysis needs the exact artefact. `None` means the engine reported none, on the §6.3 semantics |
@@ -1310,6 +1314,7 @@ job there is synthesis rather than prose.
 | 2. Every `ClaimValue` matches the canonical record it cites | Direct comparison |
 | 3. No claim asserts a value for a record whose value slot is empty | `quantity is None` makes any asserted value a violation. This is §9.6 as code |
 | 4. Open blocking flags on records in `inputs` appear in `unresolved` | Set difference |
+| 5. No record of a non-droppable category appears in `omitted` (§10.6) | Set membership. If the allergies did not fit, the budget is wrong |
 
 Checks 1 and 3 are the valuable pair: together they are what catches "the model
 produced a number that is not in the data".
@@ -1318,7 +1323,7 @@ produced a number that is not in the data".
 
 | Class | Example | Consequence |
 |---|---|---|
-| Hard | a citation absent from `inputs`; a claim asserting a value where the slot is empty | The artifact is created with `review = rejected_by_guardrail` and reaches no renderer a physician sees |
+| Hard | a citation absent from `inputs`; a claim asserting a value where the slot is empty; a non-droppable category in `omitted` | The artifact is created with `review = rejected_by_guardrail` and reaches no renderer a physician sees |
 | Soft | an unresolved flag not carried forward; a claim without a citation that asserts nothing numeric | `review = pending` with the failures attached, so the human reviewer sees them |
 
 A hard failure is **not discarded quietly**, for the reason given in §9.3: a
@@ -1341,6 +1346,85 @@ The guardrails are also asymmetric: **they catch fabrication and not omission.**
 brief that failed to mention a critical allergy passes all four checks. Omission is
 undetectable by construction, because there is nothing to diff a summary against
 that was never written. §7 records this.
+
+### 10.6 Context limits: what is left out, and what is refused
+
+Four hundred labs over ten years, a fifty-page note, an eighty-analyte panel. A small
+local context window makes this acute, and truncating silently before the prompt is the
+same invisibility the rest of the model is built against.
+
+Two different things, not to be conflated. The **context budget** is about selection —
+which records go in. The **size of a single object** is about one value that may not fit
+by itself.
+
+**There are no limits on canonical.** A note *is* the record, and refusing to store a
+long note loses clinical data. So there is no `max_length` on `ClinicalText.value` and
+no ceiling on the number of `LabResult` records. Limits exist only at the projection
+boundary. This is stated because otherwise someone adds a length validator for safety.
+
+An eighty-analyte panel is not a special case: eighty `LabResult` records under one
+`DiagnosticReport`, which storage does not care about and selection handles below.
+
+**The budget and what it reports.**
+
+```
+ProjectionResult:
+    included: list[CanonicalRef]
+    omitted:  list[OmittedRecord]   # required, no default
+    budget:   BudgetUsage           # limit, consumed
+```
+
+`OmittedRecord` is a ref plus a reason from a closed enum: `CONTEXT_BUDGET`,
+`OUT_OF_WINDOW`, `SUPERSEDED`, `TOO_LARGE_FOR_BUDGET`. The shape is `LabTrend.excluded`
+from §9.4 reused, not a second pattern for the same problem.
+
+**Categorical exclusions do not go in `omitted`.** `Coverage`, `AuditEvent` and identity
+are excluded by §10.4 always, not by a budget, and listing them on every call is noise.
+`omitted` is for what would have been in scope and did not fit.
+
+**Non-droppable categories.** `AllergyIntolerance`, open blocking `DataQualityFlag`
+records, active `Medication`, active `Condition`. If these alone do not fit the budget,
+**the budget is wrong, not the allergies.**
+
+So the generation is **refused**, with the reason recorded, rather than truncated. This
+works because §10.4 already separated the objects: the deterministic `PreVisitBrief` has
+no budget and holds all four hundred labs. The physician receives the data plus a
+statement of why there is no narrative — not a narrative built on trimmed data.
+
+A narrative without active conditions is a list of test results rather than a pre-visit
+brief, which is why conditions are on that list.
+
+The refusal still produces an `AIArtifact` — with no output, `review =
+rejected_by_guardrail`, and the reason — so that the attempt is visible. Same reasoning
+as the unclosed event pair in §9.7: a refusal nobody can see is indistinguishable from a
+generation that was never requested.
+
+**A fifty-page note, and why the alternative is already closed.** It is omitted whole,
+named in `omitted` with `TOO_LARGE_FOR_BUDGET`.
+
+The tempting alternative is to summarise the note first and feed the summary to the
+brief. §6.19 already forbids it: a note summary is `ai_inference` at depth 1, a brief
+built on that summary is depth 2, and the cap is `depth <= 1`. The choice here is not
+arbitrary — the alternative is structurally closed by a decision taken elsewhere in the
+model.
+
+**Where omissions live.** Not in a transient. `AIArtifact` carries `omitted` beside
+`inputs` (§10.2), so "what the generation did not see" sits permanently next to what it
+did. Without it the incident analysis of §6.3 is incomplete: `inputs` shows what was
+read and says nothing about what quietly failed to fit.
+
+**And it is checked.** §10.5 gains a fifth check — no record of a non-droppable category
+appears in `omitted`, hard class. Otherwise the rule above is prose.
+
+**The invariant:**
+
+> **Nothing is dropped from a prompt without being named in the result.**
+
+**Division with D8.** This section declares the mechanism: the budget, the non-droppable
+categories, the reporting of omissions. The *selection policy* for the brief itself —
+every active condition, the latest value per analyte plus the earliest as a trend
+anchor, notes within a stated window — belongs to D8, because it is workflow-specific.
+The mechanism carries no clinical decisions of its own.
 
 ---
 
