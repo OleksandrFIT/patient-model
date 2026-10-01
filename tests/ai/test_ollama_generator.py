@@ -24,11 +24,12 @@ from pai3.ai.generators import (
 )
 from pai3.ai.projection import AIPatientView
 from pai3.entities.results import LabResult
-from pai3.enums import ProvenanceOrigin
+from pai3.enums import FlagCode, ProvenanceOrigin, Severity
 from pai3.ids import new_id
 from pai3.readmodels.trend import build_lab_trend
 from pai3.values.actor import Actor, ActorKind
 from pai3.values.codeable import CodeableConcept
+from pai3.values.flags import FlagSummary
 from pai3.values.provenance import Provenance
 from pai3.values.quantity import Quantity, ReferenceRange
 
@@ -109,6 +110,31 @@ def test_the_prompt_labels_records_by_index_and_never_shows_an_id():
     lowered = prompt.lower()
     assert "`values`" in lowered
     assert "rejected" in lowered
+
+
+def test_a_flag_message_reaches_the_model_without_its_figures():
+    """The competing values belong to no citable record, so the model cannot declare them and
+    cannot state them undeclared. Printing them made every run fail check 6."""
+    flag = FlagSummary(
+        flag_id="flag_0001",
+        code=FlagCode.CONFLICTING_VALUES,
+        severity=Severity.BLOCKING,
+        message="fasting glucose: EMR 5.5 mmol/L against lab 7.2 mmol/L, unresolved",
+    )
+    ctx = _ctx([_lab(5.6)]).model_copy(update={"unresolved": [flag]})
+    prompt = ctx.render().text
+
+    for figure in ("5.5", "7.2"):
+        assert figure not in prompt
+    # An integer would survive guardrail 6 and must not survive this.
+    integer = flag.model_copy(update={"message": "HbA1c: EMR 54 against lab 7, unresolved"})
+    assert "54" not in _ctx([_lab(5.6)]).model_copy(
+        update={"unresolved": [integer]}
+    ).render().text
+    # What the model still needs: which analyte, who disagrees, and the code.
+    assert "fasting glucose" in prompt
+    assert "EMR" in prompt and "lab" in prompt
+    assert "CONFLICTING_VALUES" in prompt
 
 
 def test_an_index_the_prompt_never_offered_cannot_resolve():

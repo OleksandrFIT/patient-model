@@ -2152,7 +2152,7 @@
       ],
       "omitted": [],
       "produced": [],
-      "prompt_digest": "sha256:6f91d26d44ccc4dbe205411061f64433fb1fc3c9f17546f7b4f877e9aa04dbb9",
+      "prompt_digest": "sha256:5616eede26510a48df87441d606ad7757529ac0dcdad0d804b23daae759bdcd7",
       "model_id": "stub:deterministic-claim-builder",
       "model_digest": null,
       "engine": "stub",

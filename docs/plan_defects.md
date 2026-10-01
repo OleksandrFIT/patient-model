@@ -288,6 +288,39 @@ validator that can never run, in a test rather than in a validator — and the s
 guardrail hole in defect 15, where every test of check 2 supplied the values it then verified.
 Fixed by asserting against `.text`, with the reason in a comment so it is not re-broken.
 
+## 21. The prompt printed numbers the model was forbidden to use
+
+Found by running the same prompt eight times instead of once. After the switch to indices every
+run was rejected, deterministically, on check 6 — and the cause was not the switch.
+
+The context included each open blocking flag's message verbatim:
+
+```
+CONFLICTING_VALUES: fasting glucose: EMR 5.5 mmol/L against lab 7.2 mmol/L, unresolved
+```
+
+Those two figures are the competing readings of an unresolved conflict, so canonical holds
+**neither**: §9.3 leaves the value empty. A claim that declares one fails check 2, which finds
+no value to match, or check 3, which forbids asserting a value for an empty slot. A claim that
+states one without declaring it fails check 6. There is no legal way to put either figure in a
+claim, and the prompt offered both.
+
+The guardrails were right every time. The defect is that the context handed the model a number
+and then forbade every use of it, which is a trap rather than an instruction — and it had been
+there since check 6 landed, making the narrative unreachable for any patient carrying a numeric
+conflict flag. One earlier run passed only because the model happened to phrase that claim
+without numbers; a single run looked like evidence that the prompt was fine.
+
+Flag messages now reach the model with their figures removed, and the header says why. The
+redaction pattern is deliberately **broader** than check 6's: check 6 ignores integers so that
+"type 2 diabetes" is not read as a measurement, but an integer left in a flag message would be
+restated and would pass every check. The two patterns are allowed to differ and the reason is
+written where both live, because unifying them would reopen the hole.
+
+The lesson is about method rather than about prompts. A generation was checked once, saw a pass,
+and the pass was the unlucky outcome: it hid a failure that eight runs made unmissable. Running
+a non-deterministic component once tests the run, not the component.
+
 ## Not numbered: the deliverables that went stale, found by the reviewer
 
 This one is deliberately outside the numbering, and the reason is a taxonomy rather than an
@@ -364,6 +397,7 @@ Defect density tracked **novelty, not care**:
 | re-running the dimension audit against code and example | — | **2** |
 | rendering the brief for its actual reader | — | **1** |
 | switching the prompt from ids to indices | — | **1** |
+| running the same prompt eight times instead of once | — | **1** |
 
 Phase 1 is where the plan designed something for the first time. Phases 2 and 3 applied
 patterns Phase 1 had already settled, and produced nothing worse than an import-order nit.

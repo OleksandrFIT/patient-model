@@ -11,6 +11,7 @@ anything real was wired in.
 """
 
 import json
+import re
 import urllib.error
 import urllib.request
 from typing import NamedTuple, Protocol
@@ -74,6 +75,29 @@ class RenderedPrompt(NamedTuple):
 
     text: str
     by_index: dict[str, CanonicalRef]
+
+
+_FIGURE = re.compile(r"\d[\d.,]*")
+"""Any figure in a flag message, deliberately broader than guardrail 6's decimal pattern.
+
+The two are allowed to differ, and unifying them would reopen a hole. Check 6 is narrow
+because it reads a *claim*, where "type 2 diabetes" must not be mistaken for a measurement.
+This reads a *flag message*, where no number is one the model may use: the values a conflict
+names are the competing readings, and canonical holds neither of them. An integer left in
+would be restated and would pass every check, because check 6 ignores integers by design.
+"""
+
+
+def _without_figures(message: str) -> str:
+    """A flag message with its competing values removed.
+
+    The model is told which analyte is disputed and by whom, and not the figures, because
+    there is no legal way for it to use them. They belong to no citable record — an
+    unresolved conflict leaves the canonical value empty (§9.3) — so declaring one fails
+    check 2 or 3 and stating one undeclared fails check 6. Printing them made the context a
+    trap: every run restated them and every run was rejected.
+    """
+    return _FIGURE.sub("(withheld)", message)
 
 
 def resolve_citation(token: str, by_index: dict[str, CanonicalRef]) -> CanonicalRef:
@@ -154,9 +178,13 @@ class GenerationContext(BaseModel):
                     + (f", {len(t.excluded)} excluded" if t.excluded else "")
                 )
         if self.unresolved:
-            lines += ["", "Unresolved data problems you must not reason past:"]
+            lines += [
+                "",
+                "Unresolved data problems you must not reason past. The competing figures are",
+                "withheld because no record holds them — name the disagreement, not numbers:",
+            ]
             for f in self.unresolved:
-                lines.append(f"  {f.code.value}: {f.message}")
+                lines.append(f"  {f.code.value}: {_without_figures(f.message)}")
         lines += [
             "",
             "Write one short claim per fact worth a physician's attention. Every claim cites",

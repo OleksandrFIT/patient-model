@@ -6,7 +6,7 @@ read the record but cannot write to it.
 
 ```bash
 python3.12 -m venv .venv && .venv/bin/pip install -e ".[dev]"
-.venv/bin/pytest -q          # 321 tests
+.venv/bin/pytest -q          # 322 tests
 .venv/bin/ruff check src tests mock scripts_*.py
 .venv/bin/python scripts_build_d3.py   # regenerate the example patient record
 .venv/bin/python scripts_normalise.py  # run the optional normalisation build

@@ -13,8 +13,9 @@ Trends already computed for you. Do not recompute them.
   free T4: indeterminate over 1 measurement(s)
   glucose, fasting: indeterminate over 0 measurement(s), 1 excluded
 
-Unresolved data problems you must not reason past:
-  CONFLICTING_VALUES: fasting glucose: EMR 5.5 mmol/L against lab 7.2 mmol/L, unresolved
+Unresolved data problems you must not reason past. The competing figures are
+withheld because no record holds them — name the disagreement, not numbers:
+  CONFLICTING_VALUES: fasting glucose: EMR (withheld) mmol/L against lab (withheld) mmol/L, unresolved
 
 Write one short claim per fact worth a physician's attention. Every claim cites
 at least one index, written as it appears above.
