@@ -34,6 +34,7 @@ from pai3.entities.results import LabResult
 from pai3.enums import ClinicalStatus, ProvenanceOrigin
 from pai3.ids import CanonicalRef, new_id
 from pai3.readmodels.brief import PatientHeader, PreVisitBrief
+from pai3.readmodels.timeline import build_timeline
 from pai3.readmodels.trend import LabTrend, build_lab_trend
 from pai3.values.actor import Actor, ActorKind
 from pai3.values.flags import FlagSummary
@@ -187,11 +188,30 @@ class LocalInferenceAdapter:
                 if c.clinical_status is ClinicalStatus.ACTIVE
             ],
             "active_medications": [m.drug.raw_text for m in fx.medications if m.is_current],
+            "active_supplements": [
+                s.substance.raw_text for s in fx.supplements if s.is_current
+            ],
             "allergies": [a.substance.raw_text for a in fx.allergies],
+            "recent_vitals": [
+                f"{v.kind.raw_text} {v.quantity.value} {v.quantity.unit}"
+                f" ({v.measurement_context.value})"
+                for v in sorted(fx.vitals, key=lambda v: v.measured_at, reverse=True)
+            ],
             "trends": _trends_for(fx.labs, unresolved),
+            "timeline": build_timeline(
+                encounters=fx.encounters,
+                conditions=fx.conditions,
+                medications=fx.medications,
+                supplements=fx.supplements,
+                labs=fx.labs,
+                notes=fx.notes,
+            ),
         }
 
-        records = [*fx.conditions, *fx.medications, *fx.allergies, *fx.labs]
+        records = [
+            *fx.conditions, *fx.medications, *fx.supplements, *fx.allergies,
+            *fx.labs, *fx.vitals, *fx.notes,
+        ]
         try:
             view = project_patient(fx.patient, scope, on=moment.date(), now=moment)
             projection = project_records(records, scope, budget=budget, now=moment)

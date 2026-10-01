@@ -15,6 +15,7 @@ from pydantic import AwareDatetime, BaseModel, Field
 
 from pai3.ai.artifact import AISummary
 from pai3.enums import Severity
+from pai3.readmodels.timeline import TimelineEvent
 from pai3.readmodels.trend import LabTrend
 from pai3.values.flags import FlagSummary
 
@@ -34,8 +35,11 @@ class PreVisitBrief(BaseModel):
     unresolved: list[FlagSummary]
     active_conditions: list[str] = Field(default_factory=list)
     active_medications: list[str] = Field(default_factory=list)
+    active_supplements: list[str] = Field(default_factory=list)
     allergies: list[str] = Field(default_factory=list)
+    recent_vitals: list[str] = Field(default_factory=list)
     trends: list[LabTrend] = Field(default_factory=list)
+    timeline: list[TimelineEvent] = Field(default_factory=list)
     narrative: AISummary | None = None
     narrative_withheld_reason: str | None = Field(
         default=None,
